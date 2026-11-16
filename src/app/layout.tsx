@@ -48,6 +48,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     description: DESCRIPTION,
     url: SITE_URL,
     image: `${SITE_URL}/og.png`,
+    logo: `${SITE_URL}/icons/icon-512.png`,
     telephone: s.phone_numbers.map((p) => `+977${p}`),
     priceRange: "Rs.",
     address: { "@type": "PostalAddress", addressLocality: "Dharan", addressCountry: "NP" },
