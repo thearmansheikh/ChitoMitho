@@ -114,8 +114,9 @@ create policy admins_self_read on admins for select to authenticated using (user
 create policy places_public_read on places for select to anon, authenticated using (is_active);
 create policy categories_public_read on categories for select to anon, authenticated
   using (exists (select 1 from places p where p.id = place_id and p.is_active));
+-- Sold-out items stay readable so the site can show them greyed out.
 create policy items_public_read on items for select to anon, authenticated
-  using (is_available and exists (select 1 from places p where p.id = place_id and p.is_active));
+  using (exists (select 1 from places p where p.id = place_id and p.is_active));
 create policy areas_public_read on areas for select to anon, authenticated using (is_active);
 create policy settings_public_read on settings for select to anon, authenticated using (true);
 

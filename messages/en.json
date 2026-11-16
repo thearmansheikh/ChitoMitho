@@ -1,10 +1,82 @@
 {
   "brand": { "name": "Chitto Mitho", "tagline": "Your everyday delivery partner" },
   "header": { "open": "Open now", "closed": "Closed", "langToggle": "Change language" },
+  "common": {
+    "add": "Add",
+    "soldOut": "Sold out",
+    "back": "Back",
+    "empty": "Nothing here yet.",
+    "call": "Call",
+    "whatsapp": "WhatsApp",
+    "optional": "optional"
+  },
   "home": {
     "title": "Order anything, from anywhere",
     "subtitle": "Food, groceries, gifts, parcels and more, delivered across Dharan, Itahari and Biratnagar.",
-    "placeholder": "Menus and ordering are coming soon."
+    "popular": "Popular places",
+    "how": "How it works",
+    "step1Title": "Choose",
+    "step1Body": "Pick items or fill a short form.",
+    "step2Title": "Send on WhatsApp",
+    "step2Body": "Your order is written for you. Just press send.",
+    "step3Title": "We deliver",
+    "step3Body": "We confirm the delivery charge, then a rider brings it. Pay cash or QR at the door.",
+    "closedNow": "We are closed right now. You can still browse and order when we open (10am – 10pm).",
+    "paused": "Orders are paused right now."
+  },
+  "services": {
+    "food": "Food",
+    "grocery": "Groceries",
+    "liquor": "Liquor",
+    "gifts": "Gifts & Flowers",
+    "parcel": "Parcel / Pick & Drop",
+    "anything": "Order Anything"
+  },
+  "pages": {
+    "foodTitle": "Food",
+    "foodIntro": "Cafés and restaurants delivering to you.",
+    "groceriesTitle": "Groceries",
+    "liquorTitle": "Liquor",
+    "giftsTitle": "Gifts & Flowers",
+    "noPlaces": "No places available right now."
+  },
+  "menu": {
+    "categories": "Menu categories",
+    "uncategorised": "Other"
+  },
+  "groceries": {
+    "listTitle": "Type your shopping list",
+    "listHelp": "Write what you need, one item per line. We will buy it for you.",
+    "listPlaceholder": "e.g. 2 kg tomato\n1 packet noodles\n1 litre milk"
+  },
+  "liquor": {
+    "ageTitle": "Are you 18 or older?",
+    "ageDefault": "You must be 18 or older. ID will be checked at the door.",
+    "ageYes": "Yes, I am 18 or older",
+    "ageNo": "No, go back"
+  },
+  "gifts": {
+    "detailsTitle": "Gift details",
+    "recipientName": "Recipient name",
+    "recipientPhone": "Recipient phone",
+    "message": "Message for the card",
+    "date": "Delivery date",
+    "time": "Delivery time"
+  },
+  "basket": {
+    "title": "Your basket",
+    "empty": "Your basket is empty.",
+    "browse": "Start ordering",
+    "itemsTotal": "Items total",
+    "note": "Note (e.g. less spicy)",
+    "remove": "Remove",
+    "increase": "Add one",
+    "decrease": "Remove one",
+    "shoppingList": "Your shopping list",
+    "giftDetails": "Gift details",
+    "orderOnWhatsapp": "Order on WhatsApp",
+    "comingNext": "Ordering opens in the next update.",
+    "clear": "Empty basket"
   },
   "bar": { "basket": "Basket", "whatsapp": "WhatsApp" },
   "footer": {

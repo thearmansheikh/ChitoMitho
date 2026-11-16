@@ -4,6 +4,7 @@ import { getLocale, getMessages } from "next-intl/server";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BottomBar from "@/components/BottomBar";
+import { BasketProvider } from "@/context/BasketContext";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -24,10 +25,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang={locale}>
       <body className="bg-white text-ink antialiased">
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <Header />
-          <main className="mx-auto max-w-3xl px-4 py-6">{children}</main>
-          <Footer />
-          <BottomBar />
+          <BasketProvider>
+            <Header />
+            <main className="mx-auto max-w-3xl px-4 py-6">{children}</main>
+            <Footer />
+            <BottomBar />
+          </BasketProvider>
         </NextIntlClientProvider>
       </body>
     </html>
