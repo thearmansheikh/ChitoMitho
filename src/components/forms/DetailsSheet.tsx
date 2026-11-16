@@ -137,7 +137,7 @@ export default function DetailsSheet({ open, onClose, onConfirm, areas, initial,
           <textarea className={`${input} min-h-[72px]`} value={note} onChange={(e) => setNote(e.target.value)} />
         </label>
 
-        <button disabled={busy} className="min-h-[56px] w-full rounded-xl bg-green-600 text-lg font-bold text-white disabled:opacity-60">
+        <button disabled={busy} className="min-h-[56px] w-full rounded-xl bg-green-700 text-lg font-bold text-white disabled:opacity-60">
           {busy ? t("opening") : `💬 ${t("continue")}`}
         </button>
         <button type="button" onClick={onClose} className="min-h-[44px] w-full text-sm font-semibold text-slate-600">{t("cancel")}</button>

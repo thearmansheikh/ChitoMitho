@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import LogoutButton from "@/components/admin/LogoutButton";
 
 export const dynamic = "force-dynamic";
+export const metadata = { title: "Admin", robots: { index: false, follow: false } };
 
 const NAV = [
   ["/admin", "Dashboard"],

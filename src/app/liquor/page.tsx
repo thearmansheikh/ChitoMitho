@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+
+export const metadata: Metadata = {
+  title: "Liquor delivery in Dharan (18+)",
+  description: "Beer, wine and spirits delivered in Dharan for adults 18 and over. ID checked at the door. Order on WhatsApp.",
+};
 import { getSettings } from "@/lib/data";
 import AgeGate from "@/components/shop/AgeGate";
 import TypeMenus from "@/components/shop/TypeMenus";

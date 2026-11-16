@@ -9,7 +9,7 @@ export default async function Header() {
   const t = await getTranslations("brand");
   const s = await getSettings();
   return (
-    <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
+    <header className="sticky top-0 z-30 border-b border-slate-200 bg-white">
       <div className="mx-auto flex max-w-3xl items-center justify-between gap-2 px-4 py-2">
         <Link href="/" className="flex items-center gap-2" aria-label={t("name")}>
           <Image src="/icons/logo.svg" alt="" width={40} height={40} priority unoptimized />

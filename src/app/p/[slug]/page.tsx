@@ -6,7 +6,12 @@ import Menu from "@/components/shop/Menu";
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const place = await getPlaceBySlug(params.slug);
-  return place ? { title: `${place.name} | Chitto Mitho`, description: place.description ?? undefined } : {};
+  if (!place) return {};
+  return {
+    title: `${place.name} – menu & delivery in Dharan`,
+    description: `Order from ${place.name} in Dharan${place.description ? `: ${place.description}` : ""}. Delivered by Chitto Mitho. Order on WhatsApp.`,
+    alternates: { canonical: `/p/${place.slug}` },
+  };
 }
 
 export default async function PlacePage({ params }: { params: { slug: string } }) {

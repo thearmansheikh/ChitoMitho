@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+
+export const metadata: Metadata = {
+  title: "Gifts & flowers delivery in Dharan",
+  description: "Send bouquets, cakes and gift sets in Dharan with a message card, on the date and time you choose. Order on WhatsApp.",
+};
 import TypeMenus from "@/components/shop/TypeMenus";
 import GiftForm from "@/components/shop/GiftForm";
 

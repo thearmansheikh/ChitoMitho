@@ -14,7 +14,7 @@ export default async function BottomBar() {
           🧺 {t("basket")}
           <BasketCount />
         </Link>
-        <a href={`https://wa.me/977${s.whatsapp_number}`} aria-label={t("whatsapp")} className={`${btn} bg-green-600 text-white`}>💬 {t("whatsapp")}</a>
+        <a href={`https://wa.me/977${s.whatsapp_number}`} aria-label={t("whatsapp")} className={`${btn} bg-green-700 text-white`}>💬 {t("whatsapp")}</a>
       </div>
     </nav>
   );

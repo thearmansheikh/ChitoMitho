@@ -14,7 +14,7 @@ export default function AddToBasket({ line, available, label }: {
   const qty = lines.find((l) => l.itemId === line.itemId)?.qty ?? 0;
 
   if (!available) {
-    return <span className="rounded-lg bg-slate-200 px-3 py-2 text-sm font-semibold text-slate-600">{t("soldOut")}</span>;
+    return <span className="rounded-lg bg-slate-200 px-3 py-2 text-sm font-semibold text-slate-700">{t("soldOut")}</span>;
   }
   if (qty === 0) {
     return (

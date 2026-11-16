@@ -3,13 +3,14 @@
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import dynamic from "next/dynamic";
 import { isOpenNow } from "@/lib/format";
 import { loadDetails, saveDetails, type Details } from "@/lib/details";
 import { pick } from "@/lib/names";
 import { whatsappUrl, type Customer, type Lang } from "@/lib/whatsapp";
 import type { Area, Service } from "@/types/db";
-import DetailsSheet from "./DetailsSheet";
+// The sheet is only needed after the customer taps the order button.
+const DetailsSheet = dynamic(() => import("./DetailsSheet"));
 
 export interface OrderConfig {
   openTime: string;
@@ -25,6 +26,7 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 async function logOrderClick(row: { service: Service; place_id: string | null; items_total_npr: number | null; area_id: string | null }) {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return;
   try {
+    const { createClient } = await import("@/lib/supabase/client");
     await createClient().from("order_clicks").insert({
       service: row.service,
       place_id: row.place_id && UUID.test(row.place_id) ? row.place_id : null,
@@ -59,7 +61,7 @@ export default function SendOrder({ service, placeId, itemsTotal, build, validat
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sentUrl, setSentUrl] = useState<string | null>(null);
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(() => isOpenNow(config.openTime, config.closeTime));
 
   useEffect(() => {
     const tick = () => setOpen(isOpenNow(config.openTime, config.closeTime));
@@ -116,7 +118,7 @@ export default function SendOrder({ service, placeId, itemsTotal, build, validat
           <p className="text-6xl" aria-hidden>✅</p>
           <h2 id="sent-title" className="text-2xl font-extrabold text-brand-blue">{t("sentTitle")}</h2>
           <p className="text-slate-700">{t("sentBody")}</p>
-          <a href={sentUrl} target="_blank" rel="noopener noreferrer" className="flex min-h-[56px] w-full items-center justify-center rounded-xl bg-green-600 text-lg font-bold text-white">
+          <a href={sentUrl} target="_blank" rel="noopener noreferrer" className="flex min-h-[56px] w-full items-center justify-center rounded-xl bg-green-700 text-lg font-bold text-white">
             💬 {t("sentAgain")}
           </a>
           <button type="button" className="min-h-[52px] w-full rounded-xl border border-slate-300 font-bold"
@@ -131,7 +133,7 @@ export default function SendOrder({ service, placeId, itemsTotal, build, validat
   return (
     <>
       <button type="button" onClick={start} disabled={!!blocked}
-        className="min-h-[56px] w-full rounded-xl bg-green-600 text-lg font-bold text-white disabled:opacity-50">
+        className="min-h-[56px] w-full rounded-xl bg-green-700 text-lg font-bold text-white disabled:opacity-50">
         💬 {label ?? b("orderOnWhatsapp")}
       </button>
       {blocked && <p role="status" className="mt-2 rounded-lg bg-yellow-50 p-3 text-sm font-semibold text-yellow-900">{blocked}</p>}

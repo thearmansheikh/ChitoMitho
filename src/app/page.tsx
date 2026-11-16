@@ -70,7 +70,7 @@ export default async function Home() {
         <a href={`tel:+977${settings.phone_numbers[0] ?? settings.whatsapp_number}`} className="flex min-h-[52px] items-center justify-center rounded-xl bg-brand-blue font-bold text-white">
           📞 {(await getTranslations("common"))("call")}
         </a>
-        <a href={`https://wa.me/977${settings.whatsapp_number}`} className="flex min-h-[52px] items-center justify-center rounded-xl bg-green-600 font-bold text-white">
+        <a href={`https://wa.me/977${settings.whatsapp_number}`} className="flex min-h-[52px] items-center justify-center rounded-xl bg-green-700 font-bold text-white">
           💬 {(await getTranslations("common"))("whatsapp")}
         </a>
       </section>

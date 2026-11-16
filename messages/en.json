@@ -79,6 +79,26 @@
     "clear": "Empty basket"
   },
   "bar": { "basket": "Basket", "whatsapp": "WhatsApp" },
+  "a11y": { "skip": "Skip to main content", "loading": "Loading" },
+  "errors": {
+    "notFoundTitle": "We could not find that page",
+    "notFoundBody": "The link may be old or mistyped. You can go back home and order from there.",
+    "goHome": "Back to home",
+    "errorTitle": "Something went wrong",
+    "errorBody": "Sorry about that. Please try again. If it keeps happening, order by WhatsApp or call us.",
+    "retry": "Try again"
+  },
+  "about": {
+    "link": "About & contact",
+    "title": "About Chitto Mitho",
+    "story": "Chitto Mitho is your everyday delivery partner in Dharan, Nepal, since 2024. We bring food from your favourite cafés and restaurants, groceries, drinks, gifts and flowers, and parcels. If you need something from anywhere, just ask.",
+    "areas": "We deliver in Dharan and nearby areas in every direction, including Itahari and Biratnagar.",
+    "hoursTitle": "Opening hours",
+    "hours": "Every day, 10am – 10pm",
+    "contactTitle": "Contact us",
+    "payTitle": "How to pay",
+    "pay": "Cash on delivery or QR at the door (eSewa, Khalti, Fonepay). We confirm the delivery charge on WhatsApp before we deliver."
+  },
   "footer": {
     "hours": "Open 10am – 10pm, every day",
     "area": "Dharan, Nepal · delivering to Itahari, Biratnagar and nearby areas",

@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+
+export const metadata: Metadata = {
+  title: "Grocery delivery in Dharan",
+  description: "Order groceries and vegetables in Dharan, Itahari and Biratnagar, or type your own shopping list. Order on WhatsApp.",
+};
 import TypeMenus from "@/components/shop/TypeMenus";
 import ShoppingList from "@/components/shop/ShoppingList";
 

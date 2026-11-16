@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+
+export const metadata: Metadata = {
+  title: "Food delivery in Dharan",
+  description: "Order from the best cafés and restaurants in Dharan. Momo, burgers, coffee and more, delivered to your door. Order on WhatsApp.",
+};
 import { getPlaces } from "@/lib/data";
 import PlaceCard from "@/components/shop/PlaceCard";
 

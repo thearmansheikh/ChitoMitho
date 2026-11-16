@@ -42,19 +42,20 @@ export default async function Menu({ place, categories, items, showTitle = false
       )}
       {groups.map((g) => (
         <div key={g.id} id={anchor(g.id)} className="scroll-mt-28 space-y-2">
-          <h3 className="text-lg font-bold">{g.label}</h3>
+          {/* Keep heading levels sequential: the page title is h1, a place title (if shown) is h2. */}
+          {showTitle ? <h3 className="text-lg font-bold">{g.label}</h3> : <h2 className="text-lg font-bold">{g.label}</h2>}
           <ul className="divide-y divide-slate-100 rounded-xl border border-slate-200">
             {g.items.map((i) => {
               const name = pick(i.name, i.name_ne, locale);
               return (
-                <li key={i.id} className={`flex items-center gap-3 p-3 ${i.is_available ? "" : "opacity-50 grayscale"}`}>
+                <li key={i.id} className={`flex items-center gap-3 p-3 ${i.is_available ? "" : "bg-slate-50"}`}>
                   {i.image_url && (
-                    <Image src={i.image_url} alt="" width={64} height={64} loading="lazy" className="h-16 w-16 flex-none rounded-lg object-cover" />
+                    <Image src={i.image_url} alt="" width={64} height={64} loading="lazy" className={`h-16 w-16 flex-none rounded-lg object-cover ${i.is_available ? "" : "opacity-50 grayscale"}`} />
                   )}
                   <div className="min-w-0 flex-1">
-                    <p className="font-semibold leading-snug">{name}</p>
-                    {i.description && <p className="text-sm text-slate-500">{i.description}</p>}
-                    <p className="font-bold text-brand-blue">{formatNPR(i.price_npr)}</p>
+                    <p className={`font-semibold leading-snug ${i.is_available ? "" : "text-slate-600 line-through"}`}>{name}</p>
+                    {i.description && <p className="text-sm text-slate-600">{i.description}</p>}
+                    <p className={`font-bold ${i.is_available ? "text-brand-blue" : "text-slate-600"}`}>{formatNPR(i.price_npr)}</p>
                   </div>
                   <AddToBasket
                     available={i.is_available}

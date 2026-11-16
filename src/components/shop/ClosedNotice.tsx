@@ -9,7 +9,7 @@ export default function ClosedNotice({ openTime, closeTime, paused, pauseMessage
   openTime: string; closeTime: string; paused: boolean; pauseMessage: string | null;
 }) {
   const t = useTranslations("home");
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(() => isOpenNow(openTime, closeTime));
   useEffect(() => { setOpen(isOpenNow(openTime, closeTime)); }, [openTime, closeTime]);
 
   if (paused) {
