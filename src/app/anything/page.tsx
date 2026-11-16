@@ -1,8 +1,8 @@
-export default function Page() {
-  return (
-    <section>
-      <h1 className="text-2xl font-extrabold text-brand-blue">Order Anything</h1>
-      <p className="mt-2 text-slate-600">Coming soon.</p>
-    </section>
-  );
+import { getAreas, getSettings } from "@/lib/data";
+import { toOrderConfig } from "@/lib/orderConfig";
+import AnythingForm from "@/components/forms/AnythingForm";
+
+export default async function AnythingPage() {
+  const [settings, areas] = await Promise.all([getSettings(), getAreas()]);
+  return <AnythingForm config={toOrderConfig(settings)} areas={areas} />;
 }
