@@ -92,6 +92,24 @@
   },
   "bar": { "basket": "Basket", "whatsapp": "WhatsApp" },
   "nav": { "promise": "Our promise", "partner": "Partner with us" },
+  "food": {
+    "searchLabel": "Search dishes and cafés",
+    "searchPlaceholder": "Search momo, burger, café…",
+    "searchButton": "Search",
+    "clear": "Clear search",
+    "results": "{count, plural, one {# result} other {# results}} for “{query}”",
+    "noResults": "Nothing found",
+    "noResultsHint": "Try a simpler word like momo, coffee or burger.",
+    "dishes": "Dishes",
+    "places": "Cafés and restaurants"
+  },
+  "craving": {
+    "title": "What are you craving?",
+    "items": {
+      "momo": "Momo", "burger": "Burger", "pizza": "Pizza", "coffee": "Coffee",
+      "noodles": "Noodles", "rice": "Rice", "cake": "Cake", "drink": "Drinks"
+    }
+  },
   "serviceDesc": {
     "food": "Cafés and restaurants",
     "grocery": "Daily essentials",

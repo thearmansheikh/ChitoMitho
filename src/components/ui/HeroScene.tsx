@@ -7,7 +7,7 @@ import { ScooterRider } from "./ScooterArt";
  */
 export default function HeroScene() {
   return (
-    <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 flex h-44 justify-center overflow-hidden sm:h-52">
+    <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-7 flex h-44 justify-center overflow-hidden sm:h-52">
       <svg viewBox="0 0 400 176" className="h-full w-full max-w-[560px] overflow-visible" preserveAspectRatio="xMidYMax meet">
         {/* far hills */}
         <path d="M-700 120C-600 92 -500 112 -400 98S-200 76 -100 102 60 84 150 98s140-26 230 6 220-10 320 8 220 4 300-6V176H-700z" fill="#fff" fillOpacity=".08" />

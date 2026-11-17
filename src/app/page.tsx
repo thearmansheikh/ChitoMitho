@@ -1,7 +1,11 @@
 import Link from "next/link";
-import { getTranslations } from "next-intl/server";
-import { getFeatured, getOffers, getPlaces, getSettings } from "@/lib/data";
+import { getLocale, getTranslations } from "next-intl/server";
+import { getFeatured, getMenu, getOffers, getPlaces, getSettings } from "@/lib/data";
+import { pick } from "@/lib/names";
+import { placeTags } from "@/lib/tags";
 import TodaysPicks from "@/components/shop/TodaysPicks";
+import SearchBar from "@/components/shop/SearchBar";
+import CravingRow from "@/components/shop/CravingRow";
 import PlaceCard from "@/components/shop/PlaceCard";
 import ClosedNotice from "@/components/shop/ClosedNotice";
 import ReorderCard from "@/components/shop/ReorderCard";
@@ -31,6 +35,8 @@ export default async function Home() {
   const popular = (await getPlaces("food")).slice(0, 4);
   const offers = await getOffers();
   const picks = await getFeatured();
+  const locale = await getLocale();
+  const { categories: popularCats } = await getMenu(popular.map((p) => p.id));
 
   return (
     <div className="space-y-10">
@@ -43,7 +49,7 @@ export default async function Home() {
       <ClosedNotice openTime={settings.open_time} closeTime={settings.close_time} paused={settings.orders_paused} pauseMessage={settings.pause_message} />
 
       {/* Hero */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-blue via-[#274e8a] to-ink p-6 pb-44 text-white shadow-pop sm:p-8 sm:pb-56 motion-safe:animate-fade-up">
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-blue via-[#274e8a] to-ink p-6 pb-52 text-white shadow-pop sm:p-8 sm:pb-64 motion-safe:animate-fade-up">
         <span aria-hidden className="absolute -right-12 -top-12 h-48 w-48 rounded-full bg-white/10" />
         <span aria-hidden className="absolute -left-10 top-24 h-24 w-24 rounded-full bg-brand-red/30 blur-xl" />
         <div className="relative">
@@ -70,6 +76,11 @@ export default async function Home() {
         </div>
         <HeroScene />
       </section>
+
+      {/* Search straddles the bottom edge of the hero, so it is the first thing a hungry person reaches for. */}
+      <div className="relative z-10 !-mt-7"><SearchBar /></div>
+
+      <CravingRow />
 
       <OffersStrip offers={offers} />
 
@@ -99,7 +110,11 @@ export default async function Home() {
       {popular.length > 0 && (
         <section className="space-y-4">
           <SectionTitle>{t("popular")}</SectionTitle>
-          <div className="space-y-3">{popular.map((p) => <PlaceCard key={p.id} place={p} />)}</div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {popular.map((p) => (
+              <PlaceCard key={p.id} place={p} name={pick(p.name, p.name_ne, locale)} tags={placeTags(p.id, popularCats, locale)} />
+            ))}
+          </div>
         </section>
       )}
 

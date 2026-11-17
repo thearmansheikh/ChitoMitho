@@ -5,15 +5,11 @@ import { formatNPR } from "@/lib/format";
 import { pick } from "@/lib/names";
 import type { FeaturedItem } from "@/lib/data";
 import SectionTitle from "@/components/ui/SectionTitle";
-import ServiceIcon from "@/components/ui/ServiceIcon";
+import DishIcon, { DISH_TINT, dishFor, type DishName } from "@/components/ui/DishIcon";
+import type { PlaceType } from "@/types/db";
 import AddToBasket from "./AddToBasket";
 
-const TINT = {
-  food: "from-red-100 to-amber-50",
-  grocery: "from-emerald-100 to-lime-50",
-  liquor: "from-amber-100 to-yellow-50",
-  gifts: "from-rose-100 to-pink-50",
-} as const;
+const BY_TYPE: Record<PlaceType, DishName> = { food: "burger", grocery: "grocery", liquor: "beer", gifts: "bouquet" };
 
 /** A swipeable row of items the team picked. Renders nothing until at least one item is switched on in the admin. */
 export default async function TodaysPicks({ picks }: { picks: FeaturedItem[] }) {
@@ -31,14 +27,15 @@ export default async function TodaysPicks({ picks }: { picks: FeaturedItem[] }) 
         {picks.map(({ item, place }) => {
           const name = pick(item.name, item.name_ne, locale);
           const placeName = pick(place.name, place.name_ne, locale);
+          const dish = dishFor(`${item.name} ${item.name_ne ?? ""}`, place.type === "food" ? null : place.type) ?? BY_TYPE[place.type];
           return (
             <li key={item.id} className="w-48 shrink-0 snap-start">
               <article className="flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-card ring-1 ring-slate-200/70">
-                <div className={`relative flex h-28 items-center justify-center overflow-hidden bg-gradient-to-br ${TINT[place.type]}`}>
+                <div className={`relative flex h-28 items-center justify-center overflow-hidden bg-gradient-to-br ${DISH_TINT[dish]}`}>
                   {item.image_url ? (
                     <Image src={item.image_url} alt="" fill sizes="192px" loading="lazy" className="object-cover" />
                   ) : (
-                    <ServiceIcon name={place.type} className="h-14 w-14" />
+                    <DishIcon name={dish} className="h-16 w-16 drop-shadow-sm" />
                   )}
                   <span className="absolute left-2 top-2 rounded-full bg-white/95 px-2 py-0.5 text-[11px] font-bold text-brand-red shadow-sm">
                     ★ {t("picksBadge")}

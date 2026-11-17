@@ -1,31 +1,48 @@
 import Image from "next/image";
 import Link from "next/link";
-import { getLocale } from "next-intl/server";
-import { pick } from "@/lib/names";
-import type { Place } from "@/types/db";
-import ServiceIcon from "@/components/ui/ServiceIcon";
+import DishIcon, { DISH_TINT, dishFor, type DishName } from "@/components/ui/DishIcon";
+import type { Place, PlaceType } from "@/types/db";
 
-const ICON = { food: "food", grocery: "grocery", liquor: "liquor", gifts: "gifts" } as const;
+const BY_TYPE: Record<PlaceType, DishName> = { food: "burger", grocery: "grocery", liquor: "beer", gifts: "bouquet" };
 
-export default async function PlaceCard({ place }: { place: Place }) {
-  const locale = await getLocale();
+/**
+ * A café or shop: a coloured cover showing what it sells, its name, a line about it and tag chips.
+ * Takes plain, already-translated text so it works on the server and in the search page.
+ */
+export default function PlaceCard({ place, name, tags = [] }: { place: Place; name: string; tags?: string[] }) {
+  // Up to three different dishes, taken from the place's menu categories.
+  const dishes = [...new Set(tags.map((t) => dishFor(t)).filter((d): d is DishName => d !== null))].slice(0, 3);
+  if (dishes.length === 0) dishes.push(BY_TYPE[place.type]);
+
   return (
     <Link
       href={`/p/${place.slug}`}
-      className="group flex items-center gap-4 rounded-2xl bg-white p-3.5 shadow-card ring-1 ring-slate-200/70 transition duration-200 hover:-translate-y-0.5 hover:shadow-lg active:scale-[0.99]"
+      className="group block overflow-hidden rounded-2xl bg-white shadow-card ring-1 ring-slate-200/70 transition duration-200 hover:-translate-y-0.5 hover:shadow-lg active:scale-[0.99]"
     >
-      {place.logo_url ? (
-        <Image src={place.logo_url} alt="" width={64} height={64} loading="lazy" className="h-16 w-16 flex-none rounded-2xl object-cover ring-1 ring-slate-200" />
-      ) : (
-        <div aria-hidden className="flex h-16 w-16 flex-none items-center justify-center rounded-2xl bg-gradient-to-br from-red-50 to-amber-50 ring-1 ring-slate-200">
-          <ServiceIcon name={ICON[place.type]} className="h-10 w-10" />
-        </div>
-      )}
-      <div className="min-w-0 flex-1">
-        <p className="truncate text-lg font-bold leading-tight">{pick(place.name, place.name_ne, locale)}</p>
-        {place.description && <p className="mt-0.5 truncate text-sm text-slate-500">{place.description}</p>}
+      <div className={`relative flex h-28 items-center justify-center gap-3 overflow-hidden bg-gradient-to-br ${DISH_TINT[dishes[0]]}`}>
+        <span aria-hidden className="absolute -right-6 -top-8 h-28 w-28 rounded-full bg-white/40" />
+        <span aria-hidden className="absolute -bottom-10 left-6 h-20 w-20 rounded-full bg-white/30" />
+        {dishes.map((d, i) => (
+          <DishIcon key={d} name={d} className={`relative drop-shadow-sm transition-transform duration-200 group-hover:scale-110 ${i === 0 ? "h-20 w-20" : "h-14 w-14"}`} />
+        ))}
+        {place.logo_url && (
+          <Image src={place.logo_url} alt="" width={44} height={44} loading="lazy" className="absolute bottom-2 left-2 h-11 w-11 rounded-full object-cover ring-2 ring-white" />
+        )}
       </div>
-      <span aria-hidden className="flex h-9 w-9 flex-none items-center justify-center rounded-full bg-slate-100 text-brand-blue transition group-hover:bg-brand-red group-hover:text-white">→</span>
+      <div className="space-y-1.5 p-3.5">
+        <div className="flex items-center justify-between gap-2">
+          <p className="truncate text-lg font-bold leading-tight">{name}</p>
+          <span aria-hidden className="flex h-8 w-8 flex-none items-center justify-center rounded-full bg-slate-100 text-brand-blue transition group-hover:bg-brand-red group-hover:text-white">→</span>
+        </div>
+        {place.description && <p className="truncate text-sm text-slate-500">{place.description}</p>}
+        {tags.length > 0 && (
+          <ul className="flex flex-wrap gap-1.5 pt-1">
+            {tags.slice(0, 4).map((t) => (
+              <li key={t} className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600">{t}</li>
+            ))}
+          </ul>
+        )}
+      </div>
     </Link>
   );
 }

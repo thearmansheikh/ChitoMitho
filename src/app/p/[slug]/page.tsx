@@ -1,8 +1,7 @@
 import { notFound } from "next/navigation";
 import { getLocale } from "next-intl/server";
 import { getMenu, getPlaceBySlug } from "@/lib/data";
-import { pick } from "@/lib/names";
-import Menu from "@/components/shop/Menu";
+import { pick } from "@/lib/names";import Menu from "@/components/shop/Menu";
 import PageHeader, { type Tone } from "@/components/ui/PageHeader";
 import ServiceIcon, { type ServiceIconName } from "@/components/ui/ServiceIcon";
 import type { PlaceType } from "@/types/db";
@@ -29,8 +28,7 @@ export default async function PlacePage({ params }: { params: { slug: string } }
   if (!place) notFound();
   const locale = await getLocale();
   const { categories, items } = await getMenu([place.id]);
-  const look = LOOK[place.type];
-  return (
+  const look = LOOK[place.type];  return (
     <div className="space-y-5">
       <PageHeader icon={<ServiceIcon name={look.icon} className="h-9 w-9" />} tone={look.tone} title={pick(place.name, place.name_ne, locale)} subtitle={place.description} />
       <Menu place={place} categories={categories} items={items} />

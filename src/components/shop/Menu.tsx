@@ -3,6 +3,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { formatNPR } from "@/lib/format";
 import { pick } from "@/lib/names";
 import type { Category, Item, Place } from "@/types/db";
+import DishTile from "@/components/ui/DishTile";
 import AddToBasket from "./AddToBasket";
 
 interface Props {
@@ -52,8 +53,10 @@ export default async function Menu({ place, categories, items, showTitle = false
               const name = pick(i.name, i.name_ne, locale);
               return (
                 <li key={i.id} className={`flex items-center gap-3 rounded-2xl p-3.5 ring-1 ${i.is_available ? "bg-white shadow-card ring-slate-200/70" : "bg-slate-100 ring-slate-200"}`}>
-                  {i.image_url && (
+                  {i.image_url ? (
                     <Image src={i.image_url} alt="" width={72} height={72} loading="lazy" className={`h-[72px] w-[72px] flex-none rounded-xl object-cover ${i.is_available ? "" : "opacity-50 grayscale"}`} />
+                  ) : (
+                    <DishTile text={`${i.name} ${i.name_ne ?? ""} ${g.label}`} type={place.type} className={`h-[72px] w-[72px] ${i.is_available ? "" : "opacity-50 grayscale"}`} />
                   )}
                   <div className="min-w-0 flex-1">
                     <p className={`font-bold leading-snug ${i.is_available ? "" : "text-slate-600 line-through"}`}>{name}</p>
