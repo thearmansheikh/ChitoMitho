@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import DishIcon, { DISH_TINT, dishFor, type DishName } from "@/components/ui/DishIcon";
 import type { Place, PlaceType } from "@/types/db";
+import PlaceOpenChip from "./PlaceOpenChip";
 
 const BY_TYPE: Record<PlaceType, DishName> = { food: "burger", grocery: "grocery", liquor: "beer", gifts: "bouquet" };
 
@@ -25,6 +26,7 @@ export default function PlaceCard({ place, name, tags = [] }: { place: Place; na
         {dishes.map((d, i) => (
           <DishIcon key={d} name={d} className={`relative drop-shadow-sm transition-transform duration-200 group-hover:scale-110 ${i === 0 ? "h-20 w-20" : "h-14 w-14"}`} />
         ))}
+        <PlaceOpenChip opensAt={place.opens_at} closesAt={place.closes_at} />
         {place.logo_url && (
           <Image src={place.logo_url} alt="" width={44} height={44} loading="lazy" className="absolute bottom-2 left-2 h-11 w-11 rounded-full object-cover ring-2 ring-white" />
         )}

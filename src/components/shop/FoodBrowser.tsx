@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { CRAVINGS } from "@/lib/cravings";
-import { formatNPR } from "@/lib/format";
+import { formatNPR, isOpenNow } from "@/lib/format";
 import { pick } from "@/lib/names";
 import { placeTags } from "@/lib/tags";
 import type { Category, Item, Place } from "@/types/db";
@@ -57,13 +57,22 @@ export default function FoodBrowser({ places, categories, items, initialQuery }:
       .slice(0, 30);
   }, [items, placeById, catById, searching, words]);
 
+  // Places with their own hours that are closed right now go to the end (the browser knows the time only after load).
+  const [clock, setClock] = useState(0);
+  useEffect(() => { setClock(Date.now()); }, []);
+  const ordered = useMemo(() => {
+    if (!clock) return places;
+    const closed = (p: Place) => !!p.opens_at && !!p.closes_at && !isOpenNow(p.opens_at.slice(0, 5), p.closes_at.slice(0, 5), new Date(clock));
+    return [...places].sort((a, b) => Number(closed(a)) - Number(closed(b)));
+  }, [places, clock]);
+
   const matchedPlaces = useMemo(() => {
-    if (!searching) return places;
-    return places.filter((p) => {
+    if (!searching) return ordered;
+    return ordered.filter((p) => {
       const hay = clean([p.name, p.name_ne, p.description, ...categories.filter((x) => x.place_id === p.id).flatMap((x) => [x.name, x.name_ne ?? ""])].filter(Boolean).join(" "));
       return words.every((w) => hay.includes(w));
     });
-  }, [places, categories, searching, words]);
+  }, [ordered, categories, searching, words]);
 
   const nothing = searching && matchedItems.length === 0 && matchedPlaces.length === 0;
 
