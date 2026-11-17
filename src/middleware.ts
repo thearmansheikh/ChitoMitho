@@ -21,9 +21,10 @@ export async function middleware(req: NextRequest) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const isLogin = req.nextUrl.pathname === "/admin/login";
+  // The sign-in page and the reset page (opened from the emailed link) must be reachable while signed out.
+  const isPublic = req.nextUrl.pathname === "/admin/login" || req.nextUrl.pathname === "/admin/reset-password";
 
-  if (!isLogin) {
+  if (!isPublic) {
     const login = req.nextUrl.clone();
     login.pathname = "/admin/login";
     login.search = "";
