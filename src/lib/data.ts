@@ -1,8 +1,9 @@
 import "server-only";
 import { unstable_cache } from "next/cache";
 import { createClient } from "@supabase/supabase-js";
-import type { Area, Category, Item, Place, PlaceType, Settings } from "@/types/db";
+import type { Area, Category, Item, Offer, Place, PlaceType, Settings } from "@/types/db";
 import {
+  SAMPLE_OFFERS,
   SAMPLE_AREAS, SAMPLE_CATEGORIES, SAMPLE_ITEMS, SAMPLE_PLACES, SAMPLE_SETTINGS,
 } from "./sample-data";
 
@@ -61,7 +62,19 @@ export const getPlaceBySlug = unstable_cache(
   REVALIDATE,
 );
 
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+export const getOffers = unstable_cache(
+  async (): Promise<Offer[]> => {
+    if (!isConfigured) return SAMPLE_OFFERS;
+    // RLS already limits this to active offers inside their dates.
+    const { data, error } = await sb().from("offers").select("*").order("sort_order").order("created_at");
+    if (error) console.error("getOffers", error.message);
+    return ((data as Offer[]) ?? []).map((o) => ({ ...o, min_order_npr: o.min_order_npr === null ? null : Number(o.min_order_npr) }));
+  },
+  ["offers"],
+  REVALIDATE,
+);
+
+const UUID_RE =/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export interface ItemStatus {
   id: string;

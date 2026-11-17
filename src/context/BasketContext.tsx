@@ -27,10 +27,13 @@ export interface GiftDetails {
 export interface Extras {
   shoppingList: string;
   gift: GiftDetails;
+  /** A promo code the customer typed and the site recognised. The team applies it on WhatsApp. */
+  promo: string;
 }
 
 const EMPTY_EXTRAS: Extras = {
   shoppingList: "",
+  promo: "",
   gift: { recipientName: "", recipientPhone: "", message: "", date: "", time: "" },
 };
 
@@ -64,6 +67,7 @@ interface BasketApi extends State {
   remove: (itemId: string) => void;
   setShoppingList: (v: string) => void;
   setGift: (g: Partial<GiftDetails>) => void;
+  setPromo: (code: string) => void;
   clear: () => void;
 }
 
@@ -144,6 +148,10 @@ export function BasketProvider({ children }: { children: React.ReactNode }) {
     setState((s) => ({ ...s, extras: { ...s.extras, gift: { ...s.extras.gift, ...g } } }));
   }, []);
 
+  const setPromo = useCallback((code: string) => {
+    setState((s) => ({ ...s, extras: { ...s.extras, promo: code } }));
+  }, []);
+
   const clear = useCallback(() => setState({ lines: [], extras: EMPTY_EXTRAS }), []);
 
   const saveLastOrder = useCallback<BasketApi["saveLastOrder"]>((o) => {
@@ -165,10 +173,10 @@ export function BasketProvider({ children }: { children: React.ReactNode }) {
     const count = state.lines.reduce((n, l) => n + l.qty, 0);
     const total = state.lines.reduce((n, l) => n + l.qty * l.price, 0);
     return {
-      ...state, hydrated, count, total, add, setQty, setNote, remove, setShoppingList, setGift, clear,
+      ...state, hydrated, count, total, add, setQty, setNote, remove, setShoppingList, setGift, setPromo, clear,
       lastOrder, saveLastOrder, loadIntoBasket, notice, setNotice,
     };
-  }, [state, hydrated, add, setQty, setNote, remove, setShoppingList, setGift, clear, lastOrder, saveLastOrder, loadIntoBasket, notice]);
+  }, [state, hydrated, add, setQty, setNote, remove, setShoppingList, setGift, setPromo, clear, lastOrder, saveLastOrder, loadIntoBasket, notice]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

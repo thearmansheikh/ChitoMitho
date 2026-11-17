@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { getPlaces, getSettings } from "@/lib/data";
+import { getOffers, getPlaces, getSettings } from "@/lib/data";
 import PlaceCard from "@/components/shop/PlaceCard";
 import ClosedNotice from "@/components/shop/ClosedNotice";
 import ReorderCard from "@/components/shop/ReorderCard";
+import OffersStrip from "@/components/shop/OffersStrip";
 
 const SERVICES = [
   { href: "/food", key: "food", icon: "🍔" },
@@ -21,6 +22,7 @@ export default async function Home() {
   const pa = await getTranslations("partner");
   const settings = await getSettings();
   const popular = (await getPlaces("food")).slice(0, 4);
+  const offers = await getOffers();
 
   return (
     <div className="space-y-8">
@@ -36,6 +38,8 @@ export default async function Home() {
         <h1 className="text-3xl font-extrabold leading-tight">{t("title")}</h1>
         <p className="mt-3 text-white/90">{t("subtitle")}</p>
       </section>
+
+      <OffersStrip offers={offers} />
 
       <ReorderCard />
 

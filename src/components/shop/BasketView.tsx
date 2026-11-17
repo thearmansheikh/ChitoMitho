@@ -6,11 +6,13 @@ import { useBasket } from "@/context/BasketContext";
 import { formatNPR } from "@/lib/format";
 import { pick } from "@/lib/names";
 import { basketMessage } from "@/lib/whatsapp";
-import type { Area, Service } from "@/types/db";
+import { checkPromo } from "@/lib/promo";
+import type { Area, Offer, Service } from "@/types/db";
 import SendOrder, { type OrderConfig } from "@/components/forms/SendOrder";
 import ReorderCard from "./ReorderCard";
+import PromoCode from "./PromoCode";
 
-export default function BasketView({ config, areas }: { config: OrderConfig; areas: Area[] }) {
+export default function BasketView({ config, areas, offers }: { config: OrderConfig; areas: Area[]; offers: Offer[] }) {
   const t = useTranslations("basket");
   const d = useTranslations("delivery");
   const locale = useLocale();
@@ -113,6 +115,8 @@ export default function BasketView({ config, areas }: { config: OrderConfig; are
         </section>
       )}
 
+      <PromoCode offers={offers} />
+
       <section className="space-y-2 rounded-xl bg-slate-50 p-4">
         <p className="flex items-center justify-between text-lg font-bold">
           <span>{t("itemsTotal")}</span><span>{formatNPR(total)}</span>
@@ -132,7 +136,12 @@ export default function BasketView({ config, areas }: { config: OrderConfig; are
           validate={() =>
             giftInBasket && (!extras.gift.recipientName.trim() || !extras.gift.recipientPhone.trim()) ? t("giftNeeds") : null
           }
-          build={(customer, lang) => basketMessage(lang, { lines, extras, total, customer })}
+          allowSchedule={!giftInBasket}
+          build={(customer, lang) => {
+            // Only a code that is valid for this basket goes into the message.
+            const promoOk = extras.promo && checkPromo(offers, extras.promo, total).ok;
+            return basketMessage(lang, { lines, extras: { ...extras, promo: promoOk ? extras.promo : "" }, total, customer });
+          }}
         />
         <button type="button" onClick={clear} className="min-h-[44px] w-full text-sm font-semibold text-brand-red">{t("clear")}</button>
       </div>

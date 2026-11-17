@@ -11,6 +11,13 @@ export function nowMinutesNPT(now: Date = new Date()): number {
   return (utcMin + NPT_OFFSET_MINUTES) % (24 * 60);
 }
 
+/** Today's and tomorrow's date in Nepal as "YYYY-MM-DD" (for scheduled orders). */
+export function nepalDates(now: Date = new Date()): { today: string; tomorrow: string } {
+  const shifted = now.getTime() + NPT_OFFSET_MINUTES * 60_000;
+  const iso = (ms: number) => new Date(ms).toISOString().slice(0, 10);
+  return { today: iso(shifted), tomorrow: iso(shifted + 86_400_000) };
+}
+
 /** Parse "10:00" or "22:00:00" to minutes since midnight. */
 export function parseTimeToMinutes(t: string): number {
   const [h, m] = t.split(":").map(Number);

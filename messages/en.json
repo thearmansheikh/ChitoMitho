@@ -81,6 +81,23 @@
   },
   "bar": { "basket": "Basket", "whatsapp": "WhatsApp" },
   "nav": { "promise": "Our promise", "partner": "Partner with us" },
+  "offers": {
+    "title": "Deals for you",
+    "stub": "OFFER",
+    "copy": "Tap to copy",
+    "copied": "Copied",
+    "minOrder": "On orders over {amount}",
+    "until": "Until {date}"
+  },
+  "promo": {
+    "label": "Have a promo code?",
+    "placeholder": "CODE",
+    "apply": "Apply",
+    "unknown": "We don't recognise that code. Check the spelling.",
+    "applied": "Code added. We apply it when we confirm your order on WhatsApp.",
+    "short": "Add {amount} more to use this code.",
+    "remove": "Remove"
+  },
   "reorder": {
     "title": "Order again",
     "button": "Order this again",
@@ -212,7 +229,17 @@
     "locationApprox": "This location is approximate. Please also fill in the landmark below.",
     "locationDenied": "Location is blocked for this site. Allow it in your browser settings, or share your live location in WhatsApp instead.",
     "locationFailed": "We could not get your location. You can share it in WhatsApp instead.",
-    "locationUnsupported": "This browser cannot share location. You can share it in WhatsApp instead."
+    "locationUnsupported": "This browser cannot share location. You can share it in WhatsApp instead.",
+    "whenTitle": "When do you want it?",
+    "asap": "As soon as possible",
+    "later": "Later",
+    "day": "Day",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "timeLabel": "Time",
+    "timeRange": "Between {open} and {close}, at least 30 minutes from now.",
+    "timeOutside": "Please choose a time between {open} and {close}.",
+    "timeTooSoon": "Please choose a time at least 30 minutes from now."
   },
   "parcel": {
     "title": "Parcel / Pick & Drop",
@@ -266,6 +293,10 @@
     "buyFrom": "Buy from",
     "budget": "Budget",
     "location": "Map location",
+    "promo": "Promo code",
+    "deliver": "Deliver",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
     "partner": {
       "header": "🤝 PARTNER REQUEST – Chitto Mitho",
       "riderHeader": "🏍️ RIDER APPLICATION – Chitto Mitho",

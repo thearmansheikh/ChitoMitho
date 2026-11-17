@@ -5,6 +5,7 @@ const TILES = [
   ["/admin/places", "Places", "Cafés, restaurants, shops"],
   ["/admin/items", "Items", "Menus, prices, sold-out"],
   ["/admin/areas", "Areas", "Delivery area list"],
+  ["/admin/offers", "Offers", "Deals and promo codes"],
   ["/admin/settings", "Settings", "WhatsApp, hours, pause orders"],
   ["/admin/orders", "Orders", "WhatsApp order counts"],
 ] as const;

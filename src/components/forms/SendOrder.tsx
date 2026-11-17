@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
+import type { SheetExtra } from "./DetailsSheet";
 import { isOpenNow } from "@/lib/format";
 import { loadDetails, saveDetails, type Details } from "@/lib/details";
 import { pick } from "@/lib/names";
@@ -38,7 +39,7 @@ async function logOrderClick(row: { service: Service; place_id: string | null; i
   }
 }
 
-export default function SendOrder({ service, placeId, itemsTotal, build, validate, config, areas, onDone, onSent, label }: {
+export default function SendOrder({ service, placeId, itemsTotal, build, validate, config, areas, onDone, onSent, label, allowSchedule = true }: {
   service: Service;
   placeId: string | null;
   itemsTotal: number | null;
@@ -50,6 +51,8 @@ export default function SendOrder({ service, placeId, itemsTotal, build, validat
   onDone?: () => void;
   /** Called once the order has been handed to WhatsApp (used to remember it for "Order again"). */
   onSent?: () => void;
+  /** Offer "as soon as possible / later" in the details sheet. Off for gifts, which pick their own date. */
+  allowSchedule?: boolean;
   label?: string;
 }) {
   const t = useTranslations("order");
@@ -83,7 +86,7 @@ export default function SendOrder({ service, placeId, itemsTotal, build, validat
     setSheet(true);
   }
 
-  async function confirm(d: Details, note: string, location: { lat: number; lng: number } | null) {
+  async function confirm(d: Details, note: string, extra: SheetExtra) {
     // Re-check at the moment of sending: the page may have been open since before closing time.
     if (config.paused || !isOpenNow(config.openTime, config.closeTime)) {
       setSheet(false);
@@ -96,7 +99,7 @@ export default function SendOrder({ service, placeId, itemsTotal, build, validat
     const area = areas.find((a) => a.id === d.areaId);
     const groupLabel = area ? t(`groups.${area.area_group}`) : "";
     const areaText = area ? `${groupLabel} – ${pick(area.name, area.name_ne, locale)}` : d.areaOther;
-    const text = build({ name: d.name, phone: d.phone, area: areaText, landmark: d.landmark, location, payment: d.payment, note }, locale);
+    const text = build({ name: d.name, phone: d.phone, area: areaText, landmark: d.landmark, location: extra.location, deliverAt: extra.deliverAt, payment: d.payment, note }, locale);
     const url = whatsappUrl(config.whatsapp, text);
 
     // Give the count a moment to send, but never make the customer wait long.
@@ -141,7 +144,10 @@ export default function SendOrder({ service, placeId, itemsTotal, build, validat
       </button>
       {blocked && <p role="status" className="mt-2 rounded-lg bg-yellow-50 p-3 text-sm font-semibold text-yellow-900">{blocked}</p>}
       {error && <p role="alert" className="mt-2 rounded-lg bg-red-50 p-3 text-sm font-semibold text-brand-red">{error}</p>}
-      <DetailsSheet open={sheet} onClose={() => setSheet(false)} onConfirm={confirm} areas={areas} initial={saved} busy={busy} />
+      <DetailsSheet
+        open={sheet} onClose={() => setSheet(false)} onConfirm={confirm} areas={areas} initial={saved} busy={busy}
+        openTime={config.openTime} closeTime={config.closeTime} allowSchedule={allowSchedule}
+      />
     </>
   );
 }

@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { getAreas, getSettings } from "@/lib/data";
-
-export const metadata: Metadata = { title: "Your basket", robots: { index: false } };
+import { getAreas, getOffers, getSettings } from "@/lib/data";
 import { toOrderConfig } from "@/lib/orderConfig";
 import BasketView from "@/components/shop/BasketView";
 
+export const metadata: Metadata = { title: "Your basket", robots: { index: false } };
+
 export default async function BasketPage() {
-  const [settings, areas] = await Promise.all([getSettings(), getAreas()]);
-  return <BasketView config={toOrderConfig(settings)} areas={areas} />;
+  const [settings, areas, offers] = await Promise.all([getSettings(), getAreas(), getOffers()]);
+  return <BasketView config={toOrderConfig(settings)} areas={areas} offers={offers} />;
 }

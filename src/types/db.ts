@@ -52,6 +52,20 @@ export interface Settings {
   announcement: string | null;
   liquor_age_text: string | null;
 }
+export interface Offer {
+  id: string;
+  title: string;
+  title_ne: string | null;
+  body: string | null;
+  body_ne: string | null;
+  code: string | null;
+  min_order_npr: number | null;
+  starts_on: string | null;
+  ends_on: string | null;
+  is_active: boolean;
+  sort_order: number;
+}
+
 export interface OrderClick {
   id: string;
   service: Service;

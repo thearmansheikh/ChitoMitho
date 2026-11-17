@@ -1,5 +1,13 @@
 // Shown only when Supabase env vars are missing (local preview). Mirrors 0002_seed.sql.
-import type { Area, Category, Item, Place, Settings } from "@/types/db";
+import type { Area, Category, Item, Offer, Place, Settings } from "@/types/db";
+
+export const SAMPLE_OFFERS: Offer[] = [
+  {
+    id: "o-sample", title: "Free delivery on your first order", title_ne: "पहिलो अर्डरमा निःशुल्क डेलिभरी",
+    body: "Sample offer for the preview.", body_ne: null, code: "FIRST", min_order_npr: null,
+    starts_on: null, ends_on: null, is_active: true, sort_order: 1,
+  },
+];
 
 export const SAMPLE_SETTINGS: Settings = {
   id: 1,

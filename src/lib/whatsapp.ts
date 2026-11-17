@@ -16,6 +16,8 @@ export interface Customer {
   landmark: string;
   /** Optional GPS position the customer chose to share. */
   location?: { lat: number; lng: number } | null;
+  /** Set when the customer wants delivery later instead of as soon as possible. */
+  deliverAt?: { day: "today" | "tomorrow"; time: string } | null;
   payment: Payment;
   note: string;
 }
@@ -48,6 +50,7 @@ function customerBlock(lang: Lang, c: Customer): string[] {
     `${t.area}: ${c.area}`,
     `${t.landmark}: ${c.landmark}`,
     ...(c.location ? [`📍 ${t.location}: ${mapLink(c.location)}`] : []),
+    ...(c.deliverAt ? [`🕒 ${t.deliver}: ${t[c.deliverAt.day]} ${c.deliverAt.time}`] : []),
     `${t.payment}: ${t.payments[c.payment]}`,
     ...(c.note.trim() ? [`${t.note}: ${c.note.trim()}`] : []),
   ];
@@ -75,6 +78,7 @@ export function basketMessage(
     }
   }
   if (o.lines.length > 0) out.push("", `${t.itemsTotal}: ${formatNPR(o.total)}`);
+  if (o.extras.promo.trim()) out.push(`🎟️ ${t.promo}: ${o.extras.promo.trim().toUpperCase()}`);
 
   if (o.extras.shoppingList.trim()) out.push("", `${t.shoppingList}:`, o.extras.shoppingList.trim());
 
