@@ -19,6 +19,8 @@ export interface BasketLine {
 }
 
 export interface GiftDetails {
+  /** Key such as "birthday", or "" when none was chosen. */
+  occasion: string;
   recipientName: string;
   recipientPhone: string;
   message: string;
@@ -36,7 +38,7 @@ export interface Extras {
 const EMPTY_EXTRAS: Extras = {
   shoppingList: "",
   promo: "",
-  gift: { recipientName: "", recipientPhone: "", message: "", date: "", time: "" },
+  gift: { occasion: "", recipientName: "", recipientPhone: "", message: "", date: "", time: "" },
 };
 
 interface State {

@@ -72,7 +72,32 @@
     "recipientPhone": "Recipient phone",
     "message": "Message for the card",
     "date": "Delivery date",
-    "time": "Delivery time"
+    "time": "Delivery time",
+    "occasion": "What is the occasion?",
+    "occasions": {
+      "birthday": "Birthday", "anniversary": "Anniversary", "mothersday": "Mother’s Day",
+      "thankyou": "Thank you", "getwell": "Get well soon", "justbecause": "Just because"
+    },
+    "ideasHint": "Tap an idea to use it, or write your own.",
+    "ideas": {
+      "birthday": ["Happy birthday! Wishing you a wonderful day.", "Many happy returns of the day!", "Another year, another reason to celebrate you."],
+      "anniversary": ["Happy anniversary! Here is to many more years together.", "Congratulations on another beautiful year."],
+      "mothersday": ["Happy Mother’s Day. Thank you for everything.", "To the best mum, with all my love."],
+      "thankyou": ["Thank you so much. This is a small way to say it.", "So grateful for you."],
+      "getwell": ["Get well soon! Thinking of you.", "Wishing you a quick recovery."],
+      "justbecause": ["Thinking of you today.", "Just because you deserve something nice."]
+    },
+    "preview": "Card preview",
+    "to": "To {name}",
+    "whenHelp": "Leave empty for as soon as possible. Otherwise pick a day and a time between {open} and {close}.",
+    "issue": {
+      "name": "Please add the recipient’s name.",
+      "phone": "Please add the recipient’s phone number (97 or 98 followed by 8 digits).",
+      "dateNeeded": "Please choose a delivery date for that time.",
+      "datePast": "That date has already passed. Please choose today or a later day.",
+      "timeOutside": "Please choose a time between {open} and {close}.",
+      "timeSoon": "Please choose a time at least 30 minutes from now."
+    }
   },
   "basket": {
     "title": "Your basket",
@@ -424,7 +449,15 @@
     "medium": "Medium",
     "large": "Large",
     "receiverName": "Receiver name",
-    "receiverPhone": "Receiver phone"
+    "receiverPhone": "Receiver phone",
+    "pinPickup": "Pin the pickup at my location",
+    "pinDrop": "Pin the drop at my location",
+    "pinHelp": "Optional. Only works if you are standing there. Otherwise type the place above.",
+    "smallHint": "Fits in a bag: documents, keys, a phone",
+    "mediumHint": "A shoebox to a small carton",
+    "largeHint": "Bigger than a backpack. Tell us what it is.",
+    "cannotTitle": "What we cannot carry",
+    "cannotBody": "Illegal items, weapons and dangerous goods. If you are not sure, ask us on WhatsApp first."
   },
   "anything": {
     "title": "Order Anything",
@@ -434,7 +467,13 @@
     "buyFrom": "Where should we buy it from?",
     "buyFromHelp": "Any shop or place. Leave empty if you do not mind.",
     "budget": "Budget",
-    "budgetHelp": "Roughly how much can we spend on the items?"
+    "budgetHelp": "Roughly how much can we spend on the items?",
+    "examplesTitle": "Not sure what to ask for? Tap an example.",
+    "examples": {
+      "medicine": "Medicine from a pharmacy", "charger": "A phone charger", "cake": "A cake from a bakery",
+      "gas": "A gas cylinder", "documents": "Pick up documents", "groceryRun": "A few things from the market"
+    },
+    "photoHint": "Need a specific brand or item? Send a photo of it on WhatsApp after you send the order."
   },
   "wa": {
     "header": "🛵 NEW ORDER – Chitto Mitho",
@@ -450,11 +489,18 @@
     "note": "Note",
     "shoppingList": "Shopping list",
     "giftTo": "Gift for",
+    "giftOccasion": "Occasion",
+    "occasions": {
+      "birthday": "Birthday", "anniversary": "Anniversary", "mothersday": "Mother’s Day",
+      "thankyou": "Thank you", "getwell": "Get well soon", "justbecause": "Just because"
+    },
     "giftPhone": "Recipient phone",
     "giftCard": "Card message",
     "giftWhen": "Deliver on",
     "pickup": "Pickup from",
     "drop": "Drop at",
+    "pickupMap": "Pickup map",
+    "dropMap": "Drop map",
     "item": "Item",
     "size": "Size",
     "receiver": "Receiver",

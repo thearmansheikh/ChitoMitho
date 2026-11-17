@@ -7,6 +7,7 @@ import { formatNPR } from "@/lib/format";
 import { pick } from "@/lib/names";
 import { basketMessage } from "@/lib/whatsapp";
 import { checkPromo } from "@/lib/promo";
+import { giftIssues } from "@/lib/gift";
 import type { Area, Offer, Service } from "@/types/db";
 import SendOrder, { type OrderConfig } from "@/components/forms/SendOrder";
 import PageHeader from "@/components/ui/PageHeader";
@@ -18,6 +19,7 @@ export default function BasketView({ config, areas, offers }: { config: OrderCon
   const t = useTranslations("basket");
   const d = useTranslations("delivery");
   const o = useTranslations("order");
+  const gt = useTranslations("gifts");
   const locale = useLocale();
   const { lines, extras, total, hydrated, setQty, setNote, remove, clear, saveLastOrder, notice, setNotice } = useBasket();
 
@@ -147,9 +149,13 @@ export default function BasketView({ config, areas, offers }: { config: OrderCon
           areas={areas}
           onDone={clear}
           onSent={() => saveLastOrder({ lines, shoppingList: extras.shoppingList, total })}
-          validate={() =>
-            giftInBasket && (!extras.gift.recipientName.trim() || !extras.gift.recipientPhone.trim()) ? t("giftNeeds") : null
-          }
+          validate={() => {
+            if (!giftInBasket) return null;
+            const open = config.openTime.slice(0, 5);
+            const close = config.closeTime.slice(0, 5);
+            const first = giftIssues(extras.gift, open, close)[0];
+            return first ? gt(`issue.${first}`, { open, close }) : null;
+          }}
           allowSchedule={!giftInBasket}
           build={(customer, lang) => {
             // Only a code that is valid for this basket goes into the message.

@@ -24,6 +24,9 @@ export interface Customer {
 
 export interface ParcelOrder {
   pickup: string;
+  /** Optional GPS pins the customer chose to share for each end. */
+  pickupPin?: { lat: number; lng: number } | null;
+  dropPin?: { lat: number; lng: number } | null;
   drop: string;
   item: string;
   size: "small" | "medium" | "large";
@@ -85,6 +88,7 @@ export function basketMessage(
   const g = o.extras.gift;
   if (o.lines.some((l) => l.placeType === "gifts")) {
     const gl = [
+      g.occasion && (t.occasions as Record<string, string>)[g.occasion] && `${t.giftOccasion}: ${(t.occasions as Record<string, string>)[g.occasion]}`,
       g.recipientName && `${t.giftTo}: ${g.recipientName}`,
       g.recipientPhone && `${t.giftPhone}: ${g.recipientPhone}`,
       g.message && `${t.giftCard}: ${g.message}`,
@@ -104,7 +108,9 @@ export function parcelMessage(lang: Lang, p: ParcelOrder, customer: Customer): s
     `${t.orderType}: ${t.services.parcel}`,
     "",
     `${t.pickup}: ${p.pickup}`,
+    ...(p.pickupPin ? [`📍 ${t.pickupMap}: ${mapLink(p.pickupPin)}`] : []),
     `${t.drop}: ${p.drop}`,
+    ...(p.dropPin ? [`📍 ${t.dropMap}: ${mapLink(p.dropPin)}`] : []),
     `${t.item}: ${p.item}`,
     `${t.size}: ${t.sizes[p.size]}`,
     `${t.receiver}: ${p.receiverName}`,

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { getSettings } from "@/lib/data";
 import TypeMenus from "@/components/shop/TypeMenus";
 import GiftForm from "@/components/shop/GiftForm";
 import PageHeader from "@/components/ui/PageHeader";
@@ -13,11 +14,12 @@ export const metadata: Metadata = {
 export default async function GiftsPage() {
   const t = await getTranslations("pages");
   const s = await getTranslations("serviceDesc");
+  const settings = await getSettings();
   return (
     <div className="space-y-6">
       <PageHeader icon={<ServiceIcon name="gifts" className="h-9 w-9" />} tone="pink" title={t("giftsTitle")} subtitle={s("gifts")} />
       <TypeMenus type="gifts" />
-      <GiftForm />
+      <GiftForm openTime={settings.open_time} closeTime={settings.close_time} />
     </div>
   );
 }

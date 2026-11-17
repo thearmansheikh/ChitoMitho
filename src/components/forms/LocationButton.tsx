@@ -15,7 +15,13 @@ type Problem = "denied" | "failed" | "unsupported" | null;
  * Optional "Share my location" button. The position is only kept in memory and added to the
  * WhatsApp message as a map link; it is never stored by the website or saved on the phone.
  */
-export default function LocationButton({ value, onChange }: { value: Coords | null; onChange: (c: Coords | null) => void }) {
+export default function LocationButton({ value, onChange, buttonLabel, helpText }: {
+  value: Coords | null;
+  onChange: (c: Coords | null) => void;
+  /** Override the button text, for example "Pin the pickup here". */
+  buttonLabel?: string;
+  helpText?: string;
+}) {
   const t = useTranslations("order");
   const [loading, setLoading] = useState(false);
   const [problem, setProblem] = useState<Problem>(null);
@@ -61,9 +67,9 @@ export default function LocationButton({ value, onChange }: { value: Coords | nu
     <div className="space-y-2">
       <button type="button" onClick={find} disabled={loading}
         className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-lg border border-brand-blue font-semibold text-brand-blue disabled:opacity-60">
-        📍 {loading ? t("locating") : t("shareLocation")}
+        📍 {loading ? t("locating") : buttonLabel ?? t("shareLocation")}
       </button>
-      <p className="text-xs text-slate-600">{t("locationHelp")}</p>
+      <p className="text-xs text-slate-600">{helpText ?? t("locationHelp")}</p>
       {problem && (
         <p role="alert" className="rounded-lg bg-yellow-50 p-3 text-sm text-yellow-900">
           {problem === "denied" ? t("locationDenied") : problem === "unsupported" ? t("locationUnsupported") : t("locationFailed")}
