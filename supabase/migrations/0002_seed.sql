@@ -1,7 +1,7 @@
 -- Sample data. Replace with real partners, menus and prices from the admin page.
 
 insert into settings (id, whatsapp_number, phone_numbers, open_time, close_time, liquor_age_text)
-values (1, '9705468562', array['9705468562', '9805338257'], '10:00', '22:00',
+values (1, '9805338257', array['9705468562', '9805338257'], '10:00', '22:00',
         'You must be 18 or older. ID will be checked at the door.')
 on conflict (id) do nothing;
 

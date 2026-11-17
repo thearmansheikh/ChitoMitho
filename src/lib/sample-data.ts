@@ -3,7 +3,7 @@ import type { Area, Category, Item, Place, Settings } from "@/types/db";
 
 export const SAMPLE_SETTINGS: Settings = {
   id: 1,
-  whatsapp_number: "9705468562",
+  whatsapp_number: "9805338257",
   phone_numbers: ["9705468562", "9805338257"],
   open_time: "10:00",
   close_time: "22:00",
