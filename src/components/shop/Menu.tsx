@@ -12,7 +12,7 @@ interface Props {
   showTitle?: boolean;
 }
 
-/** One place's menu: sticky category tabs, then items. Sold-out items are greyed out. */
+/** One place's menu: sticky category pills, then items. Sold-out items are greyed out. */
 export default async function Menu({ place, categories, items, showTitle = false }: Props) {
   const locale = await getLocale();
   const t = await getTranslations("menu");
@@ -27,35 +27,40 @@ export default async function Menu({ place, categories, items, showTitle = false
   const anchor = (id: string) => `${place.slug}-${id}`;
 
   return (
-    <section aria-label={place.name} className="space-y-4">
+    <section aria-label={place.name} className="space-y-5">
       {showTitle && (
-        <h2 className="text-xl font-extrabold text-brand-blue">{pick(place.name, place.name_ne, locale)}</h2>
+        <h2 className="flex items-center gap-2.5 text-xl font-bold text-brand-blue">
+          <span aria-hidden className="h-6 w-1.5 rounded-full bg-brand-red" />
+          {pick(place.name, place.name_ne, locale)}
+        </h2>
       )}
       {groups.length > 1 && (
-        <nav aria-label={t("categories")} className="sticky top-[57px] z-20 -mx-4 flex gap-2 overflow-x-auto border-b border-slate-200 bg-white px-4 py-2">
+        <nav aria-label={t("categories")} className="no-scrollbar sticky top-[61px] z-20 -mx-4 flex gap-2 overflow-x-auto bg-paper/95 px-4 py-3 backdrop-blur">
           {groups.map((g) => (
-            <a key={g.id} href={`#${anchor(g.id)}`} className="whitespace-nowrap rounded-full bg-slate-100 px-4 py-2 text-sm font-semibold text-brand-blue">
+            <a key={g.id} href={`#${anchor(g.id)}`} className="whitespace-nowrap rounded-full bg-white px-4 py-2 text-sm font-semibold text-brand-blue shadow-card ring-1 ring-slate-200 transition active:scale-95 active:bg-brand-blue active:text-white">
               {g.label}
             </a>
           ))}
         </nav>
       )}
       {groups.map((g) => (
-        <div key={g.id} id={anchor(g.id)} className="scroll-mt-28 space-y-2">
+        <div key={g.id} id={anchor(g.id)} className="scroll-mt-32 space-y-3">
           {/* Keep heading levels sequential: the page title is h1, a place title (if shown) is h2. */}
           {showTitle ? <h3 className="text-lg font-bold">{g.label}</h3> : <h2 className="text-lg font-bold">{g.label}</h2>}
-          <ul className="divide-y divide-slate-100 rounded-xl border border-slate-200">
+          <ul className="space-y-3">
             {g.items.map((i) => {
               const name = pick(i.name, i.name_ne, locale);
               return (
-                <li key={i.id} className={`flex items-center gap-3 p-3 ${i.is_available ? "" : "bg-slate-50"}`}>
+                <li key={i.id} className={`flex items-center gap-3 rounded-2xl p-3.5 ring-1 ${i.is_available ? "bg-white shadow-card ring-slate-200/70" : "bg-slate-100 ring-slate-200"}`}>
                   {i.image_url && (
-                    <Image src={i.image_url} alt="" width={64} height={64} loading="lazy" className={`h-16 w-16 flex-none rounded-lg object-cover ${i.is_available ? "" : "opacity-50 grayscale"}`} />
+                    <Image src={i.image_url} alt="" width={72} height={72} loading="lazy" className={`h-[72px] w-[72px] flex-none rounded-xl object-cover ${i.is_available ? "" : "opacity-50 grayscale"}`} />
                   )}
                   <div className="min-w-0 flex-1">
-                    <p className={`font-semibold leading-snug ${i.is_available ? "" : "text-slate-600 line-through"}`}>{name}</p>
-                    {i.description && <p className="text-sm text-slate-600">{i.description}</p>}
-                    <p className={`font-bold ${i.is_available ? "text-brand-blue" : "text-slate-600"}`}>{formatNPR(i.price_npr)}</p>
+                    <p className={`font-bold leading-snug ${i.is_available ? "" : "text-slate-600 line-through"}`}>{name}</p>
+                    {i.description && <p className="mt-0.5 line-clamp-2 text-sm text-slate-600">{i.description}</p>}
+                    <p className={`mt-1 inline-block rounded-full px-2.5 py-0.5 text-sm font-bold ${i.is_available ? "bg-blue-50 text-brand-blue" : "bg-slate-200 text-slate-600"}`}>
+                      {formatNPR(i.price_npr)}
+                    </p>
                   </div>
                   <AddToBasket
                     available={i.is_available}

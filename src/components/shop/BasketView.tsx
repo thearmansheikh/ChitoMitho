@@ -9,6 +9,7 @@ import { basketMessage } from "@/lib/whatsapp";
 import { checkPromo } from "@/lib/promo";
 import type { Area, Offer, Service } from "@/types/db";
 import SendOrder, { type OrderConfig } from "@/components/forms/SendOrder";
+import PageHeader from "@/components/ui/PageHeader";
 import ReorderCard from "./ReorderCard";
 import PromoCode from "./PromoCode";
 
@@ -28,7 +29,7 @@ export default function BasketView({ config, areas, offers }: { config: OrderCon
     return (
       <div className="space-y-4 py-8 text-center">
         <p className="text-5xl" aria-hidden>🧺</p>
-        <h1 className="text-2xl font-extrabold text-brand-blue">{t("title")}</h1>
+        <div className="text-left"><PageHeader icon="🧺" tone="blue" title={t("title")} /></div>
         <p className="text-slate-600">{t("empty")}</p>
         {notice && (
           <p role="status" className="mx-auto max-w-sm rounded-lg bg-yellow-50 p-3 text-left text-sm font-semibold text-yellow-900">{notice}</p>
@@ -60,7 +61,7 @@ export default function BasketView({ config, areas, offers }: { config: OrderCon
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-extrabold text-brand-blue">{t("title")}</h1>
+      <PageHeader icon="🧺" tone="blue" title={t("title")} />
       {notice && (
         <p role="status" className="flex items-start justify-between gap-2 rounded-lg bg-yellow-50 p-3 text-sm font-semibold text-yellow-900">
           <span>{notice}</span>

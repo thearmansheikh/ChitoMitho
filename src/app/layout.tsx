@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Hind, Poppins } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import Header from "@/components/Header";
@@ -9,6 +10,22 @@ import { getSettings } from "@/lib/data";
 import { SITE } from "@/lib/config";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
+
+// Friendly rounded type for English, with Hind covering Devanagari so Nepali sits in the same design.
+// The browser only downloads Hind when a page actually shows Nepali text.
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "600", "700"],
+  display: "swap",
+  variable: "--font-poppins",
+});
+const hind = Hind({
+  subsets: ["devanagari"],
+  weight: ["400", "600", "700"],
+  display: "swap",
+  variable: "--font-hind",
+  preload: false,
+});
 
 const DESCRIPTION =
   "Order food, groceries, liquor, gifts & flowers, parcels and anything from anywhere. Delivery in Dharan, Itahari and Biratnagar, Nepal. Open 10am – 10pm.";
@@ -63,8 +80,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   };
 
   return (
-    <html lang={locale}>
-      <body className="bg-white text-ink antialiased">
+    <html lang={locale} className={`${poppins.variable} ${hind.variable}`}>
+      <body className="bg-paper font-sans text-ink antialiased">
         <script
           type="application/ld+json"
           // "<" is escaped so no field value can close the script tag.

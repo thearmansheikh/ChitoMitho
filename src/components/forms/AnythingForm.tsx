@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { anythingMessage } from "@/lib/whatsapp";
 import type { Area } from "@/types/db";
+import PageHeader from "@/components/ui/PageHeader";
 import SendOrder, { type OrderConfig } from "./SendOrder";
 
 const input =
@@ -17,10 +18,7 @@ export default function AnythingForm({ config, areas }: { config: OrderConfig; a
 
   return (
     <div className="space-y-4">
-      <div>
-        <h1 className="text-2xl font-extrabold text-brand-blue">{t("title")}</h1>
-        <p className="text-slate-600">{t("intro")}</p>
-      </div>
+      <PageHeader icon="✨" tone="ink" title={t("title")} subtitle={t("intro")} />
 
       <div className="space-y-3">
         <label className="block space-y-1">

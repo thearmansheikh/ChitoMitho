@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { getSettings } from "@/lib/data";
+import PageHeader from "@/components/ui/PageHeader";
 
 export const metadata: Metadata = {
   title: "Our promise – how Chitto Mitho delivery works in Dharan",
@@ -26,15 +27,12 @@ export default async function PromisePage() {
   const s = await getSettings();
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-extrabold text-brand-blue">{t("title")}</h1>
-        <p className="mt-1 text-slate-600">{t("intro")}</p>
-      </div>
+      <PageHeader icon="🤝" tone="blue" title={t("title")} subtitle={t("intro")} />
 
       <ul className="space-y-3">
         {SECTIONS.map(([key, icon]) => (
-          <li key={key} className="flex gap-3 rounded-xl border border-slate-200 p-4">
-            <span className="text-2xl" aria-hidden>{icon}</span>
+          <li key={key} className="flex gap-3 rounded-2xl bg-white p-4 shadow-card ring-1 ring-slate-200/70">
+            <span className="flex h-11 w-11 flex-none items-center justify-center rounded-xl bg-blue-50 text-2xl" aria-hidden>{icon}</span>
             <div>
               <h2 className="font-bold">{t(`${key}Title`)}</h2>
               <p className="mt-1 text-slate-700">{t(`${key}Body`)}</p>

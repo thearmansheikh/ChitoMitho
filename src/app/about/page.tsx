@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { getSettings } from "@/lib/data";
 import { SITE } from "@/lib/config";
+import PageHeader from "@/components/ui/PageHeader";
 
 export const metadata: Metadata = {
   title: "About & contact – delivery in Dharan",
@@ -16,7 +17,7 @@ export default async function AboutPage() {
   const btn = "flex min-h-[52px] items-center justify-center rounded-xl px-4 font-bold";
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-extrabold text-brand-blue">{t("title")}</h1>
+      <PageHeader icon="ℹ️" tone="blue" title={t("title")} />
       <p className="text-slate-700">{t("story")}</p>
       <p className="text-slate-700">{t("areas")}</p>
 

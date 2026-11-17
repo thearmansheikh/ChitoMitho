@@ -12,6 +12,14 @@
   },
   "home": {
     "title": "Order anything, from anywhere",
+    "titleA": "Order anything,",
+    "titleB": "from anywhere",
+    "ctaFood": "Order food",
+    "ctaAnything": "Order anything",
+    "chipAreas": "Dharan · Itahari · Biratnagar",
+    "chipHours": "Open 10am – 10pm",
+    "chipPay": "Cash or QR at the door",
+    "chipWhatsapp": "Order on WhatsApp",
     "subtitle": "Food, groceries, gifts, parcels and more, delivered across Dharan, Itahari and Biratnagar.",
     "popular": "Popular places",
     "how": "How it works",
@@ -81,6 +89,14 @@
   },
   "bar": { "basket": "Basket", "whatsapp": "WhatsApp" },
   "nav": { "promise": "Our promise", "partner": "Partner with us" },
+  "serviceDesc": {
+    "food": "Cafés and restaurants",
+    "grocery": "Daily essentials",
+    "liquor": "Drinks, 18+ only",
+    "gifts": "Cakes, flowers, gifts",
+    "parcel": "We pick up and drop",
+    "anything": "From any shop"
+  },
   "offers": {
     "title": "Deals for you",
     "stub": "OFFER",

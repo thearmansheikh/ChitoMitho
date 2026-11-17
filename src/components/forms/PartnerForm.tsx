@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { PHONE_RE, normalizePhone } from "@/lib/details";
+import PageHeader from "@/components/ui/PageHeader";
 import { partnerMessage, riderMessage, whatsappUrl, type BusinessType, type Lang, type Vehicle } from "@/lib/whatsapp";
 
 const input =
@@ -71,10 +72,7 @@ export default function PartnerForm({ whatsapp }: { whatsapp: string }) {
 
   return (
     <form onSubmit={submit} noValidate className="space-y-4">
-      <div>
-        <h1 className="text-2xl font-extrabold text-brand-blue">{t("title")}</h1>
-        <p className="text-slate-600">{t("intro")}</p>
-      </div>
+      <PageHeader icon="🤝" tone="amber" title={t("title")} subtitle={t("intro")} />
 
       <div role="tablist" aria-label={t("title")} className="flex gap-2">
         <button type="button" role="tab" aria-selected={mode === "business"} className={tab("business")} onClick={() => { setMode("business"); setError(null); }}>🏪 {t("tabBusiness")}</button>

@@ -4,19 +4,27 @@ import { getLocale } from "next-intl/server";
 import { pick } from "@/lib/names";
 import type { Place } from "@/types/db";
 
+const FALLBACK = { food: "🍽️", grocery: "🛒", liquor: "🍺", gifts: "💐" } as const;
+
 export default async function PlaceCard({ place }: { place: Place }) {
   const locale = await getLocale();
   return (
-    <Link href={`/p/${place.slug}`} className="flex items-center gap-3 rounded-xl border border-slate-200 p-3 shadow-sm active:bg-slate-50">
+    <Link
+      href={`/p/${place.slug}`}
+      className="group flex items-center gap-4 rounded-2xl bg-white p-3.5 shadow-card ring-1 ring-slate-200/70 transition duration-200 hover:-translate-y-0.5 hover:shadow-lg active:scale-[0.99]"
+    >
       {place.logo_url ? (
-        <Image src={place.logo_url} alt="" width={56} height={56} loading="lazy" className="h-14 w-14 flex-none rounded-lg object-cover" />
+        <Image src={place.logo_url} alt="" width={64} height={64} loading="lazy" className="h-16 w-16 flex-none rounded-2xl object-cover ring-1 ring-slate-200" />
       ) : (
-        <div className="flex h-14 w-14 flex-none items-center justify-center rounded-lg bg-slate-100 text-2xl" aria-hidden>🍽️</div>
+        <div aria-hidden className="flex h-16 w-16 flex-none items-center justify-center rounded-2xl bg-gradient-to-br from-red-50 to-amber-50 text-3xl ring-1 ring-slate-200">
+          {FALLBACK[place.type]}
+        </div>
       )}
-      <div className="min-w-0">
-        <p className="truncate text-lg font-bold">{pick(place.name, place.name_ne, locale)}</p>
-        {place.description && <p className="truncate text-sm text-slate-500">{place.description}</p>}
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-lg font-bold leading-tight">{pick(place.name, place.name_ne, locale)}</p>
+        {place.description && <p className="mt-0.5 truncate text-sm text-slate-500">{place.description}</p>}
       </div>
+      <span aria-hidden className="flex h-9 w-9 flex-none items-center justify-center rounded-full bg-slate-100 text-brand-blue transition group-hover:bg-brand-red group-hover:text-white">→</span>
     </Link>
   );
 }

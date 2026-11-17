@@ -1,18 +1,20 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import TypeMenus from "@/components/shop/TypeMenus";
+import ShoppingList from "@/components/shop/ShoppingList";
+import PageHeader from "@/components/ui/PageHeader";
 
 export const metadata: Metadata = {
   title: "Grocery delivery in Dharan",
   description: "Order groceries and vegetables in Dharan, Itahari and Biratnagar, or type your own shopping list. Order on WhatsApp.",
 };
-import TypeMenus from "@/components/shop/TypeMenus";
-import ShoppingList from "@/components/shop/ShoppingList";
 
 export default async function GroceriesPage() {
   const t = await getTranslations("pages");
+  const s = await getTranslations("serviceDesc");
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-extrabold text-brand-blue">{t("groceriesTitle")}</h1>
+      <PageHeader icon="🛒" tone="green" title={t("groceriesTitle")} subtitle={s("grocery")} />
       <ShoppingList />
       <TypeMenus type="grocery" />
     </div>
