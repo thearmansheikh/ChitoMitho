@@ -17,7 +17,7 @@ export default async function GroceriesPage() {
     <div className="space-y-6">
       <PageHeader icon={<ServiceIcon name="grocery" className="h-9 w-9" />} tone="green" title={t("groceriesTitle")} subtitle={s("grocery")} />
       <ShoppingList />
-      <TypeMenus type="grocery" />
+      <TypeMenus type="grocery" searchable />
     </div>
   );
 }

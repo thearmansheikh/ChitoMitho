@@ -1,6 +1,13 @@
 {
-  "brand": { "name": "Chitto Mitho", "tagline": "Your everyday delivery partner" },
-  "header": { "open": "Open now", "closed": "Closed", "langToggle": "Change language" },
+  "brand": {
+    "name": "Chitto Mitho",
+    "tagline": "Your everyday delivery partner"
+  },
+  "header": {
+    "open": "Open now",
+    "closed": "Closed",
+    "langToggle": "Change language"
+  },
   "common": {
     "add": "Add",
     "soldOut": "Sold out",
@@ -54,7 +61,13 @@
   },
   "menu": {
     "categories": "Menu categories",
-    "uncategorised": "Other"
+    "uncategorised": "Other",
+    "searchLabel": "Search items",
+    "searchPlaceholder": "Search rice, milk, tomato…",
+    "clear": "Clear search",
+    "results": "{count, plural, one {# item} other {# items}} for “{query}”",
+    "none": "Nothing found",
+    "noneHint": "Try a simpler word, or type your own shopping list above and we will buy it for you."
   },
   "groceries": {
     "listTitle": "Type your shopping list",
@@ -76,17 +89,40 @@
     "time": "Delivery time",
     "occasion": "What is the occasion?",
     "occasions": {
-      "birthday": "Birthday", "anniversary": "Anniversary", "mothersday": "Mother’s Day",
-      "thankyou": "Thank you", "getwell": "Get well soon", "justbecause": "Just because"
+      "birthday": "Birthday",
+      "anniversary": "Anniversary",
+      "mothersday": "Mother’s Day",
+      "thankyou": "Thank you",
+      "getwell": "Get well soon",
+      "justbecause": "Just because"
     },
     "ideasHint": "Tap an idea to use it, or write your own.",
     "ideas": {
-      "birthday": ["Happy birthday! Wishing you a wonderful day.", "Many happy returns of the day!", "Another year, another reason to celebrate you."],
-      "anniversary": ["Happy anniversary! Here is to many more years together.", "Congratulations on another beautiful year."],
-      "mothersday": ["Happy Mother’s Day. Thank you for everything.", "To the best mum, with all my love."],
-      "thankyou": ["Thank you so much. This is a small way to say it.", "So grateful for you."],
-      "getwell": ["Get well soon! Thinking of you.", "Wishing you a quick recovery."],
-      "justbecause": ["Thinking of you today.", "Just because you deserve something nice."]
+      "birthday": [
+        "Happy birthday! Wishing you a wonderful day.",
+        "Many happy returns of the day!",
+        "Another year, another reason to celebrate you."
+      ],
+      "anniversary": [
+        "Happy anniversary! Here is to many more years together.",
+        "Congratulations on another beautiful year."
+      ],
+      "mothersday": [
+        "Happy Mother’s Day. Thank you for everything.",
+        "To the best mum, with all my love."
+      ],
+      "thankyou": [
+        "Thank you so much. This is a small way to say it.",
+        "So grateful for you."
+      ],
+      "getwell": [
+        "Get well soon! Thinking of you.",
+        "Wishing you a quick recovery."
+      ],
+      "justbecause": [
+        "Thinking of you today.",
+        "Just because you deserve something nice."
+      ]
     },
     "preview": "Card preview",
     "to": "To {name}",
@@ -118,18 +154,39 @@
     "subtotal": "Subtotal",
     "addMore": "Add more"
   },
-  "bar": { "basket": "Basket", "whatsapp": "WhatsApp" },
+  "bar": {
+    "basket": "Basket",
+    "whatsapp": "WhatsApp"
+  },
   "nav": {
-    "promise": "Our promise", "partner": "Partner with us",
-    "main": "Main menu", "order": "Order", "home": "Home", "breadcrumb": "You are here",
-    "areas": "Where we deliver", "help": "Help", "privacy": "Privacy", "terms": "Terms", "info": "Information",
-    "food": "Food", "grocery": "Groceries", "liquor": "Liquor", "gifts": "Gifts", "parcel": "Parcel", "anything": "Order anything"
+    "promise": "Our promise",
+    "partner": "Partner with us",
+    "main": "Main menu",
+    "order": "Order",
+    "home": "Home",
+    "breadcrumb": "You are here",
+    "areas": "Where we deliver",
+    "help": "Help",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "info": "Information",
+    "food": "Food",
+    "grocery": "Groceries",
+    "liquor": "Liquor",
+    "gifts": "Gifts",
+    "parcel": "Parcel",
+    "anything": "Order anything"
   },
   "areasPage": {
     "title": "Where we deliver",
     "intro": "We deliver in Dharan and nearby areas in every direction, including Itahari and Biratnagar.",
     "listed": "Places you can pick when you order",
-    "groups": { "dharan": "Dharan", "itahari": "Itahari", "biratnagar": "Biratnagar", "nearby": "Nearby areas" },
+    "groups": {
+      "dharan": "Dharan",
+      "itahari": "Itahari",
+      "biratnagar": "Biratnagar",
+      "nearby": "Nearby areas"
+    },
     "viewMap": "See {place} on the map",
     "notListedTitle": "Your place is not in the list?",
     "notListedBody": "Choose “Other area” when you order and type where you are. We will tell you on WhatsApp if we can reach you.",
@@ -244,8 +301,14 @@
   "craving": {
     "title": "What are you craving?",
     "items": {
-      "momo": "Momo", "burger": "Burger", "pizza": "Pizza", "coffee": "Coffee",
-      "noodles": "Noodles", "rice": "Rice", "cake": "Cake", "drink": "Drinks"
+      "momo": "Momo",
+      "burger": "Burger",
+      "pizza": "Pizza",
+      "coffee": "Coffee",
+      "noodles": "Noodles",
+      "rice": "Rice",
+      "cake": "Cake",
+      "drink": "Drinks"
     }
   },
   "serviceDesc": {
@@ -318,7 +381,13 @@
     "riderIntro": "Want to earn by delivering with us? Tell us a little about yourself and the team will contact you.",
     "business": "Business name",
     "type": "Type of business",
-    "types": { "cafe": "Café / Restaurant", "grocery": "Grocery / Vegetables", "liquor": "Liquor shop", "gifts": "Gifts / Flowers / Cakes", "other": "Other" },
+    "types": {
+      "cafe": "Café / Restaurant",
+      "grocery": "Grocery / Vegetables",
+      "liquor": "Liquor shop",
+      "gifts": "Gifts / Flowers / Cakes",
+      "other": "Other"
+    },
     "contactName": "Contact person",
     "phone": "Phone number",
     "area": "Address / area",
@@ -328,7 +397,12 @@
     "consentRequired": "Please tick the box to confirm.",
     "riderName": "Your name",
     "vehicle": "Vehicle",
-    "vehicles": { "bike": "Motorbike", "scooter": "Scooter", "bicycle": "Bicycle", "other": "Other" },
+    "vehicles": {
+      "bike": "Motorbike",
+      "scooter": "Scooter",
+      "bicycle": "Bicycle",
+      "other": "Other"
+    },
     "license": "I have a valid driving licence",
     "availability": "When can you ride? (optional)",
     "availabilityHelp": "e.g. evenings, 5pm – 10pm",
@@ -338,7 +412,10 @@
     "sentBody": "Press send in WhatsApp to finish. Our team will reply to you there.",
     "sendAnother": "Send another request"
   },
-  "a11y": { "skip": "Skip to main content", "loading": "Loading" },
+  "a11y": {
+    "skip": "Skip to main content",
+    "loading": "Loading"
+  },
   "errors": {
     "notFoundTitle": "We could not find that page",
     "notFoundBody": "The link may be old or mistyped. You can go back home and order from there.",
@@ -374,7 +451,9 @@
     "tiktok": "TikTok",
     "instagram": "Instagram"
   },
-  "delivery": { "note": "Delivery charge will be confirmed on WhatsApp." },
+  "delivery": {
+    "note": "Delivery charge will be confirmed on WhatsApp."
+  },
   "order": {
     "title": "Your details",
     "intro": "Saved on this phone so you only type them once.",
@@ -398,7 +477,12 @@
     "required": "Please fill this in.",
     "phoneInvalid": "Enter a valid Nepal mobile number (97 or 98 followed by 8 digits).",
     "areaRequired": "Please choose your area.",
-    "groups": { "dharan": "Dharan", "itahari": "Itahari", "biratnagar": "Biratnagar", "nearby": "Nearby areas" },
+    "groups": {
+      "dharan": "Dharan",
+      "itahari": "Itahari",
+      "biratnagar": "Biratnagar",
+      "nearby": "Nearby areas"
+    },
     "sentTitle": "Your order is ready in WhatsApp",
     "sentBody": "Press send in WhatsApp. You can also share your live location there so the rider finds you easily.",
     "sentAgain": "Open WhatsApp again",
@@ -471,8 +555,12 @@
     "budgetHelp": "Roughly how much can we spend on the items?",
     "examplesTitle": "Not sure what to ask for? Tap an example.",
     "examples": {
-      "medicine": "Medicine from a pharmacy", "charger": "A phone charger", "cake": "A cake from a bakery",
-      "gas": "A gas cylinder", "documents": "Pick up documents", "groceryRun": "A few things from the market"
+      "medicine": "Medicine from a pharmacy",
+      "charger": "A phone charger",
+      "cake": "A cake from a bakery",
+      "gas": "A gas cylinder",
+      "documents": "Pick up documents",
+      "groceryRun": "A few things from the market"
     },
     "photoHint": "Need a specific brand or item? Send a photo of it on WhatsApp after you send the order."
   },
@@ -492,8 +580,12 @@
     "giftTo": "Gift for",
     "giftOccasion": "Occasion",
     "occasions": {
-      "birthday": "Birthday", "anniversary": "Anniversary", "mothersday": "Mother’s Day",
-      "thankyou": "Thank you", "getwell": "Get well soon", "justbecause": "Just because"
+      "birthday": "Birthday",
+      "anniversary": "Anniversary",
+      "mothersday": "Mother’s Day",
+      "thankyou": "Thank you",
+      "getwell": "Get well soon",
+      "justbecause": "Just because"
     },
     "giftPhone": "Recipient phone",
     "giftCard": "Card message",
@@ -519,7 +611,13 @@
       "riderHeader": "🏍️ RIDER APPLICATION – Chitto Mitho",
       "business": "Business",
       "type": "Type",
-      "types": { "cafe": "Café / Restaurant", "grocery": "Grocery / Vegetables", "liquor": "Liquor shop", "gifts": "Gifts / Flowers / Cakes", "other": "Other" },
+      "types": {
+        "cafe": "Café / Restaurant",
+        "grocery": "Grocery / Vegetables",
+        "liquor": "Liquor shop",
+        "gifts": "Gifts / Flowers / Cakes",
+        "other": "Other"
+      },
       "contactName": "Contact person",
       "phone": "Phone",
       "area": "Address / area",
@@ -528,14 +626,33 @@
       "menuPhotos": "(Menu photos will be sent in this chat)",
       "riderName": "Name",
       "vehicle": "Vehicle",
-      "vehicles": { "bike": "Motorbike", "scooter": "Scooter", "bicycle": "Bicycle", "other": "Other" },
+      "vehicles": {
+        "bike": "Motorbike",
+        "scooter": "Scooter",
+        "bicycle": "Bicycle",
+        "other": "Other"
+      },
       "license": "Valid licence",
       "yes": "Yes",
       "no": "No",
       "availability": "Availability"
     },
-    "services": { "food": "Food", "grocery": "Groceries", "liquor": "Liquor", "gifts": "Gifts & Flowers", "parcel": "Parcel / Pick & Drop", "anything": "Order Anything" },
-    "sizes": { "small": "Small", "medium": "Medium", "large": "Large" },
-    "payments": { "cod": "Cash on delivery", "qr": "QR at door" }
+    "services": {
+      "food": "Food",
+      "grocery": "Groceries",
+      "liquor": "Liquor",
+      "gifts": "Gifts & Flowers",
+      "parcel": "Parcel / Pick & Drop",
+      "anything": "Order Anything"
+    },
+    "sizes": {
+      "small": "Small",
+      "medium": "Medium",
+      "large": "Large"
+    },
+    "payments": {
+      "cod": "Cash on delivery",
+      "qr": "QR at door"
+    }
   }
 }
