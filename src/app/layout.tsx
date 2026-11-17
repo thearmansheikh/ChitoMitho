@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   title: { default: "Delivery in Dharan | Chitto Mitho", template: "%s | Chitto Mitho" },
   description: DESCRIPTION,
   applicationName: "Chitto Mitho",
-  alternates: { canonical: "/" },
+
   openGraph: {
     type: "website", siteName: "Chitto Mitho", title: "Chitto Mitho – Order anything, from anywhere",
     description: DESCRIPTION, url: SITE_URL, locale: "en_NP",

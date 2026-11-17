@@ -25,6 +25,8 @@ const SERVICES = [
   { href: "/anything", key: "anything", icon: "✨", badge: "bg-indigo-100", glow: "group-hover:shadow-indigo-200" },
 ] as const;
 
+export const metadata = { alternates: { canonical: "/" } };
+
 export default async function Home() {
   const t = await getTranslations("home");
   const s = await getTranslations("services");

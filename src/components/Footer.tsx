@@ -75,7 +75,7 @@ export default async function Footer() {
               <h2 className="text-xs font-bold uppercase tracking-[0.14em] text-white/50">{t("contact")}</h2>
               <a
                 href={`https://wa.me/977${s.whatsapp_number}`}
-                className="flex min-h-[52px] items-center justify-center gap-2 rounded-xl bg-green-600 px-5 font-bold text-white shadow-lg shadow-black/20 transition hover:bg-green-500 active:scale-95 sm:max-w-xs"
+                className="flex min-h-[52px] items-center justify-center gap-2 rounded-xl bg-green-700 px-5 font-bold text-white shadow-lg shadow-black/20 transition hover:bg-green-600 active:scale-95 sm:max-w-xs"
               >
                 <SocialIcon name="whatsapp" className="h-5 w-5" /> {t("whatsapp")} · {s.whatsapp_number}
               </a>

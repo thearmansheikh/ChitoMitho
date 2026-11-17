@@ -23,7 +23,7 @@ export default function BasketView({ config, areas, offers }: { config: OrderCon
   const locale = useLocale();
   const { lines, extras, total, hydrated, setQty, setNote, remove, clear, saveLastOrder, notice, setNotice } = useBasket();
 
-  if (!hydrated) return null;
+  if (!hydrated) return <div className="min-h-[70vh]" aria-hidden />;
 
   const giftInBasket = lines.some((l) => l.placeType === "gifts");
   const hasGift = giftInBasket && Object.values(extras.gift).some(Boolean);
