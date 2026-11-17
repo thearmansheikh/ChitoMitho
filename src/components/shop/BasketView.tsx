@@ -17,6 +17,7 @@ import PromoCode from "./PromoCode";
 export default function BasketView({ config, areas, offers }: { config: OrderConfig; areas: Area[]; offers: Offer[] }) {
   const t = useTranslations("basket");
   const d = useTranslations("delivery");
+  const o = useTranslations("order");
   const locale = useLocale();
   const { lines, extras, total, hydrated, setQty, setNote, remove, clear, saveLastOrder, notice, setNotice } = useBasket();
 
@@ -134,6 +135,7 @@ export default function BasketView({ config, areas, offers }: { config: OrderCon
           <span>{t("itemsTotal")}</span><span>{formatNPR(total)}</span>
         </p>
         <p className="text-sm text-slate-600">{d("note")}</p>
+        <Link href="/help" className="inline-flex min-h-[44px] items-center text-sm font-semibold text-brand-blue underline">{o("helpLink")}</Link>
       </section>
 
       <div className="space-y-2">

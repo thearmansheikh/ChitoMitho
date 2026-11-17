@@ -53,9 +53,9 @@ export default async function Home() {
         <span aria-hidden className="absolute -right-12 -top-12 h-48 w-48 rounded-full bg-white/10" />
         <span aria-hidden className="absolute -left-10 top-24 h-24 w-24 rounded-full bg-brand-red/30 blur-xl" />
         <div className="relative">
-          <p className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold ring-1 ring-white/25">
-            <span aria-hidden>📍</span> {t("chipAreas")}
-          </p>
+          <Link href="/areas" className="inline-flex min-h-[32px] items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold ring-1 ring-white/25 transition hover:bg-white/25">
+            <span aria-hidden>📍</span> {t("chipAreas")} <span aria-hidden>›</span>
+          </Link>
           <h1 className="mt-4 text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl">
             {t("titleA")} <span className="text-sun">{t("titleB")}</span>
           </h1>

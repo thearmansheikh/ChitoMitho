@@ -147,6 +147,10 @@ export default function DetailsSheet({ open, onClose, onConfirm, areas, initial,
           <div>
             <h2 id="details-title" className="text-xl font-extrabold text-brand-blue">{t("title")}</h2>
             <p className="text-sm text-slate-600">{t("intro")}</p>
+            <p className="mt-1 text-xs text-slate-500">
+              {t("privacyNote")}{" "}
+              <a href="/privacy" target="_blank" rel="noopener noreferrer" className="font-semibold text-brand-blue underline">{t("privacyLink")}</a>
+            </p>
           </div>
           <button type="button" onClick={onClose} aria-label={t("close")} className="flex h-11 w-11 flex-none items-center justify-center rounded-lg text-2xl text-slate-500">×</button>
         </div>

@@ -1,0 +1,63 @@
+import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
+import { getSettings } from "@/lib/data";
+import PageHeader from "@/components/ui/PageHeader";
+
+export const metadata: Metadata = {
+  title: "Help and questions – how ordering works",
+  description: "Answers about ordering on WhatsApp, delivery charges, payment, opening hours, areas, changes, problems and liquor orders with Chitto Mitho in Dharan.",
+  alternates: { canonical: "/help" },
+};
+
+const COUNT = 14;
+
+export default async function HelpPage() {
+  const t = await getTranslations("help");
+  const c = await getTranslations("common");
+  const s = await getSettings();
+  const hours = { open: s.open_time.slice(0, 5), close: s.close_time.slice(0, 5) };
+  const items = Array.from({ length: COUNT }, (_, i) => ({ q: t(`q${i + 1}`), a: t(`a${i + 1}`, hours) }));
+
+  // Lets search engines show the answers directly.
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((x) => ({ "@type": "Question", name: x.q, acceptedAnswer: { "@type": "Answer", text: x.a } })),
+  };
+
+  return (
+    <div className="space-y-6">
+      <script
+        type="application/ld+json"
+        // "<" is escaped so no text can close the script tag.
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
+      />
+      <PageHeader icon="❓" tone="blue" title={t("title")} subtitle={t("intro")} />
+
+      <div className="space-y-3">
+        {items.map((x, i) => (
+          <details key={i} className="group rounded-2xl bg-white shadow-card ring-1 ring-slate-200/70 open:ring-brand-blue/40">
+            <summary className="flex min-h-[56px] cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 font-bold [&::-webkit-details-marker]:hidden">
+              <span>{x.q}</span>
+              <span aria-hidden className="flex h-8 w-8 flex-none items-center justify-center rounded-full bg-slate-100 text-lg text-brand-blue transition group-open:rotate-45 group-open:bg-brand-blue group-open:text-white">+</span>
+            </summary>
+            <p className="px-4 pb-4 text-slate-700">{x.a}</p>
+          </details>
+        ))}
+      </div>
+
+      <section className="space-y-3 rounded-2xl bg-slate-100 p-5">
+        <h2 className="font-bold">{t("stuckTitle")}</h2>
+        <p className="text-slate-700">{t("stuckBody")}</p>
+        <div className="grid gap-2 sm:grid-cols-2">
+          <a href={`https://wa.me/977${s.whatsapp_number}`} className="flex min-h-[52px] items-center justify-center gap-2 rounded-xl bg-green-700 font-bold text-white">
+            <span aria-hidden>💬</span> {c("whatsapp")}
+          </a>
+          <a href={`tel:+977${s.phone_numbers[0] ?? s.whatsapp_number}`} className="flex min-h-[52px] items-center justify-center gap-2 rounded-xl bg-brand-blue font-bold text-white">
+            <span aria-hidden>📞</span> {c("call")}
+          </a>
+        </div>
+      </section>
+    </div>
+  );
+}

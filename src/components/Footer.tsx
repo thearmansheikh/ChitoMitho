@@ -44,6 +44,10 @@ export default async function Footer() {
           <Link href="/about" className={link}>{a("link")}</Link>
           <Link href="/promise" className={link}>{n("promise")}</Link>
           <Link href="/partner" className={link}>{n("partner")}</Link>
+          <Link href="/areas" className={link}>{n("areas")}</Link>
+          <Link href="/help" className={link}>{n("help")}</Link>
+          <Link href="/privacy" className={link}>{n("privacy")}</Link>
+          <Link href="/terms" className={link}>{n("terms")}</Link>
         </div>
       </div>
     </footer>

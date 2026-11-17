@@ -143,6 +143,7 @@ export default function SendOrder({ service, placeId, itemsTotal, build, validat
               ))}
             </ol>
             <p className="mt-3 text-xs text-slate-500">{t("hoursLine", { open: config.openTime.slice(0, 5), close: config.closeTime.slice(0, 5) })}</p>
+            <a href="/help" target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-[44px] items-center text-sm font-semibold text-brand-blue underline">{t("helpLink")}</a>
           </div>
           <a href={sentUrl} target="_blank" rel="noopener noreferrer" className="flex min-h-[56px] w-full items-center justify-center rounded-xl bg-green-700 text-lg font-bold text-white">
             💬 {t("sentAgain")}

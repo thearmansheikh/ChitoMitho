@@ -1,0 +1,29 @@
+import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
+import PageHeader from "@/components/ui/PageHeader";
+
+export const metadata: Metadata = {
+  title: "Terms of service – ordering with Chitto Mitho",
+  description: "The simple rules for ordering with Chitto Mitho: prices, delivery charge and time, payment, changes, problems, liquor and offers.",
+  alternates: { canonical: "/terms" },
+};
+
+const COUNT = 10;
+
+export default async function TermsPage() {
+  const t = await getTranslations("terms");
+  return (
+    <div className="space-y-6">
+      <PageHeader icon="📄" tone="blue" title={t("title")} subtitle={t("intro")} />
+      <div className="space-y-3">
+        {Array.from({ length: COUNT }, (_, i) => i + 1).map((n) => (
+          <section key={n} className="rounded-2xl bg-white p-5 shadow-card ring-1 ring-slate-200/70">
+            <h2 className="font-bold">{t(`s${n}Title`)}</h2>
+            <p className="mt-1 text-slate-700">{t(`s${n}Body`)}</p>
+          </section>
+        ))}
+      </div>
+      <p className="text-sm text-slate-500">{t("updated")}</p>
+    </div>
+  );
+}
