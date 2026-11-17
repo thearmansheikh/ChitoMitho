@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Card } from "@/components/admin/ui";
+import DashboardStats from "@/components/admin/DashboardStats";
 
 const TILES = [
   ["/admin/places", "Places", "Cafés, restaurants, shops"],
@@ -13,6 +14,8 @@ const TILES = [
 
 export default function AdminHome() {
   return (
+    <div className="space-y-5">
+      <DashboardStats />
     <div className="grid gap-3 sm:grid-cols-2">
       {TILES.map(([href, title, sub]) => (
         <Link key={href} href={href}>
@@ -22,6 +25,7 @@ export default function AdminHome() {
           </Card>
         </Link>
       ))}
+    </div>
     </div>
   );
 }
