@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { CRAVINGS } from "@/lib/cravings";
 import { formatNPR } from "@/lib/format";
@@ -27,6 +27,15 @@ export default function FoodBrowser({ places, categories, items, initialQuery }:
   const c = useTranslations("craving");
   const locale = useLocale();
   const [q, setQ] = useState(initialQuery);
+
+  // Keep the search in the address bar so a search can be shared or bookmarked, without adding history entries.
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const text = q.trim();
+    if (text) url.searchParams.set("q", text);
+    else url.searchParams.delete("q");
+    if (url.toString() !== window.location.href) window.history.replaceState(window.history.state, "", url.toString());
+  }, [q]);
 
   const placeById = useMemo(() => new Map(places.map((p) => [p.id, p])), [places]);
   const catById = useMemo(() => new Map(categories.map((x) => [x.id, x])), [categories]);

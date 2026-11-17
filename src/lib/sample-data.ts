@@ -23,7 +23,8 @@ export const SAMPLE_SETTINGS: Settings = {
 };
 
 const place = (id: string, name: string, slug: string, type: Place["type"], description: string, sort_order: number, name_ne: string | null = null): Place => ({
-  id, name, name_ne, slug, type, logo_url: null, description, is_active: true, sort_order,
+  id, name, name_ne, slug, type, logo_url: null, description, address: null, maps_url: null, cover_url: null,
+  opens_at: null, closes_at: null, is_active: true, sort_order,
 });
 
 export const SAMPLE_PLACES: Place[] = [
@@ -78,3 +79,12 @@ export const SAMPLE_AREAS: Area[] = [
   area("a-duhabi", "Duhabi", "दुहबी", "nearby", 1),
   area("a-inaruwa", "Inaruwa", "इनरुवा", "nearby", 2),
 ];
+
+// Preview mode only: one café shows an address, a map link and its own hours so the page can be previewed.
+SAMPLE_PLACES[0] = {
+  ...SAMPLE_PLACES[0],
+  address: "Bhanu Chowk, near Nabil Bank, Dharan",
+  maps_url: "https://maps.google.com/?q=Bhanu+Chowk+Dharan",
+  opens_at: "09:00:00",
+  closes_at: "21:00:00",
+};

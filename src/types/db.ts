@@ -10,6 +10,13 @@ export interface Place {
   type: PlaceType;
   logo_url: string | null;
   description: string | null;
+  address: string | null;
+  /** A Google Maps (or similar) web link to the place. */
+  maps_url: string | null;
+  cover_url: string | null;
+  /** Own opening hours, "HH:MM:SS". Both null means "same as the shop". */
+  opens_at: string | null;
+  closes_at: string | null;
   is_active: boolean;
   sort_order: number;
 }

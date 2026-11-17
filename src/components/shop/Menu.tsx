@@ -5,6 +5,7 @@ import { pick } from "@/lib/names";
 import type { Category, Item, Place } from "@/types/db";
 import DishTile from "@/components/ui/DishTile";
 import AddToBasket from "./AddToBasket";
+import CategoryTabs from "./CategoryTabs";
 
 interface Props {
   place: Place;
@@ -36,13 +37,7 @@ export default async function Menu({ place, categories, items, showTitle = false
         </h2>
       )}
       {groups.length > 1 && (
-        <nav aria-label={t("categories")} className="no-scrollbar sticky top-[61px] z-20 -mx-4 flex gap-2 overflow-x-auto bg-paper/95 px-4 py-3 backdrop-blur">
-          {groups.map((g) => (
-            <a key={g.id} href={`#${anchor(g.id)}`} className="whitespace-nowrap rounded-full bg-white px-4 py-2 text-sm font-semibold text-brand-blue shadow-card ring-1 ring-slate-200 transition active:scale-95 active:bg-brand-blue active:text-white">
-              {g.label}
-            </a>
-          ))}
-        </nav>
+        <CategoryTabs label={t("categories")} tabs={groups.map((g) => ({ id: anchor(g.id), label: g.label }))} />
       )}
       {groups.map((g) => (
         <div key={g.id} id={anchor(g.id)} className="scroll-mt-32 space-y-3">

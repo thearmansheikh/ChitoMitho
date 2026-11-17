@@ -93,8 +93,18 @@
   "bar": { "basket": "बास्केट", "whatsapp": "व्हाट्सएप" },
   "nav": {
     "promise": "हाम्रो वचन", "partner": "साझेदार बन्नुहोस्",
-    "main": "मुख्य मेनु", "order": "अर्डर",
+    "main": "मुख्य मेनु", "order": "अर्डर", "home": "गृहपृष्ठ", "breadcrumb": "तपाईं यहाँ हुनुहुन्छ",
     "food": "खाना", "grocery": "किराना", "liquor": "रक्सी", "gifts": "उपहार", "parcel": "पार्सल", "anything": "जे पनि अर्डर"
+  },
+  "placeInfo": {
+    "openNow": "अहिले खुला",
+    "closed": "बन्द",
+    "until": "{time} सम्म",
+    "opensAt": "{time} मा खुल्छ",
+    "address": "ठेगाना",
+    "openInMaps": "नक्सामा खोल्नुहोस्",
+    "share": "सेयर गर्नुहोस्",
+    "copied": "लिङ्क कपी भयो"
   },
   "food": {
     "searchLabel": "परिकार र क्याफे खोज्नुहोस्",

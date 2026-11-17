@@ -93,8 +93,18 @@
   "bar": { "basket": "Basket", "whatsapp": "WhatsApp" },
   "nav": {
     "promise": "Our promise", "partner": "Partner with us",
-    "main": "Main menu", "order": "Order",
+    "main": "Main menu", "order": "Order", "home": "Home", "breadcrumb": "You are here",
     "food": "Food", "grocery": "Groceries", "liquor": "Liquor", "gifts": "Gifts", "parcel": "Parcel", "anything": "Order anything"
+  },
+  "placeInfo": {
+    "openNow": "Open now",
+    "closed": "Closed",
+    "until": "until {time}",
+    "opensAt": "opens at {time}",
+    "address": "Address",
+    "openInMaps": "Open in Maps",
+    "share": "Share",
+    "copied": "Link copied"
   },
   "food": {
     "searchLabel": "Search dishes and cafés",

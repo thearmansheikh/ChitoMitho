@@ -8,7 +8,10 @@ import { btnDanger, btnGhost, btnPrimary, Card, Field, inputCls, Notice } from "
 import type { Place, PlaceType } from "@/types/db";
 
 const TYPES: PlaceType[] = ["food", "grocery", "liquor", "gifts"];
-const EMPTY = { name: "", name_ne: "", slug: "", type: "food" as PlaceType, description: "" };
+const EMPTY = {
+  name: "", name_ne: "", slug: "", type: "food" as PlaceType, description: "",
+  address: "", maps_url: "", opens_at: "", closes_at: "",
+};
 
 export default function PlacesPage() {
   const sb = createClient();
@@ -28,20 +31,32 @@ export default function PlacesPage() {
 
   function startEdit(p: Place) {
     setEditing(p.id);
-    setForm({ name: p.name, name_ne: p.name_ne ?? "", slug: p.slug, type: p.type, description: p.description ?? "" });
+    setForm({
+      name: p.name, name_ne: p.name_ne ?? "", slug: p.slug, type: p.type, description: p.description ?? "",
+      address: p.address ?? "", maps_url: p.maps_url ?? "",
+      opens_at: p.opens_at?.slice(0, 5) ?? "", closes_at: p.closes_at?.slice(0, 5) ?? "",
+    });
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
   function reset() { setEditing(null); setForm(EMPTY); }
 
   async function save(e: React.FormEvent) {
     e.preventDefault();
-    setBusy(true); setError(null); setOk(null);
+    setError(null); setOk(null);
+    const maps = form.maps_url.trim();
+    if (maps && !/^https?:\/\//i.test(maps)) return setError("The map link must start with https://");
+    if (Boolean(form.opens_at) !== Boolean(form.closes_at)) return setError("Set both opening and closing time, or leave both empty.");
+    setBusy(true);
     const row = {
       name: form.name.trim(),
       name_ne: form.name_ne.trim() || null,
       slug: slugify(form.slug || form.name),
       type: form.type,
       description: form.description.trim() || null,
+      address: form.address.trim() || null,
+      maps_url: maps || null,
+      opens_at: form.opens_at || null,
+      closes_at: form.closes_at || null,
     };
     const res = editing
       ? await sb.from("places").update(row).eq("id", editing)
@@ -80,6 +95,17 @@ export default function PlacesPage() {
     } catch (e) { setError((e as Error).message); }
   }
 
+  async function cover(p: Place, file?: File) {
+    if (!file) return;
+    setError(null);
+    try {
+      const url = await uploadImage(sb, file, "covers");
+      const { error } = await sb.from("places").update({ cover_url: url }).eq("id", p.id);
+      if (error) throw error;
+      load();
+    } catch (e) { setError((e as Error).message); }
+  }
+
   async function remove(p: Place) {
     if (!confirm(`Delete "${p.name}" and all its items?`)) return;
     const { error } = await sb.from("places").delete().eq("id", p.id);
@@ -103,6 +129,11 @@ export default function PlacesPage() {
           </Field>
           <Field label="URL slug (auto if empty)"><input className={inputCls} value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} placeholder={slugify(form.name)} /></Field>
           <div className="sm:col-span-2"><Field label="Description"><input className={inputCls} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></Field></div>
+          <div className="sm:col-span-2"><Field label="Address or area (optional)"><input className={inputCls} value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} placeholder="Bhanu Chowk, near Nabil Bank" /></Field></div>
+          <div className="sm:col-span-2"><Field label="Google Maps link (optional)"><input className={inputCls} inputMode="url" value={form.maps_url} onChange={(e) => setForm({ ...form, maps_url: e.target.value })} placeholder="https://maps.app.goo.gl/…" /></Field></div>
+          <Field label="Opens (optional)"><input type="time" className={inputCls} value={form.opens_at} onChange={(e) => setForm({ ...form, opens_at: e.target.value })} /></Field>
+          <Field label="Closes (optional)"><input type="time" className={inputCls} value={form.closes_at} onChange={(e) => setForm({ ...form, closes_at: e.target.value })} /></Field>
+          <p className="text-xs text-slate-500 sm:col-span-2">Leave the times empty if this place keeps the shop’s hours. Upload a logo or cover photo with the buttons on the place’s card below.</p>
           <div className="flex gap-2 sm:col-span-2">
             <button className={btnPrimary} disabled={busy}>{editing ? "Save" : "Add place"}</button>
             {editing && <button type="button" className={btnGhost} onClick={reset}>Cancel</button>}
@@ -132,6 +163,10 @@ export default function PlacesPage() {
               <label className={`${btnGhost} flex cursor-pointer items-center`}>
                 Logo
                 <input type="file" accept="image/*" className="sr-only" onChange={(e) => logo(p, e.target.files?.[0])} />
+              </label>
+              <label className={`${btnGhost} flex cursor-pointer items-center`}>
+                {p.cover_url ? "Change cover" : "Cover photo"}
+                <input type="file" accept="image/*" className="sr-only" onChange={(e) => cover(p, e.target.files?.[0])} />
               </label>
               <button className={btnDanger} onClick={() => remove(p)}>Delete</button>
             </div>
