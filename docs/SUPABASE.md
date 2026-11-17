@@ -1,7 +1,7 @@
 # Supabase setup
 
 1. Create a project at supabase.com.
-2. SQL Editor: run `supabase/migrations/0001_schema.sql`, then `0002_seed.sql` (sample data).
+2. SQL Editor: run `supabase/migrations/0001_schema.sql`, `0002_seed.sql` (sample data), then `0003_restrict_is_admin.sql`.
 3. Authentication > Providers > Email: **disable "Allow new users to sign up"**.
 4. Authentication > Users > Add user: create the team member with email + password.
 5. Make them an admin (SQL Editor):

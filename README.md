@@ -32,7 +32,7 @@ Never put the `service_role` key in this project. It is not needed.
 ## Supabase setup
 
 1. Create a project at [supabase.com](https://supabase.com).
-2. **SQL Editor**: run `supabase/migrations/0001_schema.sql`, then `supabase/migrations/0002_seed.sql`
+2. **SQL Editor**: run `supabase/migrations/0001_schema.sql`, `0002_seed.sql` and then `0003_restrict_is_admin.sql`
    (sample places, items, areas and settings; replace them from the admin page).
 3. **Authentication > Providers > Email**: turn **off** "Allow new users to sign up".
 4. Put the three environment variables above in `.env.local`.
