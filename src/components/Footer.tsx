@@ -32,6 +32,14 @@ export default async function Footer() {
           <a href={`https://www.tiktok.com/@${SITE.tiktok}`} className={link} target="_blank" rel="noopener noreferrer">{t("tiktok")} @{SITE.tiktok}</a>
           <a href={`https://www.instagram.com/${SITE.instagram}`} className={link} target="_blank" rel="noopener noreferrer">{t("instagram")} @{SITE.instagram}</a>
         </div>
+        <nav aria-label={n("order")} className="flex flex-wrap gap-x-4 border-t border-white/10 pt-3">
+          <Link href="/food" className={link}>{n("food")}</Link>
+          <Link href="/groceries" className={link}>{n("grocery")}</Link>
+          <Link href="/liquor" className={link}>{n("liquor")}</Link>
+          <Link href="/gifts" className={link}>{n("gifts")}</Link>
+          <Link href="/parcel" className={link}>{n("parcel")}</Link>
+          <Link href="/anything" className={link}>{n("anything")}</Link>
+        </nav>
         <div className="flex flex-wrap gap-x-4 border-t border-white/10 pt-3">
           <Link href="/about" className={link}>{a("link")}</Link>
           <Link href="/promise" className={link}>{n("promise")}</Link>

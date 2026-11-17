@@ -91,7 +91,11 @@
     "dismiss": "Dismiss"
   },
   "bar": { "basket": "Basket", "whatsapp": "WhatsApp" },
-  "nav": { "promise": "Our promise", "partner": "Partner with us" },
+  "nav": {
+    "promise": "Our promise", "partner": "Partner with us",
+    "main": "Main menu", "order": "Order",
+    "food": "Food", "grocery": "Groceries", "liquor": "Liquor", "gifts": "Gifts", "parcel": "Parcel", "anything": "Order anything"
+  },
   "food": {
     "searchLabel": "Search dishes and cafés",
     "searchPlaceholder": "Search momo, burger, café…",
