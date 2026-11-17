@@ -4,6 +4,7 @@ import { Card } from "@/components/admin/ui";
 const TILES = [
   ["/admin/places", "Places", "Cafés, restaurants, shops"],
   ["/admin/items", "Items", "Menus, prices, sold-out"],
+  ["/admin/import", "Import a menu", "Paste or upload a whole menu at once"],
   ["/admin/areas", "Areas", "Delivery area list"],
   ["/admin/offers", "Offers", "Deals and promo codes"],
   ["/admin/settings", "Settings", "WhatsApp, hours, pause orders"],

@@ -63,6 +63,7 @@ A user who is not in the `admins` table cannot use `/admin` or change any data, 
 | --- | --- |
 | Places | Add, edit, reorder, activate/deactivate, upload a logo |
 | Items | Per place: categories, items, prices, Nepali names, photos, sold-out switch |
+| Import | Paste a menu (typed list, or cells copied from Excel or Google Sheets) or upload a CSV. Preview, then import. Adds new items, optionally updates prices of existing ones, never deletes. See `src/lib/menuImport.ts` for the accepted formats |
 | Areas | The delivery-area dropdown (grouped Dharan / Itahari / Biratnagar / Nearby) |
 | Settings | Order WhatsApp number, phone numbers, opening hours, **Pause orders** + message, announcement banner, liquor age text |
 | Orders | How many WhatsApp orders were sent today / this week / this month, by service and place |
