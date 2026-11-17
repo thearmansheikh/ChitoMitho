@@ -5,7 +5,8 @@ import PlaceCard from "@/components/shop/PlaceCard";
 import ClosedNotice from "@/components/shop/ClosedNotice";
 import ReorderCard from "@/components/shop/ReorderCard";
 import OffersStrip from "@/components/shop/OffersStrip";
-import HeroRoute from "@/components/ui/HeroRoute";
+import HeroScene from "@/components/ui/HeroScene";
+import ServiceIcon from "@/components/ui/ServiceIcon";
 import SectionTitle from "@/components/ui/SectionTitle";
 
 // Each service gets its own soft colour so people can find it by sight, not only by reading.
@@ -40,7 +41,7 @@ export default async function Home() {
       <ClosedNotice openTime={settings.open_time} closeTime={settings.close_time} paused={settings.orders_paused} pauseMessage={settings.pause_message} />
 
       {/* Hero */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-blue via-[#274e8a] to-ink p-6 pb-28 text-white shadow-pop sm:p-8 sm:pb-32 motion-safe:animate-fade-up">
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-blue via-[#274e8a] to-ink p-6 pb-44 text-white shadow-pop sm:p-8 sm:pb-56 motion-safe:animate-fade-up">
         <span aria-hidden className="absolute -right-12 -top-12 h-48 w-48 rounded-full bg-white/10" />
         <span aria-hidden className="absolute -left-10 top-24 h-24 w-24 rounded-full bg-brand-red/30 blur-xl" />
         <div className="relative">
@@ -53,10 +54,10 @@ export default async function Home() {
           <p className="mt-3 max-w-md text-white/85">{t("subtitle")}</p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link href="/food" className="inline-flex min-h-[52px] items-center rounded-xl bg-brand-red px-6 font-bold shadow-lg shadow-black/25 transition active:scale-95">
-              🍔 {t("ctaFood")}
+              <ServiceIcon name="food" className="mr-2 h-6 w-6" /> {t("ctaFood")}
             </Link>
             <Link href="/anything" className="inline-flex min-h-[52px] items-center rounded-xl bg-white/15 px-6 font-bold ring-1 ring-white/35 transition active:scale-95">
-              ✨ {t("ctaAnything")}
+              <ServiceIcon name="anything" className="mr-2 h-6 w-6" /> {t("ctaAnything")}
             </Link>
           </div>
           <ul className="mt-5 flex flex-wrap gap-2 text-xs font-semibold">
@@ -65,7 +66,7 @@ export default async function Home() {
             ))}
           </ul>
         </div>
-        <HeroRoute />
+        <HeroScene />
       </section>
 
       <OffersStrip offers={offers} />
@@ -81,8 +82,8 @@ export default async function Home() {
             style={{ animationDelay: `${i * 60}ms` }}
             className={`group relative flex min-h-[148px] flex-col gap-2 overflow-hidden rounded-2xl bg-white p-4 shadow-card ring-1 ring-slate-200/70 transition duration-200 hover:-translate-y-0.5 hover:shadow-lg ${x.glow} active:scale-[0.98] motion-safe:animate-fade-up`}
           >
-            <span aria-hidden className={`flex h-14 w-14 items-center justify-center rounded-2xl text-3xl transition-transform duration-200 group-hover:scale-110 group-hover:-rotate-6 ${x.badge}`}>
-              {x.icon}
+            <span aria-hidden className={`flex h-14 w-14 items-center justify-center rounded-2xl transition-transform duration-200 group-hover:scale-110 group-hover:-rotate-6 ${x.badge}`}>
+              <ServiceIcon name={x.key} className="h-9 w-9" />
             </span>
             <span className="mt-1 font-bold leading-tight">{s(x.key)}</span>
             <span className="text-xs leading-snug text-slate-500">{d(x.key)}</span>

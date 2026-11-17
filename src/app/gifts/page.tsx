@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import TypeMenus from "@/components/shop/TypeMenus";
 import GiftForm from "@/components/shop/GiftForm";
 import PageHeader from "@/components/ui/PageHeader";
+import ServiceIcon from "@/components/ui/ServiceIcon";
 
 export const metadata: Metadata = {
   title: "Gifts & flowers delivery in Dharan",
@@ -14,7 +15,7 @@ export default async function GiftsPage() {
   const s = await getTranslations("serviceDesc");
   return (
     <div className="space-y-6">
-      <PageHeader icon="💐" tone="pink" title={t("giftsTitle")} subtitle={s("gifts")} />
+      <PageHeader icon={<ServiceIcon name="gifts" className="h-9 w-9" />} tone="pink" title={t("giftsTitle")} subtitle={s("gifts")} />
       <TypeMenus type="gifts" />
       <GiftForm />
     </div>

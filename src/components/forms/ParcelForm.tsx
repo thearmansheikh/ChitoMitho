@@ -6,6 +6,7 @@ import { PHONE_RE, normalizePhone } from "@/lib/details";
 import { parcelMessage, type ParcelOrder } from "@/lib/whatsapp";
 import type { Area } from "@/types/db";
 import PageHeader from "@/components/ui/PageHeader";
+import ServiceIcon from "@/components/ui/ServiceIcon";
 import SendOrder, { type OrderConfig } from "./SendOrder";
 
 const input =
@@ -26,7 +27,7 @@ export default function ParcelForm({ config, areas }: { config: OrderConfig; are
 
   return (
     <div className="space-y-4">
-      <PageHeader icon="📦" tone="blue" title={t("title")} subtitle={t("intro")} />
+      <PageHeader icon={<ServiceIcon name="parcel" className="h-9 w-9" />} tone="blue" title={t("title")} subtitle={t("intro")} />
 
       <div className="space-y-3">
         <label className="block space-y-1">

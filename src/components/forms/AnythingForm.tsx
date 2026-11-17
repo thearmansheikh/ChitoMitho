@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { anythingMessage } from "@/lib/whatsapp";
 import type { Area } from "@/types/db";
 import PageHeader from "@/components/ui/PageHeader";
+import ServiceIcon from "@/components/ui/ServiceIcon";
 import SendOrder, { type OrderConfig } from "./SendOrder";
 
 const input =
@@ -18,7 +19,7 @@ export default function AnythingForm({ config, areas }: { config: OrderConfig; a
 
   return (
     <div className="space-y-4">
-      <PageHeader icon="✨" tone="ink" title={t("title")} subtitle={t("intro")} />
+      <PageHeader icon={<ServiceIcon name="anything" className="h-9 w-9" />} tone="ink" title={t("title")} subtitle={t("intro")} />
 
       <div className="space-y-3">
         <label className="block space-y-1">

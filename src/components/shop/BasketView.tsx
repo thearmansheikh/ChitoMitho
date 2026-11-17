@@ -10,6 +10,7 @@ import { checkPromo } from "@/lib/promo";
 import type { Area, Offer, Service } from "@/types/db";
 import SendOrder, { type OrderConfig } from "@/components/forms/SendOrder";
 import PageHeader from "@/components/ui/PageHeader";
+import ScooterArt from "@/components/ui/ScooterArt";
 import ReorderCard from "./ReorderCard";
 import PromoCode from "./PromoCode";
 
@@ -28,7 +29,7 @@ export default function BasketView({ config, areas, offers }: { config: OrderCon
   if (lines.length === 0 && !hasList) {
     return (
       <div className="space-y-4 py-8 text-center">
-        <p className="text-5xl" aria-hidden>🧺</p>
+        <div className="flex justify-center"><ScooterArt className="h-28 w-auto" /></div>
         <div className="text-left"><PageHeader icon="🧺" tone="blue" title={t("title")} /></div>
         <p className="text-slate-600">{t("empty")}</p>
         {notice && (

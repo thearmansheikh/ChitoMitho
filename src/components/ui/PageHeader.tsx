@@ -13,7 +13,7 @@ export type Tone = keyof typeof TONES;
 
 /** Coloured banner at the top of a page: an icon, a title and an optional line of help. */
 export default function PageHeader({ icon, title, subtitle, tone = "blue" }: {
-  icon: string;
+  icon: ReactNode;
   title: string;
   subtitle?: ReactNode;
   tone?: Tone;

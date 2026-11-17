@@ -3,8 +3,9 @@ import Link from "next/link";
 import { getLocale } from "next-intl/server";
 import { pick } from "@/lib/names";
 import type { Place } from "@/types/db";
+import ServiceIcon from "@/components/ui/ServiceIcon";
 
-const FALLBACK = { food: "🍽️", grocery: "🛒", liquor: "🍺", gifts: "💐" } as const;
+const ICON = { food: "food", grocery: "grocery", liquor: "liquor", gifts: "gifts" } as const;
 
 export default async function PlaceCard({ place }: { place: Place }) {
   const locale = await getLocale();
@@ -16,8 +17,8 @@ export default async function PlaceCard({ place }: { place: Place }) {
       {place.logo_url ? (
         <Image src={place.logo_url} alt="" width={64} height={64} loading="lazy" className="h-16 w-16 flex-none rounded-2xl object-cover ring-1 ring-slate-200" />
       ) : (
-        <div aria-hidden className="flex h-16 w-16 flex-none items-center justify-center rounded-2xl bg-gradient-to-br from-red-50 to-amber-50 text-3xl ring-1 ring-slate-200">
-          {FALLBACK[place.type]}
+        <div aria-hidden className="flex h-16 w-16 flex-none items-center justify-center rounded-2xl bg-gradient-to-br from-red-50 to-amber-50 ring-1 ring-slate-200">
+          <ServiceIcon name={ICON[place.type]} className="h-10 w-10" />
         </div>
       )}
       <div className="min-w-0 flex-1">

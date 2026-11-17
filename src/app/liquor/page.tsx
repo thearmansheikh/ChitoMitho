@@ -4,6 +4,7 @@ import { getSettings } from "@/lib/data";
 import AgeGate from "@/components/shop/AgeGate";
 import TypeMenus from "@/components/shop/TypeMenus";
 import PageHeader from "@/components/ui/PageHeader";
+import ServiceIcon from "@/components/ui/ServiceIcon";
 
 export const metadata: Metadata = {
   title: "Liquor delivery in Dharan (18+)",
@@ -17,7 +18,7 @@ export default async function LiquorPage() {
   return (
     <AgeGate text={settings.liquor_age_text}>
       <div className="space-y-6">
-        <PageHeader icon="🍺" tone="amber" title={t("liquorTitle")} subtitle={s("liquor")} />
+        <PageHeader icon={<ServiceIcon name="liquor" className="h-9 w-9" />} tone="amber" title={t("liquorTitle")} subtitle={s("liquor")} />
         <TypeMenus type="liquor" />
       </div>
     </AgeGate>

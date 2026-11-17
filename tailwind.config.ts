@@ -38,6 +38,10 @@ const config: Config = {
           "50%": { transform: "translateY(-5px)" },
         },
         dash: { to: { strokeDashoffset: "-28" } },
+        bob: {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-2px)" },
+        },
         "pulse-dot": {
           "0%": { boxShadow: "0 0 0 0 rgba(22,163,74,.5)" },
           "70%": { boxShadow: "0 0 0 7px rgba(22,163,74,0)" },
@@ -48,6 +52,7 @@ const config: Config = {
         "fade-up": "fade-up .55s cubic-bezier(.2,.7,.2,1) both",
         float: "float 3.2s ease-in-out infinite",
         dash: "dash 1.6s linear infinite",
+        bob: "bob .7s ease-in-out infinite",
         "pulse-dot": "pulse-dot 2s ease-out infinite",
       },
       minHeight: { tap: "48px" },
