@@ -84,6 +84,11 @@ function ItemsManager() {
     if (error) setError(error.message); else load();
   }
 
+  async function toggleFeatured(i: Item) {
+    const { error } = await sb.from("items").update({ is_featured: !i.is_featured }).eq("id", i.id);
+    if (error) setError(error.message); else load();
+  }
+
   async function photo(i: Item, file?: File) {
     if (!file) return;
     try {
@@ -166,11 +171,14 @@ function ItemsManager() {
                       : <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-slate-100" aria-hidden>🍽️</div>}
                     <div className="min-w-0 flex-1">
                       <p className="truncate font-semibold">{i.name} {i.name_ne && <span className="font-normal text-slate-500">· {i.name_ne}</span>}</p>
-                      <p className="text-sm text-slate-600">{formatNPR(i.price_npr)} {!i.is_available && <b className="text-brand-red">· Sold out</b>}</p>
+                      <p className="text-sm text-slate-600">{formatNPR(i.price_npr)} {!i.is_available && <b className="text-brand-red">· Sold out</b>} {i.is_featured && <b className="text-brand-blue">· ★ On home page</b>}</p>
                     </div>
                   </div>
                   <div className="mt-3 flex flex-wrap gap-2">
                     <button className={btnGhost} onClick={() => toggle(i)}>{i.is_available ? "Mark sold out" : "Mark available"}</button>
+                    <button className={btnGhost} aria-pressed={i.is_featured} onClick={() => toggleFeatured(i)}>
+                      {i.is_featured ? "★ Featured · remove" : "☆ Feature on home"}
+                    </button>
                     <button className={btnGhost} onClick={() => startEdit(i)}>Edit</button>
                     <label className={`${btnGhost} flex cursor-pointer items-center`}>
                       Photo

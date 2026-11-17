@@ -30,6 +30,8 @@ export interface Item {
   price_npr: number;
   image_url: string | null;
   is_available: boolean;
+  /** Shown in "Today's picks" on the home page. */
+  is_featured: boolean;
   sort_order: number;
 }
 export interface Area {

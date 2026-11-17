@@ -12,6 +12,9 @@
   },
   "home": {
     "title": "Order anything, from anywhere",
+    "picksTitle": "Today's picks",
+    "picksSub": "Hand-picked by our team",
+    "picksBadge": "Pick",
     "titleA": "Order anything,",
     "titleB": "from anywhere",
     "ctaFood": "Order food",

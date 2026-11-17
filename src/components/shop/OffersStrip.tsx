@@ -14,7 +14,7 @@ export default async function OffersStrip({ offers }: { offers: Offer[] }) {
   return (
     <section aria-labelledby="offers-h" className="space-y-3">
       <h2 id="offers-h" className="text-xl font-extrabold">{t("title")}</h2>
-      <ul className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2">
+      <ul className="no-scrollbar -mx-4 flex scroll-pl-4 snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2">
         {offers.map((o) => {
           const body = pick(o.body ?? "", o.body_ne, locale);
           return (

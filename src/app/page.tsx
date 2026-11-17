@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { getOffers, getPlaces, getSettings } from "@/lib/data";
+import { getFeatured, getOffers, getPlaces, getSettings } from "@/lib/data";
+import TodaysPicks from "@/components/shop/TodaysPicks";
 import PlaceCard from "@/components/shop/PlaceCard";
 import ClosedNotice from "@/components/shop/ClosedNotice";
 import ReorderCard from "@/components/shop/ReorderCard";
@@ -29,6 +30,7 @@ export default async function Home() {
   const settings = await getSettings();
   const popular = (await getPlaces("food")).slice(0, 4);
   const offers = await getOffers();
+  const picks = await getFeatured();
 
   return (
     <div className="space-y-10">
@@ -91,6 +93,8 @@ export default async function Home() {
           </Link>
         ))}
       </section>
+
+      <TodaysPicks picks={picks} />
 
       {popular.length > 0 && (
         <section className="space-y-4">

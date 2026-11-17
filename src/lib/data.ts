@@ -62,6 +62,37 @@ export const getPlaceBySlug = unstable_cache(
   REVALIDATE,
 );
 
+export interface FeaturedItem {
+  item: Item;
+  place: Place;
+}
+
+/** Items the team switched on for "Today's picks": in stock, at an active place. Empty until someone picks some. */
+export const getFeatured = unstable_cache(
+  async (): Promise<FeaturedItem[]> => {
+    if (!isConfigured) {
+      return SAMPLE_ITEMS.filter((i) => i.is_featured && i.is_available).flatMap((item) => {
+        const place = SAMPLE_PLACES.find((p) => p.id === item.place_id);
+        return place ? [{ item, place }] : [];
+      });
+    }
+    const c = sb();
+    const { data: items, error } = await c
+      .from("items").select("*").eq("is_featured", true).eq("is_available", true).order("sort_order").limit(12);
+    if (error) console.error("getFeatured", error.message);
+    const list = (items as Item[]) ?? [];
+    if (list.length === 0) return [];
+    const { data: places } = await c.from("places").select("*").in("id", [...new Set(list.map((i) => i.place_id))]);
+    const byId = new Map(((places as Place[]) ?? []).map((p) => [p.id, p]));
+    return list.flatMap((item) => {
+      const place = byId.get(item.place_id);
+      return place ? [{ item: { ...item, price_npr: Number(item.price_npr) }, place }] : [];
+    });
+  },
+  ["featured"],
+  REVALIDATE,
+);
+
 export const getOffers = unstable_cache(
   async (): Promise<Offer[]> => {
     if (!isConfigured) return SAMPLE_OFFERS;

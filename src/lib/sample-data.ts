@@ -49,20 +49,20 @@ export const SAMPLE_CATEGORIES: Category[] = [
   cat("c-cakes", "p-gifts", "Cakes", "केक", 2),
 ];
 
-const item = (id: string, place_id: string, category_id: string, name: string, name_ne: string, price_npr: number, is_available = true): Item => ({
-  id, place_id, category_id, name, name_ne, description: null, price_npr, image_url: null, is_available, sort_order: 0,
+const item = (id: string, place_id: string, category_id: string, name: string, name_ne: string, price_npr: number, is_available = true, is_featured = false): Item => ({
+  id, place_id, category_id, name, name_ne, description: null, price_npr, image_url: null, is_available, is_featured, sort_order: 0,
 });
 
 export const SAMPLE_ITEMS: Item[] = [
-  item("i-cmomo", "p-olive", "c-momo", "Chicken Momo", "चिकेन मोमो", 250),
+  item("i-cmomo", "p-olive", "c-momo", "Chicken Momo", "चिकेन मोमो", 250, true, true),
   item("i-vmomo", "p-olive", "c-momo", "Veg Momo", "भेज मोमो", 200, false),
   item("i-coffee", "p-olive", "c-drinks", "Cold Coffee", "कोल्ड कफी", 180),
-  item("i-burger", "p-circle", "c-burgers", "Chicken Burger", "चिकेन बर्गर", 320),
+  item("i-burger", "p-circle", "c-burgers", "Chicken Burger", "चिकेन बर्गर", 320, true, true),
   item("i-rice", "p-siblings", "c-meals", "Chicken Fried Rice", "चिकेन फ्राइड राइस", 280),
   item("i-rice5", "p-grocery", "c-rice", "Rice 5kg", "चामल ५ केजी", 900),
   item("i-tomato", "p-grocery", "c-veg", "Tomato 1kg", "गोलभेडा १ केजी", 80),
   item("i-beer", "p-drinks", "c-beer", "Beer 650ml", "बियर ६५० एमएल", 450),
-  item("i-roses", "p-gifts", "c-bouquets", "Red Rose Bouquet", "रातो गुलाफको गुच्छा", 1500),
+  item("i-roses", "p-gifts", "c-bouquets", "Red Rose Bouquet", "रातो गुलाफको गुच्छा", 1500, true, true),
   item("i-cake", "p-gifts", "c-cakes", "Chocolate Cake 1lb", "चकलेट केक १ पाउन्ड", 1200),
 ];
 
