@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { getPlaces, getSettings } from "@/lib/data";
 import PlaceCard from "@/components/shop/PlaceCard";
 import ClosedNotice from "@/components/shop/ClosedNotice";
+import ReorderCard from "@/components/shop/ReorderCard";
 
 const SERVICES = [
   { href: "/food", key: "food", icon: "🍔" },
@@ -16,6 +17,8 @@ const SERVICES = [
 export default async function Home() {
   const t = await getTranslations("home");
   const s = await getTranslations("services");
+  const pr = await getTranslations("promise");
+  const pa = await getTranslations("partner");
   const settings = await getSettings();
   const popular = (await getPlaces("food")).slice(0, 4);
 
@@ -33,6 +36,8 @@ export default async function Home() {
         <h1 className="text-3xl font-extrabold leading-tight">{t("title")}</h1>
         <p className="mt-3 text-white/90">{t("subtitle")}</p>
       </section>
+
+      <ReorderCard />
 
       <section aria-label="Services" className="grid grid-cols-2 gap-3">
         {SERVICES.map((x) => (
@@ -64,6 +69,17 @@ export default async function Home() {
             </li>
           ))}
         </ol>
+      </section>
+
+      <section className="grid gap-3 sm:grid-cols-2">
+        <Link href="/promise" className="rounded-xl border border-slate-200 p-4 active:bg-slate-50">
+          <p className="font-bold text-brand-blue">🤝 {pr("link")}</p>
+          <p className="text-sm text-slate-600">{pr("linkBody")}</p>
+        </Link>
+        <Link href="/partner" className="rounded-xl border border-slate-200 p-4 active:bg-slate-50">
+          <p className="font-bold text-brand-blue">🏪 {pa("ctaTitle")}</p>
+          <p className="text-sm text-slate-600">{pa("ctaBody")}</p>
+        </Link>
       </section>
 
       <section className="grid grid-cols-2 gap-3">

@@ -61,6 +61,28 @@ export const getPlaceBySlug = unstable_cache(
   REVALIDATE,
 );
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+export interface ItemStatus {
+  id: string;
+  price_npr: number;
+  is_available: boolean;
+}
+
+/** Fresh (uncached) price and availability for items, used by "Order again". Missing = no longer sold. */
+export async function getItemStatus(ids: string[]): Promise<ItemStatus[]> {
+  if (ids.length === 0) return [];
+  if (!isConfigured) {
+    return SAMPLE_ITEMS.filter((i) => ids.includes(i.id)).map((i) => ({ id: i.id, price_npr: Number(i.price_npr), is_available: i.is_available }));
+  }
+  // Ids that are not UUIDs (e.g. left over from preview/sample data) can never match: treat as missing.
+  const valid = ids.filter((i) => UUID_RE.test(i));
+  if (valid.length === 0) return [];
+  const { data, error } = await sb().from("items").select("id, price_npr, is_available").in("id", valid);
+  if (error) throw new Error(error.message);
+  return (data as ItemStatus[]) ?? [];
+}
+
 export interface Menu {
   categories: Category[];
   items: Item[];

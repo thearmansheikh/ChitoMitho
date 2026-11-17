@@ -38,7 +38,7 @@ async function logOrderClick(row: { service: Service; place_id: string | null; i
   }
 }
 
-export default function SendOrder({ service, placeId, itemsTotal, build, validate, config, areas, onDone, label }: {
+export default function SendOrder({ service, placeId, itemsTotal, build, validate, config, areas, onDone, onSent, label }: {
   service: Service;
   placeId: string | null;
   itemsTotal: number | null;
@@ -48,6 +48,8 @@ export default function SendOrder({ service, placeId, itemsTotal, build, validat
   config: OrderConfig;
   areas: Area[];
   onDone?: () => void;
+  /** Called once the order has been handed to WhatsApp (used to remember it for "Order again"). */
+  onSent?: () => void;
   label?: string;
 }) {
   const t = useTranslations("order");
@@ -106,6 +108,7 @@ export default function SendOrder({ service, placeId, itemsTotal, build, validat
     setSentUrl(url);
     setSheet(false);
     setBusy(false);
+    onSent?.();
     // A new tab works on desktop; if the browser blocks it (common on iPhone), go in this tab.
     const w = window.open(url, "_blank", "noopener");
     if (!w) window.location.href = url;

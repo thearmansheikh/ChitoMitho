@@ -8,12 +8,13 @@ import { pick } from "@/lib/names";
 import { basketMessage } from "@/lib/whatsapp";
 import type { Area, Service } from "@/types/db";
 import SendOrder, { type OrderConfig } from "@/components/forms/SendOrder";
+import ReorderCard from "./ReorderCard";
 
 export default function BasketView({ config, areas }: { config: OrderConfig; areas: Area[] }) {
   const t = useTranslations("basket");
   const d = useTranslations("delivery");
   const locale = useLocale();
-  const { lines, extras, total, hydrated, setQty, setNote, remove, clear } = useBasket();
+  const { lines, extras, total, hydrated, setQty, setNote, remove, clear, saveLastOrder, notice, setNotice } = useBasket();
 
   if (!hydrated) return null;
 
@@ -27,7 +28,11 @@ export default function BasketView({ config, areas }: { config: OrderConfig; are
         <p className="text-5xl" aria-hidden>🧺</p>
         <h1 className="text-2xl font-extrabold text-brand-blue">{t("title")}</h1>
         <p className="text-slate-600">{t("empty")}</p>
-        <Link href="/" className="inline-flex min-h-[52px] items-center rounded-xl bg-brand-blue px-6 font-bold text-white">{t("browse")}</Link>
+        {notice && (
+          <p role="status" className="mx-auto max-w-sm rounded-lg bg-yellow-50 p-3 text-left text-sm font-semibold text-yellow-900">{notice}</p>
+        )}
+        <Link href="/" onClick={() => setNotice(null)} className="inline-flex min-h-[52px] items-center rounded-xl bg-brand-blue px-6 font-bold text-white">{t("browse")}</Link>
+        <div className="mx-auto max-w-sm text-left"><ReorderCard /></div>
       </div>
     );
   }
@@ -54,6 +59,12 @@ export default function BasketView({ config, areas }: { config: OrderConfig; are
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-extrabold text-brand-blue">{t("title")}</h1>
+      {notice && (
+        <p role="status" className="flex items-start justify-between gap-2 rounded-lg bg-yellow-50 p-3 text-sm font-semibold text-yellow-900">
+          <span>{notice}</span>
+          <button type="button" onClick={() => setNotice(null)} aria-label={t("dismiss")} className="-m-2 flex h-11 w-11 flex-none items-center justify-center text-lg">×</button>
+        </p>
+      )}
 
       {groups.map((g) => (
         <section key={g.id} className="space-y-2">
@@ -117,6 +128,7 @@ export default function BasketView({ config, areas }: { config: OrderConfig; are
           config={config}
           areas={areas}
           onDone={clear}
+          onSent={() => saveLastOrder({ lines, shoppingList: extras.shoppingList, total })}
           validate={() =>
             giftInBasket && (!extras.gift.recipientName.trim() || !extras.gift.recipientPhone.trim()) ? t("giftNeeds") : null
           }

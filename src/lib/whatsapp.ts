@@ -126,6 +126,56 @@ export function anythingMessage(lang: Lang, a: AnythingOrder, customer: Customer
   ].join("\n");
 }
 
+export type BusinessType = "cafe" | "grocery" | "liquor" | "gifts" | "other";
+export type Vehicle = "bike" | "scooter" | "bicycle" | "other";
+
+export interface PartnerRequest {
+  business: string;
+  type: BusinessType;
+  contactName: string;
+  phone: string;
+  area: string;
+  offer: string;
+}
+
+export interface RiderApplication {
+  name: string;
+  phone: string;
+  area: string;
+  vehicle: Vehicle;
+  hasLicense: boolean;
+  availability: string;
+}
+
+export function partnerMessage(lang: Lang, p: PartnerRequest): string {
+  const t = L[lang].partner;
+  return [
+    t.header,
+    `${t.business}: ${p.business}`,
+    `${t.type}: ${t.types[p.type]}`,
+    `${t.contactName}: ${p.contactName}`,
+    `${t.phone}: ${p.phone}`,
+    `${t.area}: ${p.area}`,
+    ...(p.offer.trim() ? [`${t.offer}: ${p.offer.trim()}`] : []),
+    "",
+    `✅ ${t.consent}`,
+    t.menuPhotos,
+  ].join("\n");
+}
+
+export function riderMessage(lang: Lang, r: RiderApplication): string {
+  const t = L[lang].partner;
+  return [
+    t.riderHeader,
+    `${t.riderName}: ${r.name}`,
+    `${t.phone}: ${r.phone}`,
+    `${t.area}: ${r.area}`,
+    `${t.vehicle}: ${t.vehicles[r.vehicle]}`,
+    `${t.license}: ${r.hasLicense ? t.yes : t.no}`,
+    ...(r.availability.trim() ? [`${t.availability}: ${r.availability.trim()}`] : []),
+  ].join("\n");
+}
+
 /** wa.me link for a Nepal number. Accepts "98XXXXXXXX", "+977 98…" or "97798…". */
 export function whatsappUrl(number: string, text: string): string {
   let d = number.replace(/\D/g, "");

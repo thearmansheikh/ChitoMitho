@@ -39,7 +39,22 @@ interface State {
   extras: Extras;
 }
 
+/** The last order sent to WhatsApp, kept only on this phone so it can be repeated. */
+export interface LastOrder {
+  lines: BasketLine[];
+  shoppingList: string;
+  total: number;
+  savedAt: string; // ISO date
+}
+
 interface BasketApi extends State {
+  lastOrder: LastOrder | null;
+  saveLastOrder: (o: { lines: BasketLine[]; shoppingList: string; total: number }) => void;
+  /** Replace the basket (used by "Order again"). Gift details are not restored: dates go stale. */
+  loadIntoBasket: (lines: BasketLine[], shoppingList: string) => void;
+  /** One-off message shown on the basket page (e.g. "2 items are sold out"). Memory only. */
+  notice: string | null;
+  setNotice: (m: string | null) => void;
   hydrated: boolean;
   count: number;
   total: number;
@@ -53,13 +68,27 @@ interface BasketApi extends State {
 }
 
 const KEY = "cm-basket-v1";
+const LAST_KEY = "cm-last-order-v1";
 const Ctx = createContext<BasketApi | null>(null);
 
 export function BasketProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<State>({ lines: [], extras: EMPTY_EXTRAS });
   const [hydrated, setHydrated] = useState(false);
+  const [lastOrder, setLastOrder] = useState<LastOrder | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
 
   useEffect(() => {
+    try {
+      const rawLast = localStorage.getItem(LAST_KEY);
+      if (rawLast) {
+        const l = JSON.parse(rawLast) as Partial<LastOrder>;
+        if (Array.isArray(l.lines)) {
+          setLastOrder({ lines: l.lines, shoppingList: l.shoppingList ?? "", total: Number(l.total) || 0, savedAt: l.savedAt ?? "" });
+        }
+      }
+    } catch {
+      /* ignore */
+    }
     try {
       const raw = localStorage.getItem(KEY);
       if (raw) {
@@ -117,11 +146,29 @@ export function BasketProvider({ children }: { children: React.ReactNode }) {
 
   const clear = useCallback(() => setState({ lines: [], extras: EMPTY_EXTRAS }), []);
 
+  const saveLastOrder = useCallback<BasketApi["saveLastOrder"]>((o) => {
+    if (o.lines.length === 0 && !o.shoppingList.trim()) return;
+    const saved: LastOrder = { ...o, savedAt: new Date().toISOString() };
+    setLastOrder(saved);
+    try {
+      localStorage.setItem(LAST_KEY, JSON.stringify(saved));
+    } catch {
+      /* storage blocked */
+    }
+  }, []);
+
+  const loadIntoBasket = useCallback<BasketApi["loadIntoBasket"]>((lines, shoppingList) => {
+    setState({ lines, extras: { ...EMPTY_EXTRAS, shoppingList } });
+  }, []);
+
   const value = useMemo<BasketApi>(() => {
     const count = state.lines.reduce((n, l) => n + l.qty, 0);
     const total = state.lines.reduce((n, l) => n + l.qty * l.price, 0);
-    return { ...state, hydrated, count, total, add, setQty, setNote, remove, setShoppingList, setGift, clear };
-  }, [state, hydrated, add, setQty, setNote, remove, setShoppingList, setGift, clear]);
+    return {
+      ...state, hydrated, count, total, add, setQty, setNote, remove, setShoppingList, setGift, clear,
+      lastOrder, saveLastOrder, loadIntoBasket, notice, setNotice,
+    };
+  }, [state, hydrated, add, setQty, setNote, remove, setShoppingList, setGift, clear, lastOrder, saveLastOrder, loadIntoBasket, notice]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

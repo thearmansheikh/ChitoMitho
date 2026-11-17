@@ -7,6 +7,7 @@ export default async function Footer() {
   const t = await getTranslations("footer");
   const b = await getTranslations("brand");
   const a = await getTranslations("about");
+  const n = await getTranslations("nav");
   const s = await getSettings();
   const link = "inline-flex min-h-tap items-center font-semibold underline-offset-2 hover:underline";
   return (
@@ -23,6 +24,8 @@ export default async function Footer() {
           <a href={`https://www.tiktok.com/@${SITE.tiktok}`} className={link} target="_blank" rel="noopener noreferrer">{t("tiktok")} @{SITE.tiktok}</a>
           <a href={`https://www.instagram.com/${SITE.instagram}`} className={link} target="_blank" rel="noopener noreferrer">{t("instagram")} @{SITE.instagram}</a>
           <Link href="/about" className={link}>{a("link")}</Link>
+          <Link href="/promise" className={link}>{n("promise")}</Link>
+          <Link href="/partner" className={link}>{n("partner")}</Link>
         </div>
       </div>
     </footer>
