@@ -135,7 +135,17 @@
     "sentTitle": "Your order is ready in WhatsApp",
     "sentBody": "Press send in WhatsApp. You can also share your live location there so the rider finds you easily.",
     "sentAgain": "Open WhatsApp again",
-    "sentDone": "Done"
+    "sentDone": "Done",
+    "shareLocation": "Share my location",
+    "locating": "Finding your location…",
+    "locationAdded": "Location added",
+    "locationRemove": "Remove",
+    "locationView": "Check on map",
+    "locationHelp": "Optional. Helps the rider find you. It is only sent in your WhatsApp message and is never saved by us.",
+    "locationApprox": "This location is approximate. Please also fill in the landmark below.",
+    "locationDenied": "Location is blocked for this site. Allow it in your browser settings, or share your live location in WhatsApp instead.",
+    "locationFailed": "We could not get your location. You can share it in WhatsApp instead.",
+    "locationUnsupported": "This browser cannot share location. You can share it in WhatsApp instead."
   },
   "parcel": {
     "title": "Parcel / Pick & Drop",
@@ -188,6 +198,7 @@
     "need": "Needs",
     "buyFrom": "Buy from",
     "budget": "Budget",
+    "location": "Map location",
     "services": { "food": "Food", "grocery": "Groceries", "liquor": "Liquor", "gifts": "Gifts & Flowers", "parcel": "Parcel / Pick & Drop", "anything": "Order Anything" },
     "sizes": { "small": "Small", "medium": "Medium", "large": "Large" },
     "payments": { "cod": "Cash on delivery", "qr": "QR at door" }

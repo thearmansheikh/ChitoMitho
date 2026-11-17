@@ -14,6 +14,8 @@ export interface Customer {
   phone: string;
   area: string;
   landmark: string;
+  /** Optional GPS position the customer chose to share. */
+  location?: { lat: number; lng: number } | null;
   payment: Payment;
   note: string;
 }
@@ -33,6 +35,11 @@ export interface AnythingOrder {
   budget: string;
 }
 
+/** Google Maps link that opens at the exact point (works on every phone and in WhatsApp). */
+export function mapLink(p: { lat: number; lng: number }): string {
+  return `https://www.google.com/maps?q=${p.lat.toFixed(6)},${p.lng.toFixed(6)}`;
+}
+
 function customerBlock(lang: Lang, c: Customer): string[] {
   const t = L[lang];
   return [
@@ -40,6 +47,7 @@ function customerBlock(lang: Lang, c: Customer): string[] {
     `${t.phone}: ${c.phone}`,
     `${t.area}: ${c.area}`,
     `${t.landmark}: ${c.landmark}`,
+    ...(c.location ? [`📍 ${t.location}: ${mapLink(c.location)}`] : []),
     `${t.payment}: ${t.payments[c.payment]}`,
     ...(c.note.trim() ? [`${t.note}: ${c.note.trim()}`] : []),
   ];

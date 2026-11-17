@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { pick } from "@/lib/names";
 import { EMPTY_DETAILS, PHONE_RE, normalizePhone, type Details, type Payment } from "@/lib/details";
 import type { Area, AreaGroup } from "@/types/db";
+import LocationButton, { type Coords } from "./LocationButton";
 
 const GROUPS: AreaGroup[] = ["dharan", "itahari", "biratnagar", "nearby"];
 const input =
@@ -15,7 +16,7 @@ type Errors = Partial<Record<"name" | "phone" | "area" | "areaOther" | "landmark
 export default function DetailsSheet({ open, onClose, onConfirm, areas, initial, busy }: {
   open: boolean;
   onClose: () => void;
-  onConfirm: (d: Details, note: string) => void;
+  onConfirm: (d: Details, note: string, location: Coords | null) => void;
   areas: Area[];
   initial: Details | null;
   busy: boolean;
@@ -24,6 +25,7 @@ export default function DetailsSheet({ open, onClose, onConfirm, areas, initial,
   const locale = useLocale();
   const [d, setD] = useState<Details>(EMPTY_DETAILS);
   const [note, setNote] = useState("");
+  const [loc, setLoc] = useState<Coords | null>(null); // never saved; asked fresh for every order
   const [errors, setErrors] = useState<Errors>({});
   const firstRef = useRef<HTMLInputElement>(null);
 
@@ -32,6 +34,7 @@ export default function DetailsSheet({ open, onClose, onConfirm, areas, initial,
     if (!open) return;
     setD(initial ?? EMPTY_DETAILS);
     setErrors({});
+    setLoc(null);
     const id = setTimeout(() => firstRef.current?.focus(), 50);
     return () => clearTimeout(id);
   }, [open, initial]);
@@ -56,7 +59,7 @@ export default function DetailsSheet({ open, onClose, onConfirm, areas, initial,
     if (!d.landmark.trim()) err.landmark = t("required");
     setErrors(err);
     if (Object.keys(err).length) return;
-    onConfirm({ ...d, name: d.name.trim(), phone, areaOther: d.areaOther.trim(), landmark: d.landmark.trim() }, note);
+    onConfirm({ ...d, name: d.name.trim(), phone, areaOther: d.areaOther.trim(), landmark: d.landmark.trim() }, note, loc);
   }
 
   const errText = (m?: string) => (m ? <span role="alert" className="block text-sm text-brand-red">{m}</span> : null);
@@ -121,6 +124,8 @@ export default function DetailsSheet({ open, onClose, onConfirm, areas, initial,
           <span className="block text-xs text-slate-500">{t("landmarkHelp")}</span>
           {errText(errors.landmark)}
         </label>
+
+        <LocationButton value={loc} onChange={setLoc} />
 
         <fieldset className="space-y-2">
           <legend className="text-sm font-semibold">{t("payment")}</legend>

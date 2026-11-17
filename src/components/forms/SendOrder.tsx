@@ -81,7 +81,7 @@ export default function SendOrder({ service, placeId, itemsTotal, build, validat
     setSheet(true);
   }
 
-  async function confirm(d: Details, note: string) {
+  async function confirm(d: Details, note: string, location: { lat: number; lng: number } | null) {
     // Re-check at the moment of sending: the page may have been open since before closing time.
     if (config.paused || !isOpenNow(config.openTime, config.closeTime)) {
       setSheet(false);
@@ -94,7 +94,7 @@ export default function SendOrder({ service, placeId, itemsTotal, build, validat
     const area = areas.find((a) => a.id === d.areaId);
     const groupLabel = area ? t(`groups.${area.area_group}`) : "";
     const areaText = area ? `${groupLabel} – ${pick(area.name, area.name_ne, locale)}` : d.areaOther;
-    const text = build({ name: d.name, phone: d.phone, area: areaText, landmark: d.landmark, payment: d.payment, note }, locale);
+    const text = build({ name: d.name, phone: d.phone, area: areaText, landmark: d.landmark, location, payment: d.payment, note }, locale);
     const url = whatsappUrl(config.whatsapp, text);
 
     // Give the count a moment to send, but never make the customer wait long.
