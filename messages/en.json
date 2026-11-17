@@ -88,7 +88,9 @@
     "orderOnWhatsapp": "Order on WhatsApp",
     "giftNeeds": "Please add the recipient's name and phone on the Gifts page.",
     "clear": "Empty basket",
-    "dismiss": "Dismiss"
+    "dismiss": "Dismiss",
+    "subtotal": "Subtotal",
+    "addMore": "Add more"
   },
   "bar": { "basket": "Basket", "whatsapp": "WhatsApp" },
   "nav": {
@@ -271,6 +273,16 @@
     "sentBody": "Press send in WhatsApp. You can also share your live location there so the rider finds you easily.",
     "sentAgain": "Open WhatsApp again",
     "sentDone": "Done",
+    "review": "Review your order",
+    "reviewTitle": "Check your order",
+    "reviewHelp": "This is exactly what we receive on WhatsApp. Nothing is sent until you press send there.",
+    "reviewSend": "Open WhatsApp",
+    "reviewEdit": "Edit my details",
+    "nextTitle": "What happens next",
+    "next1": "We read your order on WhatsApp.",
+    "next2": "We reply with the delivery charge and when to expect it.",
+    "next3": "Your rider delivers. Pay cash or QR at the door.",
+    "hoursLine": "We reply between {open} and {close}.",
     "shareLocation": "Share my location",
     "locating": "Finding your location…",
     "locationAdded": "Location added",

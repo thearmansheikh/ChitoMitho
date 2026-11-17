@@ -23,7 +23,7 @@ export interface SheetExtra {
 /** A customer can pick a time at least this long from now, so the team has time to prepare. */
 const LEAD_MINUTES = 30;
 
-export default function DetailsSheet({ open, onClose, onConfirm, areas, initial, busy, openTime, closeTime, allowSchedule }: {
+export default function DetailsSheet({ open, onClose, onConfirm, areas, initial, busy, openTime, closeTime, allowSchedule, preview }: {
   open: boolean;
   onClose: () => void;
   onConfirm: (d: Details, note: string, extra: SheetExtra) => void;
@@ -34,12 +34,15 @@ export default function DetailsSheet({ open, onClose, onConfirm, areas, initial,
   areas: Area[];
   initial: Details | null;
   busy: boolean;
+  /** Builds the exact WhatsApp message so the customer can read it before it opens. */
+  preview?: (d: Details, note: string, extra: SheetExtra) => string;
 }) {
   const t = useTranslations("order");
   const locale = useLocale();
   const [d, setD] = useState<Details>(EMPTY_DETAILS);
   const [note, setNote] = useState("");
   const [loc, setLoc] = useState<Coords | null>(null); // never saved; asked fresh for every order
+  const [review, setReview] = useState<{ d: Details; note: string; extra: SheetExtra; text: string } | null>(null);
   const [when, setWhen] = useState<"asap" | "later">("asap");
   const [day, setDay] = useState<"today" | "tomorrow">("today");
   const [time, setTime] = useState("");
@@ -52,6 +55,7 @@ export default function DetailsSheet({ open, onClose, onConfirm, areas, initial,
     setD(initial ?? EMPTY_DETAILS);
     setErrors({});
     setLoc(null);
+    setReview(null);
     setWhen("asap");
     setTime("");
     const id = setTimeout(() => firstRef.current?.focus(), 50);
@@ -93,10 +97,44 @@ export default function DetailsSheet({ open, onClose, onConfirm, areas, initial,
     if (!d.landmark.trim()) err.landmark = t("required");
     setErrors(err);
     if (Object.keys(err).length) return;
-    onConfirm({ ...d, name: d.name.trim(), phone, areaOther: d.areaOther.trim(), landmark: d.landmark.trim() }, note, { location: loc, deliverAt });
+    const clean = { ...d, name: d.name.trim(), phone, areaOther: d.areaOther.trim(), landmark: d.landmark.trim() };
+    const extra: SheetExtra = { location: loc, deliverAt };
+    // Show the customer exactly what will be sent before WhatsApp opens.
+    if (preview) return setReview({ d: clean, note, extra, text: preview(clean, note, extra) });
+    onConfirm(clean, note, extra);
   }
 
   const errText = (m?: string) => (m ? <span role="alert" className="block text-sm text-brand-red">{m}</span> : null);
+
+  if (review) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 sm:items-center" onClick={onClose}>
+        <div
+          role="dialog" aria-modal="true" aria-labelledby="review-title" onClick={(e) => e.stopPropagation()}
+          className="max-h-[92vh] w-full max-w-lg space-y-3 overflow-y-auto rounded-t-2xl bg-white p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:rounded-2xl"
+        >
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <h2 id="review-title" className="text-xl font-extrabold text-brand-blue">{t("reviewTitle")}</h2>
+              <p className="text-sm text-slate-600">{t("reviewHelp")}</p>
+            </div>
+            <button type="button" onClick={onClose} aria-label={t("close")} className="flex h-11 w-11 flex-none items-center justify-center rounded-lg text-2xl text-slate-500">×</button>
+          </div>
+          {/* Looks like the WhatsApp message it will become. */}
+          <pre tabIndex={0} className="max-h-[46vh] overflow-auto whitespace-pre-wrap break-words rounded-2xl rounded-tl-sm bg-[#DCF8C6] p-4 font-sans text-sm leading-relaxed text-slate-900 shadow-sm">
+            {review.text}
+          </pre>
+          <button type="button" disabled={busy} onClick={() => onConfirm(review.d, review.note, review.extra)}
+            className="min-h-[56px] w-full rounded-xl bg-green-700 text-lg font-bold text-white disabled:opacity-60">
+            {busy ? t("opening") : `💬 ${t("reviewSend")}`}
+          </button>
+          <button type="button" onClick={() => setReview(null)} className="min-h-[48px] w-full rounded-lg border border-slate-300 font-semibold">
+            {t("reviewEdit")}
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 sm:items-center" onClick={onClose}>
@@ -213,7 +251,7 @@ export default function DetailsSheet({ open, onClose, onConfirm, areas, initial,
         </label>
 
         <button disabled={busy} className="min-h-[56px] w-full rounded-xl bg-green-700 text-lg font-bold text-white disabled:opacity-60">
-          {busy ? t("opening") : `💬 ${t("continue")}`}
+          {busy ? t("opening") : preview ? t("review") : `💬 ${t("continue")}`}
         </button>
         <button type="button" onClick={onClose} className="min-h-[44px] w-full text-sm font-semibold text-slate-600">{t("cancel")}</button>
       </form>

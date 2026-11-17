@@ -52,7 +52,7 @@ export default async function TodaysPicks({ picks }: { picks: FeaturedItem[] }) 
                       available={item.is_available}
                       label={name}
                       line={{
-                        itemId: item.id, placeId: place.id, placeName: place.name, placeNameNe: place.name_ne,
+                        itemId: item.id, placeId: place.id, placeName: place.name, placeNameNe: place.name_ne, placeSlug: place.slug,
                         placeType: place.type, name: item.name, nameNe: item.name_ne, price: Number(item.price_npr),
                       }}
                     />

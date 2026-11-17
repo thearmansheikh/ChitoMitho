@@ -143,7 +143,7 @@ export default function FoodBrowser({ places, categories, items, initialQuery }:
                     available={i.is_available}
                     label={name}
                     line={{
-                      itemId: i.id, placeId: place.id, placeName: place.name, placeNameNe: place.name_ne,
+                      itemId: i.id, placeId: place.id, placeName: place.name, placeNameNe: place.name_ne, placeSlug: place.slug,
                       placeType: place.type, name: i.name, nameNe: i.name_ne, price: Number(i.price_npr),
                     }}
                   />

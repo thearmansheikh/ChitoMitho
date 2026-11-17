@@ -42,11 +42,11 @@ export default function BasketView({ config, areas, offers }: { config: OrderCon
   }
 
   // Group lines by place, keeping first-added order.
-  const groups: { id: string; name: string; subtotal: number; lines: typeof lines }[] = [];
+  const groups: { id: string; name: string; slug?: string; subtotal: number; lines: typeof lines }[] = [];
   for (const l of lines) {
     let g = groups.find((x) => x.id === l.placeId);
     if (!g) {
-      g = { id: l.placeId, name: pick(l.placeName, l.placeNameNe, locale), subtotal: 0, lines: [] };
+      g = { id: l.placeId, name: pick(l.placeName, l.placeNameNe, locale), slug: l.placeSlug, subtotal: 0, lines: [] };
       groups.push(g);
     }
     g.lines.push(l);
@@ -72,7 +72,17 @@ export default function BasketView({ config, areas, offers }: { config: OrderCon
 
       {groups.map((g) => (
         <section key={g.id} className="space-y-2">
-          <h2 className="text-lg font-bold">{g.name}</h2>
+          <div className="flex flex-wrap items-baseline justify-between gap-x-3">
+            <h2 className="text-lg font-bold">{g.name}</h2>
+            <p className="flex items-center gap-3 text-sm text-slate-600">
+              <span>{t("subtotal")}: <b className="text-ink">{formatNPR(g.subtotal)}</b></span>
+              {g.slug && (
+                <Link href={`/p/${g.slug}`} className="inline-flex min-h-[44px] items-center font-semibold text-brand-blue underline-offset-2 hover:underline">
+                  + {t("addMore")}
+                </Link>
+              )}
+            </p>
+          </div>
           <ul className="divide-y divide-slate-100 rounded-xl border border-slate-200">
             {g.lines.map((l) => {
               const name = pick(l.name, l.nameNe, locale);

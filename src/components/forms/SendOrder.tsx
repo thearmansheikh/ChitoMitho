@@ -86,6 +86,17 @@ export default function SendOrder({ service, placeId, itemsTotal, build, validat
     setSheet(true);
   }
 
+  /** The exact message the customer's WhatsApp will open with, built the same way for the preview and the send. */
+  function makeText(d: Details, note: string, extra: SheetExtra) {
+    const area = areas.find((a) => a.id === d.areaId);
+    const areaText = area ? `${t(`groups.${area.area_group}`)} – ${pick(area.name, area.name_ne, locale)}` : d.areaOther;
+    const text = build(
+      { name: d.name, phone: d.phone, area: areaText, landmark: d.landmark, location: extra.location, deliverAt: extra.deliverAt, payment: d.payment, note },
+      locale,
+    );
+    return { text, area };
+  }
+
   async function confirm(d: Details, note: string, extra: SheetExtra) {
     // Re-check at the moment of sending: the page may have been open since before closing time.
     if (config.paused || !isOpenNow(config.openTime, config.closeTime)) {
@@ -96,10 +107,7 @@ export default function SendOrder({ service, placeId, itemsTotal, build, validat
     setBusy(true);
     saveDetails(d);
 
-    const area = areas.find((a) => a.id === d.areaId);
-    const groupLabel = area ? t(`groups.${area.area_group}`) : "";
-    const areaText = area ? `${groupLabel} – ${pick(area.name, area.name_ne, locale)}` : d.areaOther;
-    const text = build({ name: d.name, phone: d.phone, area: areaText, landmark: d.landmark, location: extra.location, deliverAt: extra.deliverAt, payment: d.payment, note }, locale);
+    const { text, area } = makeText(d, note, extra);
     const url = whatsappUrl(config.whatsapp, text);
 
     // Give the count a moment to send, but never make the customer wait long.
@@ -119,11 +127,23 @@ export default function SendOrder({ service, placeId, itemsTotal, build, validat
 
   if (sentUrl) {
     return (
-      <div role="dialog" aria-modal="true" aria-labelledby="sent-title" className="fixed inset-0 z-50 flex items-center justify-center bg-white p-6">
+      <div role="dialog" aria-modal="true" aria-labelledby="sent-title" className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-white p-6 sm:items-center">
         <div className="w-full max-w-sm space-y-4 text-center">
           <p className="text-6xl" aria-hidden>✅</p>
           <h2 id="sent-title" className="text-2xl font-extrabold text-brand-blue">{t("sentTitle")}</h2>
           <p className="text-slate-700">{t("sentBody")}</p>
+          <div className="rounded-2xl bg-slate-50 p-4 text-left">
+            <p className="mb-2 font-bold">{t("nextTitle")}</p>
+            <ol className="space-y-2 text-sm text-slate-700">
+              {(["next1", "next2", "next3"] as const).map((k, i) => (
+                <li key={k} className="flex gap-3">
+                  <span aria-hidden className="flex h-6 w-6 flex-none items-center justify-center rounded-full bg-brand-red text-xs font-bold text-white">{i + 1}</span>
+                  <span>{t(k)}</span>
+                </li>
+              ))}
+            </ol>
+            <p className="mt-3 text-xs text-slate-500">{t("hoursLine", { open: config.openTime.slice(0, 5), close: config.closeTime.slice(0, 5) })}</p>
+          </div>
           <a href={sentUrl} target="_blank" rel="noopener noreferrer" className="flex min-h-[56px] w-full items-center justify-center rounded-xl bg-green-700 text-lg font-bold text-white">
             💬 {t("sentAgain")}
           </a>
@@ -147,6 +167,7 @@ export default function SendOrder({ service, placeId, itemsTotal, build, validat
       <DetailsSheet
         open={sheet} onClose={() => setSheet(false)} onConfirm={confirm} areas={areas} initial={saved} busy={busy}
         openTime={config.openTime} closeTime={config.closeTime} allowSchedule={allowSchedule}
+        preview={(d, note, extra) => makeText(d, note, extra).text}
       />
     </>
   );

@@ -8,6 +8,8 @@ export interface BasketLine {
   placeId: string;
   placeName: string;
   placeNameNe: string | null;
+  /** Address of the place's page, for "add more". Older saved baskets do not have it. */
+  placeSlug?: string;
   placeType: PlaceType;
   name: string;
   nameNe: string | null;
