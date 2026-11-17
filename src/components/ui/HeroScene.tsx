@@ -29,9 +29,9 @@ export default function HeroScene() {
         {/* near hills + road */}
         <path d="M-700 142C-600 122 -500 140 -400 130S-200 116 -100 134 80 122 190 132s150-18 250 2 200-6 300 6V176H-700z" fill="#0F1A33" fillOpacity=".35" />
         <rect x="-700" y="148" width="1800" height="40" fill="#0F1A33" fillOpacity=".6" />
-        <path d="M-700 162H1100" stroke="#fff" strokeOpacity=".55" strokeWidth="2.5" strokeDasharray="12 14" className="motion-safe:animate-dash" />
+        <path d="M-700 162H1100" stroke="#fff" strokeOpacity=".55" strokeWidth="2.5" strokeDasharray="12 14" />
         {/* route to the pin */}
-        <path d="M166 122C206 84 250 126 294 86S334 60 346 58" fill="none" stroke="#fff" strokeOpacity=".75" strokeWidth="3" strokeLinecap="round" strokeDasharray="6 8" className="motion-safe:animate-dash" />
+        <path d="M166 122C206 84 250 126 294 86S334 60 346 58" fill="none" stroke="#fff" strokeOpacity=".75" strokeWidth="3" strokeLinecap="round" strokeDasharray="6 8" />
         {/* pin */}
         <g className="motion-safe:animate-float" style={{ transformBox: "fill-box", transformOrigin: "center" }}>
           <path d="M346 30c-10 0-17 7-17 17 0 13 17 30 17 30s17-17 17-30c0-10-7-17-17-17z" fill="#FFC857" />

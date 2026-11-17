@@ -51,9 +51,12 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = { themeColor: "#2E5A9C", width: "device-width", initialScale: 1 };
 
+const TEXT_ONLY = ["help", "privacy", "terms", "areasPage", "about", "promise"];
+
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const locale = await getLocale();
-  const messages = await getMessages();
+  // Long text-only pages are rendered on the server, so their copy never needs to reach the browser.
+  const messages = Object.fromEntries(Object.entries((await getMessages()) as Record<string, any>).filter(([k]) => !TEXT_ONLY.includes(k))); // eslint-disable-line @typescript-eslint/no-explicit-any
   const a11y = await getTranslations("a11y");
   const s = await getSettings();
 
