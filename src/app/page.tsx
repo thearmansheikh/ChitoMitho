@@ -7,6 +7,7 @@ import TodaysPicks from "@/components/shop/TodaysPicks";
 import SearchBar from "@/components/shop/SearchBar";
 import CravingRow from "@/components/shop/CravingRow";
 import PlaceCard from "@/components/shop/PlaceCard";
+import PartnerStrip from "@/components/shop/PartnerStrip";
 import ClosedNotice from "@/components/shop/ClosedNotice";
 import ReorderCard from "@/components/shop/ReorderCard";
 import OffersStrip from "@/components/shop/OffersStrip";
@@ -117,6 +118,8 @@ export default async function Home() {
           </div>
         </section>
       )}
+
+      <PartnerStrip title={t("partners")} />
 
       {/* How it works */}
       <section className="space-y-4">
