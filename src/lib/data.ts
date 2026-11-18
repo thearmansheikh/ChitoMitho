@@ -3,6 +3,7 @@ import { unstable_cache } from "next/cache";
 import { createClient } from "@supabase/supabase-js";
 import type { Area, Category, Closure, Item, Offer, Place, PlaceType, Settings } from "@/types/db";
 import { nepalDates } from "./format";
+import { DAY_NAMES, DAY_NAMES_NE, hoursFor, nepalWeekday, validWeekHours } from "./hours";
 import {
   SAMPLE_OFFERS,
   SAMPLE_AREAS, SAMPLE_CATEGORIES, SAMPLE_ITEMS, SAMPLE_PLACES, SAMPLE_SETTINGS,
@@ -23,7 +24,23 @@ export const getSettings = unstable_cache(
     if (!isConfigured) return SAMPLE_SETTINGS;
     const { data, error } = await sb().from("settings").select("*").eq("id", 1).maybeSingle();
     if (error) console.error("getSettings", error.message);
-    const settings = (data as Settings | null) ?? { ...SAMPLE_SETTINGS, announcement: null };
+    let settings = (data as Settings | null) ?? { ...SAMPLE_SETTINGS, announcement: null };
+
+    // Different hours on different weekdays: from here on open_time and close_time mean "today's hours".
+    const week = validWeekHours(settings.weekday_hours);
+    if (week) {
+      const day = nepalWeekday();
+      const h = hoursFor(week, day);
+      settings = { ...settings, open_time: h.open, close_time: h.close };
+      if (h.closed && !settings.orders_paused) {
+        settings = {
+          ...settings,
+          orders_paused: true,
+          pause_message: `We are closed on ${DAY_NAMES[day]}s. We open again tomorrow.`,
+          pause_message_ne: `हामी ${DAY_NAMES_NE[day]} बन्द हुन्छौं। भोलि फेरि खुल्छौं।`,
+        };
+      }
+    }
 
     const today = nepalDates().today;
     const { data: closures, error: closureError } = await sb()

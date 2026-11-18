@@ -9,6 +9,7 @@ import { BasketProvider } from "@/context/BasketContext";
 import { getSettings } from "@/lib/data";
 import { SITE } from "@/lib/config";
 import { SITE_URL } from "@/lib/site";
+import { DAY_NAMES, validWeekHours } from "@/lib/hours";
 import "./globals.css";
 
 // Friendly rounded type for English, with Hind covering Devanagari so Nepali sits in the same design.
@@ -59,6 +60,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const messages = Object.fromEntries(Object.entries((await getMessages()) as Record<string, any>).filter(([k]) => !TEXT_ONLY.includes(k))); // eslint-disable-line @typescript-eslint/no-explicit-any
   const a11y = await getTranslations("a11y");
   const s = await getSettings();
+  const week = validWeekHours(s.weekday_hours);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -73,12 +75,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     priceRange: "Rs.",
     address: { "@type": "PostalAddress", addressLocality: "Dharan", addressCountry: "NP" },
     areaServed: ["Dharan", "Itahari", "Biratnagar"].map((n) => ({ "@type": "City", name: n })),
-    openingHoursSpecification: {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-      opens: s.open_time.slice(0, 5),
-      closes: s.close_time.slice(0, 5),
-    },
+    openingHoursSpecification: week
+      ? week.flatMap((d, i) => (d.closed ? [] : [{ "@type": "OpeningHoursSpecification", dayOfWeek: DAY_NAMES[i], opens: d.open, closes: d.close }]))
+      : {
+          "@type": "OpeningHoursSpecification",
+          dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+          opens: s.open_time.slice(0, 5),
+          closes: s.close_time.slice(0, 5),
+        },
     sameAs: [`https://www.tiktok.com/@${SITE.tiktok}`, `https://www.instagram.com/${SITE.instagram}`],
   };
 
