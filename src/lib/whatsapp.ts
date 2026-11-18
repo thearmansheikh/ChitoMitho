@@ -76,7 +76,8 @@ export function basketMessage(
     const ls = o.lines.filter((l) => l.placeId === pid);
     out.push("", `${t.from}: ${pick(ls[0].placeName, ls[0].placeNameNe, lang)}`);
     for (const l of ls) {
-      out.push(`• ${l.qty} x ${pick(l.name, l.nameNe, lang)} (${formatNPR(l.price)}) = ${formatNPR(l.qty * l.price)}`);
+      const chosen = (l.options ?? []).map((o) => pick(o.choice, o.choiceNe, lang)).join(", ");
+      out.push(`• ${l.qty} x ${pick(l.name, l.nameNe, lang)}${chosen ? ` – ${chosen}` : ""} (${formatNPR(l.price)}) = ${formatNPR(l.qty * l.price)}`);
       if (l.note.trim()) out.push(`   ↳ ${l.note.trim()}`);
     }
   }

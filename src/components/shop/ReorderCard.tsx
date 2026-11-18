@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { useBasket, type BasketLine } from "@/context/BasketContext";
+import { lineKey, useBasket, type BasketLine } from "@/context/BasketContext";
 import { formatNPR } from "@/lib/format";
 import { pick } from "@/lib/names";
 
@@ -43,7 +43,7 @@ export default function ReorderCard() {
         const res = await fetch("/api/reorder", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ids: lines.map((l) => l.itemId) }),
+          body: JSON.stringify({ ids: [...new Set(lines.map((l) => l.itemId))] }),
         });
         if (!res.ok) throw new Error("lookup failed");
         const { items } = (await res.json()) as { items: Status[] };
@@ -52,9 +52,11 @@ export default function ReorderCard() {
         for (const l of lines) {
           const cur = byId.get(l.itemId);
           if (!cur || !cur.is_available) { skipped += 1; continue; }
-          const price = Number(cur.price_npr);
+          // A line with options is re-priced as today's item price plus the option prices it was ordered with.
+          const base = Number(cur.price_npr);
+          const price = base + (l.options ?? []).reduce((n, o) => n + o.price, 0);
           if (price !== l.price) repriced += 1;
-          next.push({ ...l, price });
+          next.push({ ...l, price, ...(l.options?.length ? { basePrice: base } : {}) });
         }
         lines = next;
       }
@@ -79,7 +81,7 @@ export default function ReorderCard() {
       </div>
       <ul className="space-y-0.5 text-sm text-slate-800">
         {shown.map((l) => (
-          <li key={l.itemId}>{l.qty} × {pick(l.name, l.nameNe, locale)}</li>
+          <li key={lineKey(l)}>{l.qty} × {pick(l.name, l.nameNe, locale)}</li>
         ))}
         {more > 0 && <li className="text-slate-600">{t("more", { count: more })}</li>}
         {order.shoppingList.trim() && <li className="text-slate-600">📝 {t("withList")}</li>}

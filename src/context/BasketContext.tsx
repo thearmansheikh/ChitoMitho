@@ -3,7 +3,18 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { PlaceType } from "@/types/db";
 
+/** One choice the customer made on an item, e.g. Size: Large (+Rs. 50). */
+export interface LineOption {
+  group: string;
+  groupNe?: string | null;
+  choice: string;
+  choiceNe?: string | null;
+  price: number;
+}
+
 export interface BasketLine {
+  /** Identifies this line in the basket. Same item with different choices means different lines. Defaults to itemId. */
+  key?: string;
   itemId: string;
   placeId: string;
   placeName: string;
@@ -13,10 +24,17 @@ export interface BasketLine {
   placeType: PlaceType;
   name: string;
   nameNe: string | null;
+  /** Unit price including any option prices. */
   price: number;
+  /** The item's own price before options, so "Order again" can re-price a line with options. */
+  basePrice?: number;
+  options?: LineOption[];
   qty: number;
   note: string;
 }
+
+/** The key that identifies a line in the basket. */
+export const lineKey = (l: { key?: string; itemId: string }): string => l.key ?? l.itemId;
 
 export interface GiftDetails {
   /** Key such as "birthday", or "" when none was chosen. */
@@ -65,10 +83,11 @@ interface BasketApi extends State {
   hydrated: boolean;
   count: number;
   total: number;
-  add: (line: Omit<BasketLine, "qty" | "note">) => void;
-  setQty: (itemId: string, qty: number) => void;
-  setNote: (itemId: string, note: string) => void;
-  remove: (itemId: string) => void;
+  /** Adds one of the line, or `qty` of it with a note (from the item sheet). */
+  add: (line: Omit<BasketLine, "qty" | "note">, extra?: { qty?: number; note?: string }) => void;
+  setQty: (key: string, qty: number) => void;
+  setNote: (key: string, note: string) => void;
+  remove: (key: string) => void;
   setShoppingList: (v: string) => void;
   setGift: (g: Partial<GiftDetails>) => void;
   setPromo: (code: string) => void;
@@ -121,28 +140,35 @@ export function BasketProvider({ children }: { children: React.ReactNode }) {
     }
   }, [state, hydrated]);
 
-  const add = useCallback<BasketApi["add"]>((line) => {
+  const add = useCallback<BasketApi["add"]>((line, extra) => {
+    const n = Math.max(1, Math.min(99, Math.floor(extra?.qty ?? 1)));
+    const note = (extra?.note ?? "").trim();
+    const key = lineKey(line);
     setState((s) => {
-      const existing = s.lines.find((l) => l.itemId === line.itemId);
+      const existing = s.lines.find((l) => lineKey(l) === key);
       const lines = existing
-        ? s.lines.map((l) => (l.itemId === line.itemId ? { ...l, qty: l.qty + 1 } : l))
-        : [...s.lines, { ...line, qty: 1, note: "" }];
+        ? s.lines.map((l) =>
+            lineKey(l) === key
+              ? { ...l, qty: Math.min(99, l.qty + n), note: note && !l.note.includes(note) ? [l.note, note].filter(Boolean).join("; ") : l.note }
+              : l,
+          )
+        : [...s.lines, { ...line, qty: n, note }];
       return { ...s, lines };
     });
   }, []);
 
-  const setQty = useCallback((itemId: string, qty: number) => {
+  const setQty = useCallback((key: string, qty: number) => {
     setState((s) => ({
       ...s,
-      lines: qty <= 0 ? s.lines.filter((l) => l.itemId !== itemId) : s.lines.map((l) => (l.itemId === itemId ? { ...l, qty } : l)),
+      lines: qty <= 0 ? s.lines.filter((l) => lineKey(l) !== key) : s.lines.map((l) => (lineKey(l) === key ? { ...l, qty } : l)),
     }));
   }, []);
 
-  const setNote = useCallback((itemId: string, note: string) => {
-    setState((s) => ({ ...s, lines: s.lines.map((l) => (l.itemId === itemId ? { ...l, note } : l)) }));
+  const setNote = useCallback((key: string, note: string) => {
+    setState((s) => ({ ...s, lines: s.lines.map((l) => (lineKey(l) === key ? { ...l, note } : l)) }));
   }, []);
 
-  const remove = useCallback((itemId: string) => setQty(itemId, 0), [setQty]);
+  const remove = useCallback((key: string) => setQty(key, 0), [setQty]);
 
   const setShoppingList = useCallback((v: string) => {
     setState((s) => ({ ...s, extras: { ...s.extras, shoppingList: v } }));

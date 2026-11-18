@@ -27,6 +27,20 @@ export interface Category {
   name_ne: string | null;
   sort_order: number;
 }
+export interface ItemChoice {
+  name: string;
+  name_ne?: string | null;
+  /** Added to the item price (can be 0 or negative). */
+  price: number;
+}
+export interface ItemOptionGroup {
+  name: string;
+  name_ne?: string | null;
+  required: boolean;
+  /** True: tick any number of choices. False: pick one. */
+  multi: boolean;
+  choices: ItemChoice[];
+}
 export interface Item {
   id: string;
   place_id: string;
@@ -39,6 +53,8 @@ export interface Item {
   is_available: boolean;
   /** Shown in "Today's picks" on the home page. */
   is_featured: boolean;
+  /** Size, extras and so on. Read it with cleanOptions(). */
+  options?: unknown;
   sort_order: number;
 }
 export interface Area {

@@ -78,6 +78,7 @@ export default function ItemSearch({ places, categories, items, children }: {
                     <p className={`mt-1 inline-block rounded-full px-2.5 py-0.5 text-sm font-bold ${i.is_available ? "bg-blue-50 text-brand-blue" : "bg-slate-200 text-slate-600"}`}>{formatNPR(i.price_npr)}</p>
                   </div>
                   <AddToBasket
+                    item={{ name: i.name, name_ne: i.name_ne, description: i.description, image_url: i.image_url, is_available: i.is_available, options: i.options }}
                     available={i.is_available}
                     label={name}
                     line={{ itemId: i.id, placeId: place.id, placeName: place.name, placeNameNe: place.name_ne, placeSlug: place.slug, placeType: place.type, name: i.name, nameNe: i.name_ne, price: Number(i.price_npr) }}

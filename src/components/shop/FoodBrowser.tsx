@@ -149,6 +149,7 @@ export default function FoodBrowser({ places, categories, items, initialQuery }:
                     </p>
                   </div>
                   <AddToBasket
+                    item={{ name: i.name, name_ne: i.name_ne, description: i.description, image_url: i.image_url, is_available: i.is_available, options: i.options }}
                     available={i.is_available}
                     label={name}
                     line={{

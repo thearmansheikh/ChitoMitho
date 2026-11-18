@@ -667,5 +667,21 @@
     "d6": "Sat",
     "closed": "Closed",
     "title": "Opening hours"
+  },
+  "itemSheet": {
+    "close": "Close",
+    "details": "Details",
+    "from": "From",
+    "required": "Required",
+    "optional": "Optional",
+    "chooseOne": "choose one",
+    "chooseAny": "choose any",
+    "note": "Note",
+    "notePlaceholder": "e.g. no onions",
+    "needChoice": "Please choose: {group}",
+    "add": "Add to basket",
+    "choose": "Choose",
+    "less": "Fewer",
+    "more": "More"
   }
 }

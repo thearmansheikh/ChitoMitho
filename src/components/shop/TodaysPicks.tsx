@@ -49,6 +49,7 @@ export default async function TodaysPicks({ picks }: { picks: FeaturedItem[] }) 
                   <div className="mt-auto space-y-2 pt-2">
                     <p className="text-base font-bold text-brand-blue">{formatNPR(item.price_npr)}</p>
                     <AddToBasket
+                      item={{ name: item.name, name_ne: item.name_ne, description: item.description, image_url: item.image_url, is_available: item.is_available, options: item.options }}
                       available={item.is_available}
                       label={name}
                       line={{

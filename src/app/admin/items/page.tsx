@@ -6,9 +6,40 @@ import { createClient } from "@/lib/supabase/client";
 import { uploadImage } from "@/lib/admin";
 import { formatNPR } from "@/lib/format";
 import { btnDanger, btnGhost, btnPrimary, Card, Field, inputCls, Notice } from "@/components/admin/ui";
+import { choiceLine, cleanOptions, parseChoiceLine } from "@/lib/options";
 import type { Category, Item, Place } from "@/types/db";
 
-const EMPTY = { name: "", name_ne: "", description: "", price: "", category_id: "" };
+/** One option group as typed in the form. Choices are one per line: "Large +50", "Regular", or "Large | ठूलो +50". */
+interface OptGroupForm { name: string; name_ne: string; required: boolean; multi: boolean; choices: string }
+const EMPTY_GROUP: OptGroupForm = { name: "", name_ne: "", required: false, multi: false, choices: "" };
+
+function groupsToForm(value: unknown): OptGroupForm[] {
+  return cleanOptions(value).map((g) => ({
+    name: g.name, name_ne: g.name_ne ?? "", required: g.required, multi: g.multi,
+    choices: g.choices.map((c) => (c.name_ne ? choiceLine({ name: `${c.name} | ${c.name_ne}`, price: c.price }) : choiceLine(c))).join("\n"),
+  }));
+}
+
+/** Reads the form back into stored option groups, or returns a message saying what to fix. */
+function formToGroups(groups: OptGroupForm[]): { ok: true; value: unknown[] } | { ok: false; error: string } {
+  const value: unknown[] = [];
+  for (const [gi, g] of groups.entries()) {
+    const label = g.name.trim() || `Option ${gi + 1}`;
+    if (!g.name.trim()) return { ok: false, error: `Option ${gi + 1} needs a name (for example Size).` };
+    const choices = [];
+    for (const line of g.choices.split("\n").map((l) => l.trim()).filter(Boolean)) {
+      const c = parseChoiceLine(line);
+      if (!c) return { ok: false, error: `Could not read the line "${line}" in ${label}. Write it like: Large +50` };
+      const [en, ne] = c.name.split("|").map((s) => s.trim());
+      choices.push({ name: en, name_ne: ne || null, price: c.price });
+    }
+    if (choices.length === 0) return { ok: false, error: `${label} needs at least one choice, one per line.` };
+    value.push({ name: g.name.trim(), name_ne: g.name_ne.trim() || null, required: g.required, multi: g.multi, choices });
+  }
+  return { ok: true, value };
+}
+
+const EMPTY = { name: "", name_ne: "", description: "", price: "", category_id: "", options: [] as OptGroupForm[] };
 
 function ItemsManager() {
   const sb = createClient();
@@ -18,6 +49,7 @@ function ItemsManager() {
   const [cats, setCats] = useState<Category[]>([]);
   const [items, setItems] = useState<Item[]>([]);
   const [form, setForm] = useState(EMPTY);
+  const [hadOptions, setHadOptions] = useState(false);
   const [editing, setEditing] = useState<string | null>(null);
   const [newCat, setNewCat] = useState({ name: "", name_ne: "" });
   const [error, setError] = useState<string | null>(null);
@@ -65,17 +97,24 @@ function ItemsManager() {
       name: form.name.trim(), name_ne: form.name_ne.trim() || null,
       description: form.description.trim() || null, price_npr: price,
       category_id: form.category_id || null,
-    };
+    } as Record<string, unknown>;
+    // Options are only sent when there is something to save or to clear, so items without options never touch that column.
+    const parsed = formToGroups(form.options);
+    if (!parsed.ok) return setError(parsed.error);
+    if (parsed.value.length > 0 || hadOptions) row.options = parsed.value.length > 0 ? parsed.value : null;
     const res = editing
       ? await sb.from("items").update(row).eq("id", editing)
       : await sb.from("items").insert({ ...row, place_id: placeId, sort_order: (items.at(-1)?.sort_order ?? 0) + 1 });
-    if (res.error) return setError(res.error.message);
-    setEditing(null); setForm(EMPTY); load();
+    if (res.error) {
+      return setError(/options/.test(res.error.message) ? "The options column is missing. Run supabase/migrations/0009_item_options.sql in the Supabase SQL Editor first." : res.error.message);
+    }
+    setEditing(null); setHadOptions(false); setForm(EMPTY); load();
   }
 
   function startEdit(i: Item) {
     setEditing(i.id);
-    setForm({ name: i.name, name_ne: i.name_ne ?? "", description: i.description ?? "", price: String(i.price_npr), category_id: i.category_id ?? "" });
+    setHadOptions(cleanOptions(i.options).length > 0);
+    setForm({ name: i.name, name_ne: i.name_ne ?? "", description: i.description ?? "", price: String(i.price_npr), category_id: i.category_id ?? "", options: groupsToForm(i.options) });
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
@@ -152,9 +191,36 @@ function ItemsManager() {
                 </select>
               </Field>
               <div className="sm:col-span-2"><Field label="Description"><input className={inputCls} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></Field></div>
+              <fieldset className="space-y-3 sm:col-span-2">
+                <legend className="font-semibold text-slate-700">Options (size, extras, optional)</legend>
+                <p className="text-sm text-slate-600">
+                  Let customers choose, for example a size or extra cheese. Their choice and its price appear in the WhatsApp order.
+                  Write one choice per line, with a price to add after it: <code>Large +50</code>. Leave the price off when it costs nothing: <code>Regular</code>.
+                </p>
+                {form.options.map((g, gi) => {
+                  const set = (patch: Partial<OptGroupForm>) => setForm({ ...form, options: form.options.map((x, j) => (j === gi ? { ...x, ...patch } : x)) });
+                  return (
+                    <div key={gi} className="space-y-2 rounded-lg border border-slate-200 p-3">
+                      <div className="grid gap-2 sm:grid-cols-2">
+                        <Field label="Option name"><input className={inputCls} value={g.name} onChange={(e) => set({ name: e.target.value })} placeholder="Size" /></Field>
+                        <Field label="Nepali name (optional)"><input className={inputCls} value={g.name_ne} onChange={(e) => set({ name_ne: e.target.value })} /></Field>
+                      </div>
+                      <Field label="Choices, one per line"><textarea className={inputCls} rows={4} value={g.choices} onChange={(e) => set({ choices: e.target.value })} placeholder={"Regular\nLarge +50"} /></Field>
+                      <div className="flex flex-wrap items-center gap-x-5 gap-y-1">
+                        <label className="flex min-h-[44px] items-center gap-2"><input type="checkbox" className="h-5 w-5" checked={g.required} onChange={(e) => set({ required: e.target.checked })} /> Customer must choose</label>
+                        <label className="flex min-h-[44px] items-center gap-2"><input type="checkbox" className="h-5 w-5" checked={g.multi} onChange={(e) => set({ multi: e.target.checked })} /> Can choose more than one</label>
+                        <button type="button" className={btnDanger} onClick={() => setForm({ ...form, options: form.options.filter((_, j) => j !== gi) })}>Remove option</button>
+                      </div>
+                    </div>
+                  );
+                })}
+                {form.options.length < 6 && (
+                  <button type="button" className={btnGhost} onClick={() => setForm({ ...form, options: [...form.options, { ...EMPTY_GROUP }] })}>+ Add an option</button>
+                )}
+              </fieldset>
               <div className="flex gap-2 sm:col-span-2">
                 <button className={btnPrimary}>{editing ? "Save" : "Add item"}</button>
-                {editing && <button type="button" className={btnGhost} onClick={() => { setEditing(null); setForm(EMPTY); }}>Cancel</button>}
+                {editing && <button type="button" className={btnGhost} onClick={() => { setEditing(null); setHadOptions(false); setForm(EMPTY); }}>Cancel</button>}
               </div>
             </form>
           </Card>
@@ -171,7 +237,7 @@ function ItemsManager() {
                       : <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-slate-100" aria-hidden>🍽️</div>}
                     <div className="min-w-0 flex-1">
                       <p className="truncate font-semibold">{i.name} {i.name_ne && <span className="font-normal text-slate-500">· {i.name_ne}</span>}</p>
-                      <p className="text-sm text-slate-600">{formatNPR(i.price_npr)} {!i.is_available && <b className="text-brand-red">· Sold out</b>} {i.is_featured && <b className="text-brand-blue">· ★ On home page</b>}</p>
+                      <p className="text-sm text-slate-600">{formatNPR(i.price_npr)} {!i.is_available && <b className="text-brand-red">· Sold out</b>} {i.is_featured && <b className="text-brand-blue">· ★ On home page</b>} {cleanOptions(i.options).length > 0 && <b className="text-slate-700">· {cleanOptions(i.options).length} option{cleanOptions(i.options).length === 1 ? "" : "s"}</b>}</p>
                     </div>
                   </div>
                   <div className="mt-3 flex flex-wrap gap-2">

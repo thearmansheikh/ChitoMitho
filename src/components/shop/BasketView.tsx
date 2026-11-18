@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
-import { useBasket } from "@/context/BasketContext";
+import { lineKey, useBasket } from "@/context/BasketContext";
 import { formatNPR } from "@/lib/format";
 import { pick } from "@/lib/names";
 import { basketMessage } from "@/lib/whatsapp";
@@ -90,21 +90,24 @@ export default function BasketView({ config, areas, offers }: { config: OrderCon
             {g.lines.map((l) => {
               const name = pick(l.name, l.nameNe, locale);
               return (
-                <li key={l.itemId} className="space-y-2 p-3">
+                <li key={lineKey(l)} className="space-y-2 p-3">
                   <div className="flex items-center justify-between gap-3">
                     <div className="min-w-0">
                       <p className="font-semibold">{name}</p>
+                      {l.options && l.options.length > 0 && (
+                        <p className="text-sm text-slate-600">{l.options.map((o) => pick(o.choice, o.choiceNe, locale)).join(", ")}</p>
+                      )}
                       <p className="text-sm text-slate-600">{formatNPR(l.price)} × {l.qty} = <b>{formatNPR(l.price * l.qty)}</b></p>
                     </div>
                     <div className="flex items-center gap-1">
-                      <button type="button" className={step} aria-label={`${t("decrease")}: ${name}`} onClick={() => setQty(l.itemId, l.qty - 1)}>−</button>
+                      <button type="button" className={step} aria-label={`${t("decrease")}: ${name}`} onClick={() => setQty(lineKey(l), l.qty - 1)}>−</button>
                       <span className="min-w-[2rem] text-center text-lg font-bold" aria-live="polite">{l.qty}</span>
-                      <button type="button" className={step} aria-label={`${t("increase")}: ${name}`} onClick={() => setQty(l.itemId, l.qty + 1)}>+</button>
+                      <button type="button" className={step} aria-label={`${t("increase")}: ${name}`} onClick={() => setQty(lineKey(l), l.qty + 1)}>+</button>
                     </div>
                   </div>
-                  <input value={l.note} onChange={(e) => setNote(l.itemId, e.target.value)} placeholder={t("note")} aria-label={`${t("note")}: ${name}`}
+                  <input value={l.note} onChange={(e) => setNote(lineKey(l), e.target.value)} placeholder={t("note")} aria-label={`${t("note")}: ${name}`}
                     className="w-full min-h-[44px] rounded-lg border border-slate-300 px-3 text-base focus:border-brand-blue focus:outline-none focus:ring-2 focus:ring-brand-blue/30" />
-                  <button type="button" onClick={() => remove(l.itemId)} className="min-h-[44px] text-sm font-semibold text-brand-red">{t("remove")}</button>
+                  <button type="button" onClick={() => remove(lineKey(l))} className="min-h-[44px] text-sm font-semibold text-brand-red">{t("remove")}</button>
                 </li>
               );
             })}
