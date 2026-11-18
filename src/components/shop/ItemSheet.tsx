@@ -99,7 +99,9 @@ export default function ItemSheet({ item, line, placeType, tileText, onClose }: 
         <div className="relative">
           {item.image_url ? (
             <div className="relative h-52 w-full overflow-hidden rounded-t-2xl bg-slate-100">
-              <Image src={item.image_url} alt="" fill sizes="(max-width: 512px) 100vw, 512px" className="object-cover" priority />
+              {/* A soft blurred copy fills the sides, so a small or narrow photo is shown whole instead of stretched. */}
+              <Image src={item.image_url} alt="" fill sizes="64px" aria-hidden className="scale-125 object-cover opacity-70 blur-2xl" />
+              <Image src={item.image_url} alt="" fill sizes="(max-width: 512px) 100vw, 512px" className="object-contain" priority />
             </div>
           ) : (
             <DishTile text={tileText} type={placeType} className="h-40 w-full !rounded-b-none rounded-t-2xl" iconClassName="h-24 w-24" />
