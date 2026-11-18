@@ -37,3 +37,33 @@ export function validWeekHours(v: unknown): WeekHours | null {
 export function hoursFor(week: WeekHours, weekday: number): DayHours {
   return week[((weekday % 7) + 7) % 7];
 }
+
+/** Days in the order people read a week (Monday first). */
+export const WEEK_ORDER = [1, 2, 3, 4, 5, 6, 0] as const;
+
+export interface HoursGroup {
+  /** Weekday numbers (0 = Sunday), in reading order. */
+  days: number[];
+  open: string;
+  close: string;
+  closed: boolean;
+}
+
+/** Runs of neighbouring days with identical hours, Monday first. */
+export function groupWeek(week: WeekHours): HoursGroup[] {
+  const groups: HoursGroup[] = [];
+  for (const day of WEEK_ORDER) {
+    const d = week[day];
+    const last = groups.at(-1);
+    const same = last && last.closed === !!d.closed && (d.closed || (last.open === d.open && last.close === d.close));
+    if (same) last.days.push(day);
+    else groups.push({ days: [day], open: d.open, close: d.close, closed: !!d.closed });
+  }
+  return groups;
+}
+
+/** "Mon–Fri" for three or more days in a row, "Sat, Sun" for two, "Mon" for one. */
+export function dayRangeLabel(days: number[], name: (day: number) => string): string {
+  if (days.length >= 3) return `${name(days[0])}–${name(days[days.length - 1])}`;
+  return days.map(name).join(", ");
+}

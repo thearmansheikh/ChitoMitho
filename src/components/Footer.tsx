@@ -3,6 +3,8 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { getSettings } from "@/lib/data";
 import { SITE } from "@/lib/config";
+import { validWeekHours } from "@/lib/hours";
+import { weekLines } from "@/lib/weekText";
 import SocialIcon from "@/components/ui/SocialIcon";
 
 export default async function Footer() {
@@ -10,7 +12,10 @@ export default async function Footer() {
   const b = await getTranslations("brand");
   const a = await getTranslations("about");
   const n = await getTranslations("nav");
+  const w = await getTranslations("weekHours");
   const s = await getSettings();
+  const week = validWeekHours(s.weekday_hours);
+  const weekRows = week ? await weekLines(week) : null;
   const year = new Date().getFullYear();
 
   const columns = [
@@ -66,9 +71,23 @@ export default async function Footer() {
               </div>
             </div>
 
-            <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3.5 py-1.5 text-sm font-semibold text-sun ring-1 ring-white/15">
-              <span aria-hidden>🕙</span> {t("hoursDynamic", { open: s.open_time.slice(0, 5), close: s.close_time.slice(0, 5) })}
-            </p>
+            {weekRows ? (
+              <div className="max-w-xs rounded-2xl bg-white/10 px-4 py-3 text-sm ring-1 ring-white/15">
+                <h2 className="mb-1.5 flex items-center gap-2 font-semibold text-sun"><span aria-hidden>🕙</span> {w("title")}</h2>
+                <dl className="space-y-0.5">
+                  {weekRows.map((r) => (
+                    <div key={r.label} className="flex justify-between gap-4">
+                      <dt className="text-white/70">{r.label}</dt>
+                      <dd className="font-semibold">{r.text}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+            ) : (
+              <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3.5 py-1.5 text-sm font-semibold text-sun ring-1 ring-white/15">
+                <span aria-hidden>🕙</span> {t("hoursDynamic", { open: s.open_time.slice(0, 5), close: s.close_time.slice(0, 5) })}
+              </p>
+            )}
             <p className="max-w-sm text-sm text-white/70">{t("area")}</p>
 
             <div className="space-y-3">

@@ -3,6 +3,8 @@ import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
 import { getAreas, getSettings } from "@/lib/data";
 import { pick } from "@/lib/names";
+import { validWeekHours } from "@/lib/hours";
+import { weekSummary } from "@/lib/weekText";
 import PageHeader from "@/components/ui/PageHeader";
 import SectionTitle from "@/components/ui/SectionTitle";
 import type { AreaGroup } from "@/types/db";
@@ -25,6 +27,8 @@ export default async function AreasPage() {
   const locale = await getLocale();
   const [areas, settings] = await Promise.all([getAreas(), getSettings()]);
   const hours = { open: settings.open_time.slice(0, 5), close: settings.close_time.slice(0, 5) };
+  const week = validWeekHours(settings.weekday_hours);
+  const schedule = week ? await weekSummary(week) : "";
 
   return (
     <div className="space-y-8">
@@ -74,7 +78,7 @@ export default async function AreasPage() {
         </div>
         <div className="rounded-2xl bg-white p-5 shadow-card ring-1 ring-slate-200/70">
           <h2 className="font-bold">{t("hoursTitle")}</h2>
-          <p className="mt-1 text-slate-700">{t("hoursBody", hours)}</p>
+          <p className="mt-1 text-slate-700">{week ? t("hoursBodyWeek", { schedule }) : t("hoursBody", hours)}</p>
         </div>
       </section>
 

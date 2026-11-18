@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { getSettings } from "@/lib/data";
 import PageHeader from "@/components/ui/PageHeader";
+import { validWeekHours } from "@/lib/hours";
+import { weekSummary } from "@/lib/weekText";
 
 export const metadata: Metadata = {
   title: "Help and questions – how ordering works",
@@ -16,7 +18,11 @@ export default async function HelpPage() {
   const c = await getTranslations("common");
   const s = await getSettings();
   const hours = { open: s.open_time.slice(0, 5), close: s.close_time.slice(0, 5) };
-  const items = Array.from({ length: COUNT }, (_, i) => ({ q: t(`q${i + 1}`), a: t(`a${i + 1}`, hours) }));
+  const week = validWeekHours(s.weekday_hours);
+  const schedule = week ? await weekSummary(week) : "";
+  // Question 4 is about opening hours: with different hours on different days it lists the whole week.
+  const answer = (n: number) => (n === 4 && week ? t("a4Week", { schedule }) : t(`a${n}`, hours));
+  const items = Array.from({ length: COUNT }, (_, i) => ({ q: t(`q${i + 1}`), a: answer(i + 1) }));
 
   // Lets search engines show the answers directly.
   const jsonLd = {

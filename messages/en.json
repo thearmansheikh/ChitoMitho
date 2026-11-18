@@ -195,7 +195,8 @@
     "hoursTitle": "When we deliver",
     "hoursBody": "Every day, {open} to {close}, Nepal time.",
     "cta": "Start an order",
-    "empty": "The area list is being updated. Ask us on WhatsApp if we deliver to you."
+    "empty": "The area list is being updated. Ask us on WhatsApp if we deliver to you.",
+    "hoursBodyWeek": "{schedule}. All times are Nepal time."
   },
   "help": {
     "title": "Help and questions",
@@ -229,7 +230,8 @@
     "q14": "I own a café or shop. Can I join?",
     "a14": "Yes. Use Partner with us. Riders can apply there too.",
     "stuckTitle": "Still stuck?",
-    "stuckBody": "Message us on WhatsApp or call. We reply during opening hours."
+    "stuckBody": "Message us on WhatsApp or call. We reply during opening hours.",
+    "a4Week": "Our opening hours are: {schedule}. All times are Nepal time. You can browse any time, but orders can only be sent while we are open."
   },
   "privacy": {
     "title": "Privacy",
@@ -654,5 +656,16 @@
       "cod": "Cash on delivery",
       "qr": "QR at door"
     }
+  },
+  "weekHours": {
+    "d0": "Sun",
+    "d1": "Mon",
+    "d2": "Tue",
+    "d3": "Wed",
+    "d4": "Thu",
+    "d5": "Fri",
+    "d6": "Sat",
+    "closed": "Closed",
+    "title": "Opening hours"
   }
 }
