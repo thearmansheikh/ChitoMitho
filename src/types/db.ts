@@ -58,8 +58,19 @@ export interface Settings {
   timezone: string;
   orders_paused: boolean;
   pause_message: string | null;
+  /** Set only while a holiday closure is on: the Nepali version of pause_message. */
+  pause_message_ne?: string | null;
   announcement: string | null;
   liquor_age_text: string | null;
+}
+export interface Closure {
+  id: string;
+  starts_on: string;
+  ends_on: string;
+  reason: string;
+  message: string | null;
+  message_ne: string | null;
+  created_at: string;
 }
 export interface Offer {
   id: string;

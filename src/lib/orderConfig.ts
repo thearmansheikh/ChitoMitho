@@ -7,6 +7,7 @@ export function toOrderConfig(s: Settings): OrderConfig {
     closeTime: s.close_time,
     paused: s.orders_paused,
     pauseMessage: s.pause_message,
+    pauseMessageNe: s.pause_message_ne ?? null,
     whatsapp: s.whatsapp_number,
   };
 }

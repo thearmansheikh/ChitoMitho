@@ -1,7 +1,8 @@
 import "server-only";
 import { unstable_cache } from "next/cache";
 import { createClient } from "@supabase/supabase-js";
-import type { Area, Category, Item, Offer, Place, PlaceType, Settings } from "@/types/db";
+import type { Area, Category, Closure, Item, Offer, Place, PlaceType, Settings } from "@/types/db";
+import { nepalDates } from "./format";
 import {
   SAMPLE_OFFERS,
   SAMPLE_AREAS, SAMPLE_CATEGORIES, SAMPLE_ITEMS, SAMPLE_PLACES, SAMPLE_SETTINGS,
@@ -16,12 +17,27 @@ const sb = () => createClient(URL!, KEY!, { auth: { persistSession: false, autoR
 
 const REVALIDATE = { revalidate: 60 };
 
+/** Settings, with orders switched to "paused" while a holiday closure covers today (Nepal date). */
 export const getSettings = unstable_cache(
   async (): Promise<Settings> => {
     if (!isConfigured) return SAMPLE_SETTINGS;
     const { data, error } = await sb().from("settings").select("*").eq("id", 1).maybeSingle();
     if (error) console.error("getSettings", error.message);
-    return (data as Settings | null) ?? { ...SAMPLE_SETTINGS, announcement: null };
+    const settings = (data as Settings | null) ?? { ...SAMPLE_SETTINGS, announcement: null };
+
+    const today = nepalDates().today;
+    const { data: closures, error: closureError } = await sb()
+      .from("closures").select("*").lte("starts_on", today).gte("ends_on", today).order("ends_on", { ascending: false }).limit(1);
+    // If the table is missing or unreadable the site keeps working with its normal settings.
+    if (closureError) console.error("getSettings closures", closureError.message);
+    const c = (closures as Closure[] | null)?.[0];
+    if (!c) return settings;
+    return {
+      ...settings,
+      orders_paused: true,
+      pause_message: c.message?.trim() || `We are closed for ${c.reason}. Orders open again after ${c.ends_on}.`,
+      pause_message_ne: c.message_ne?.trim() || null,
+    };
   },
   ["settings"],
   REVALIDATE,

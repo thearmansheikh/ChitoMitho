@@ -49,7 +49,7 @@ export default async function Home() {
         </p>
       )}
 
-      <ClosedNotice openTime={settings.open_time} closeTime={settings.close_time} paused={settings.orders_paused} pauseMessage={settings.pause_message} />
+      <ClosedNotice openTime={settings.open_time} closeTime={settings.close_time} paused={settings.orders_paused} pauseMessage={settings.pause_message} pauseMessageNe={settings.pause_message_ne} />
 
       {/* Hero */}
       <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-blue via-[#274e8a] to-ink p-6 pb-52 text-white shadow-pop sm:p-8 sm:pb-64 motion-safe:animate-fade-up">

@@ -18,6 +18,7 @@ export interface OrderConfig {
   closeTime: string;
   paused: boolean;
   pauseMessage: string | null;
+  pauseMessageNe?: string | null;
   whatsapp: string;
 }
 
@@ -75,7 +76,7 @@ export default function SendOrder({ service, placeId, itemsTotal, build, validat
     return () => clearInterval(id);
   }, [config.openTime, config.closeTime]);
 
-  const blocked = config.paused ? config.pauseMessage || h("paused") : !open ? h("closedNow") : null;
+  const blocked = config.paused ? (config.pauseMessage ? pick(config.pauseMessage, config.pauseMessageNe, locale) : h("paused")) : !open ? h("closedNow") : null;
 
   function start() {
     setError(null);

@@ -8,6 +8,7 @@ const TILES = [
   ["/admin/import", "Import a menu", "Paste or upload a whole menu at once"],
   ["/admin/areas", "Areas", "Delivery area list"],
   ["/admin/offers", "Offers", "Deals and promo codes"],
+  ["/admin/closures", "Holiday closures", "Days when orders are closed"],
   ["/admin/settings", "Settings", "WhatsApp, hours, pause orders"],
   ["/admin/orders", "Orders", "WhatsApp order counts"],
 ] as const;
