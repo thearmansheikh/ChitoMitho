@@ -179,6 +179,35 @@ for (const lang of ["en", "ne"]) {
   eq("Nepali: as soon as possible", w.basketMessage("ne", { lines: [two[0]], extras: ex(), total: 1338, customer: cust }).split("\n").includes("डेलिभरी: सकेसम्म चाँडो"), true);
 }
 
+// ---- Task 2: the other forms (parcel, order anything, partner, rider)
+{
+  const cust = { name: "Sita Rai", phone: "9812345678", area: "Dharan-5", landmark: "Near Nabil Bank", payment: "cod", note: "", deliverAt: null };
+  const rows = (s) => s.split("\n");
+
+  const parcel = rows(w.parcelMessage("en", { pickup: "Bhanu Chowk", drop: "BPKIHS gate", item: "Documents & keys", size: "small", receiverName: "Ram", receiverPhone: "9801112233" }, cust));
+  eq("parcel: sender name and phone are labelled as the sender's", parcel.includes("Sender name: Sita Rai") && parcel.includes("Sender phone: 9812345678"), true);
+  eq("parcel: the pickup time is asked and written (as soon as possible)", parcel.includes("Pickup time: As soon as possible"), true);
+  eq("parcel: a later pickup shows the day and time", rows(w.parcelMessage("en", { pickup: "A", drop: "B", item: "x", size: "small", receiverName: "R", receiverPhone: "9801112233" }, { ...cust, deliverAt: { day: "tomorrow", time: "11:00" } })).includes("Pickup time: Later – Tomorrow 11:00"), true);
+  eq("parcel: pickup, drop, item, size and receiver are all there", ["Pickup: Bhanu Chowk", "Drop: BPKIHS gate", "Item: Documents & keys"].every((l) => parcel.some((r) => r.includes(l.split(": ")[1]))) && parcel.some((r) => r.startsWith("Receiver")), true);
+  eq("parcel (Nepali): sender labels", rows(w.parcelMessage("ne", { pickup: "A", drop: "B", item: "x", size: "small", receiverName: "R", receiverPhone: "9801112233" }, cust)).some((r) => r.startsWith("पठाउनेको नाम: ")), true);
+
+  const any = (b) => rows(w.anythingMessage("en", { need: "Medicine & a charger", buyFrom: "", budget: b }, cust));
+  eq("anything: a numeric budget is written as Rs.", any("500").includes("Budget: Rs. 500"), true);
+  eq("anything: a large budget gets a thousands comma", any("12500").includes("Budget: Rs. 12,500"), true);
+  eq("anything: no budget, no budget line", any("").some((r) => r.startsWith("Budget")), false);
+  eq("anything: the need is kept as typed", any("").includes("Need: Medicine & a charger") || any("").some((r) => r.includes("Medicine & a charger")), true);
+
+  const partner = (type, typeOther) => rows(w.partnerMessage("en", { business: "Test Café & Grill #1", type, typeOther, contactName: "Ram", phone: "9801234567", area: "Dharan", offer: "" }));
+  eq("partner: a normal type is written as is", partner("cafe", "").includes("Type: Café / Restaurant"), true);
+  eq("partner: the type typed for 'Other' is written", partner("other", "Bakery").includes("Type: Other – Bakery"), true);
+  eq("partner: 'Other' with nothing typed is just Other", partner("other", "").includes("Type: Other"), true);
+
+  const rider = (o) => rows(w.riderMessage("en", { name: "Hari", phone: "9801234567", area: "Dharan-9", vehicle: "bike", hasLicense: true, availability: "", ...o }));
+  eq("rider: with a vehicle, the vehicle is listed", rider({ hasVehicle: true }).includes("Own vehicle: Yes") && rider({ hasVehicle: true }).includes("Vehicle: Motorbike"), true);
+  eq("rider: without a vehicle there is no vehicle line", rider({ hasVehicle: false }).includes("Own vehicle: No") && !rider({ hasVehicle: false }).some((r) => r.startsWith("Vehicle:")), true);
+  eq("rider: licence and availability", rider({ hasLicense: false, availability: "evenings" }).includes("Valid licence: No") && rider({ availability: "evenings" }).includes("Availability: evenings"), true);
+}
+
 // ---- a very long basket gets shorter lines but keeps every item, quantity and the total
 const big = Array.from({ length: 30 }, (_, i) => ({ ...base, itemId: "b" + i, name: `Crispy Boneless Strips - ${i + 1}pc special`, price: 100 + i, qty: 2 + (i % 3), note: "extra crispy please, not too salty and well done" }));
 const bigTotal = big.reduce((n, l) => n + l.qty * l.price, 0);

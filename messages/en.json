@@ -15,7 +15,9 @@
     "empty": "Nothing here yet.",
     "call": "Call",
     "whatsapp": "WhatsApp",
-    "optional": "optional"
+    "optional": "optional",
+    "requiredWord": "required",
+    "requiredNote": "* marks a required field."
   },
   "home": {
     "title": "Order anything, from anywhere",
@@ -134,7 +136,10 @@
       "datePast": "That date has already passed. Please choose today or a later day.",
       "timeOutside": "Please choose a time between {open} and {close}.",
       "timeSoon": "Please choose a time at least 30 minutes from now."
-    }
+    },
+    "orderButton": "Review your gift order on WhatsApp",
+    "orderEmpty": "Add a gift from the list above first.",
+    "orderHelp": "Next you will check your details and send the order on WhatsApp."
   },
   "basket": {
     "title": "Your basket",
@@ -416,7 +421,12 @@
     "privacy": "This opens WhatsApp with your details written for you. Nothing is saved on this website.",
     "sentTitle": "Almost done!",
     "sentBody": "Press send in WhatsApp to finish. Our team will reply to you there.",
-    "sendAnother": "Send another request"
+    "sendAnother": "Send another request",
+    "typeOther": "Tell us the type of business",
+    "hasVehicle": "Do you have your own vehicle?",
+    "yes": "Yes",
+    "no": "No",
+    "riderArea": "Area where you live or can ride"
   },
   "a11y": {
     "skip": "Skip to main content",
@@ -539,7 +549,9 @@
     "chargeNote": "Delivery charge is not fixed. It depends on your order and the distance to your address. We confirm the exact amount on WhatsApp before a rider is sent.",
     "chargeNoteFrom": "Delivery charge starts from {amount}. The exact charge depends on your location (inside Dharan or outside Dharan) and your order. We confirm it on WhatsApp before a rider is sent.",
     "next2From": "We reply with the delivery charge (it starts from {amount} and depends on your location and order) and when to expect it.",
-    "chargeFixed": "Delivery to {area} is {amount}."
+    "chargeFixed": "Delivery to {area} is {amount}.",
+    "checkFields": "Please check the fields marked below.",
+    "whenPickup": "When should we pick it up?"
   },
   "parcel": {
     "title": "Parcel / Pick & Drop",
@@ -655,7 +667,8 @@
       "license": "Valid licence",
       "yes": "Yes",
       "no": "No",
-      "availability": "Availability"
+      "availability": "Availability",
+      "ownVehicle": "Own vehicle"
     },
     "services": {
       "food": "Food",
@@ -682,7 +695,10 @@
     "deliveryFixed": "(Delivery charge for {area}: {amount})",
     "delivery": "Delivery",
     "asap": "As soon as possible",
-    "later": "Later"
+    "later": "Later",
+    "senderName": "Sender name",
+    "senderPhone": "Sender phone",
+    "pickupTime": "Pickup time"
   },
   "weekHours": {
     "d0": "Sun",

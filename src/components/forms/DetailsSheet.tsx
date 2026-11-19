@@ -9,6 +9,7 @@ import { fixedChargeOf } from "@/lib/areaCharges";
 import type { Area, AreaGroup } from "@/types/db";
 import LocationButton, { type Coords } from "./LocationButton";
 import { useToles } from "@/lib/toles";
+import Req from "@/components/ui/Req";
 
 const GROUPS: AreaGroup[] = ["dharan", "itahari", "biratnagar", "nearby"];
 const input =
@@ -25,7 +26,7 @@ export interface SheetExtra {
 /** A customer can pick a time at least this long from now, so the team has time to prepare. */
 const LEAD_MINUTES = 30;
 
-export default function DetailsSheet({ open, onClose, onConfirm, areas, initial, busy, openTime, closeTime, allowSchedule, preview, deliveryFrom = null }: {
+export default function DetailsSheet({ open, onClose, onConfirm, areas, initial, busy, openTime, closeTime, allowSchedule, preview, deliveryFrom = null, whenTitle }: {
   open: boolean;
   onClose: () => void;
   onConfirm: (d: Details, note: string, extra: SheetExtra) => void;
@@ -33,6 +34,8 @@ export default function DetailsSheet({ open, onClose, onConfirm, areas, initial,
   closeTime: string;
   /** The delivery charge starts from this amount (Settings). */
   deliveryFrom?: number | null;
+  /** Replaces the "When do you want it?" question. */
+  whenTitle?: string;
   /** Hide the delivery-time choice (gift orders already pick their own date and time). */
   allowSchedule: boolean;
   areas: Area[];
@@ -172,13 +175,13 @@ export default function DetailsSheet({ open, onClose, onConfirm, areas, initial,
         </div>
 
         <label className="block space-y-1">
-          <span className="text-sm font-semibold">{t("name")}</span>
+          <span className="text-sm font-semibold">{t("name")}<Req /></span>
           <input ref={firstRef} className={input} autoComplete="name" value={d.name} onChange={(e) => { setD({ ...d, name: e.target.value }); fix("name"); }} aria-invalid={!!errors.name} />
           {errText(errors.name)}
         </label>
 
         <label className="block space-y-1">
-          <span className="text-sm font-semibold">{t("phone")}</span>
+          <span className="text-sm font-semibold">{t("phone")}<Req /></span>
           <input className={input} type="tel" inputMode="numeric" autoComplete="tel" placeholder="98XXXXXXXX" value={d.phone} onChange={(e) => { setD({ ...d, phone: e.target.value }); fix("phone"); }} aria-invalid={!!errors.phone} />
           <span className="block text-xs text-slate-500">{t("phoneHelp")}</span>
           {errText(errors.phone)}
@@ -192,7 +195,7 @@ export default function DetailsSheet({ open, onClose, onConfirm, areas, initial,
         </label>
 
         <label className="block space-y-1">
-          <span className="text-sm font-semibold">{t("area")}</span>
+          <span className="text-sm font-semibold">{t("area")}<Req /></span>
           <select className={input} value={d.areaId} onChange={(e) => { setD({ ...d, areaId: e.target.value }); fix("area", "areaOther"); }} aria-invalid={!!errors.area}>
             <option value="">{t("areaChoose")}</option>
             {GROUPS.map((g) => {
@@ -218,7 +221,7 @@ export default function DetailsSheet({ open, onClose, onConfirm, areas, initial,
         )}
 
         <label className="block space-y-1">
-          <span className="text-sm font-semibold">{t("tole")}</span>
+          <span className="text-sm font-semibold">{t("tole")}<Req /></span>
           <input
             className={input} list="tole-suggestions" autoComplete="off" placeholder={t("tolePlaceholder")} value={d.tole}
             onChange={(e) => { setD({ ...d, tole: e.target.value }); fix("tole"); }} aria-invalid={!!errors.tole}
@@ -248,7 +251,7 @@ export default function DetailsSheet({ open, onClose, onConfirm, areas, initial,
 
         {allowSchedule && (
           <fieldset className="space-y-2">
-            <legend className="text-sm font-semibold">{t("whenTitle")}</legend>
+            <legend className="text-sm font-semibold">{whenTitle ?? t("whenTitle")}</legend>
             <div className="grid grid-cols-2 gap-2">
               {(["asap", "later"] as const).map((w) => (
                 <label key={w} className={`flex min-h-[48px] cursor-pointer items-center justify-center rounded-lg border px-2 text-center font-semibold ${when === w ? "border-brand-blue bg-blue-50 text-brand-blue" : "border-slate-300"}`}>

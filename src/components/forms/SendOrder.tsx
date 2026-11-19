@@ -54,12 +54,13 @@ function logOrderClick(row: { service: Service; place_id: string | null; items_t
   }
 }
 
-export default function SendOrder({ service, placeId, itemsTotal, build, validate, config, areas, onDone, onSent, label, allowSchedule = true, openOnRequest = false }: {
+export default function SendOrder({ service, placeId, itemsTotal, build, validate, config, areas, onDone, onSent, label, allowSchedule = true, openOnRequest = false, whenTitle }: {
   service: Service;
   placeId: string | null;
   itemsTotal: number | null;
   build: (customer: Customer, lang: Lang) => string;
-  /** Return an error message if the form is incomplete; shown instead of opening the sheet. */
+  /** Return an error message if the form is incomplete; shown instead of opening the sheet.
+   *  Return "" to block without a message here (the form shows its own, next to the fields). */
   validate?: () => string | null;
   config: OrderConfig;
   areas: Area[];
@@ -70,6 +71,8 @@ export default function SendOrder({ service, placeId, itemsTotal, build, validat
   allowSchedule?: boolean;
   /** Open the details form when the header or bottom-bar WhatsApp button is tapped with a full basket (or /basket?order=1 is opened). */
   openOnRequest?: boolean;
+  /** Replaces "When do you want it?" (for parcels: when should we pick it up). */
+  whenTitle?: string;
   label?: string;
 }) {
   const t = useTranslations("order");
@@ -98,7 +101,10 @@ export default function SendOrder({ service, placeId, itemsTotal, build, validat
     setError(null);
     if (blocked) return;
     const v = validate?.();
-    if (v) return setError(v);
+    if (v !== null && v !== undefined) {
+      if (v) setError(v);
+      return;
+    }
     setSaved(loadDetails());
     setSheet(true);
   }
@@ -203,7 +209,7 @@ export default function SendOrder({ service, placeId, itemsTotal, build, validat
       {error && <p role="alert" className="mt-2 rounded-lg bg-red-50 p-3 text-sm font-semibold text-brand-red">{error}</p>}
       <DetailsSheet
         open={sheet} onClose={() => setSheet(false)} onConfirm={confirm} areas={areas} initial={saved} busy={busy}
-        openTime={config.openTime} closeTime={config.closeTime} allowSchedule={allowSchedule} deliveryFrom={config.deliveryFrom ?? null}
+        openTime={config.openTime} closeTime={config.closeTime} allowSchedule={allowSchedule} whenTitle={whenTitle} deliveryFrom={config.deliveryFrom ?? null}
         preview={(d, note, extra) => makeText(d, note, extra).text}
       />
     </>

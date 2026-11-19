@@ -59,19 +59,20 @@ export function mapLink(p: { lat: number; lng: number }): string {
  * Who, where, how to pay, when, and anything extra. Order: name, phone, address, payment, delivery time,
  * promo code (basket orders only), map location, note. Lines that are empty are left out.
  */
-function customerBlock(lang: Lang, c: Customer, promo = ""): string[] {
+function customerBlock(lang: Lang, c: Customer, promo = "", kind: "order" | "parcel" = "order"): string[] {
   const t = L[lang];
+  const parcel = kind === "parcel";
   const when = c.deliverAt ? `${t.later} – ${t[c.deliverAt.day]} ${c.deliverAt.time}` : t.asap;
   return [
-    `${t.name}: ${c.name}`,
-    `${t.phone}: ${c.phone}`,
+    `${parcel ? t.senderName : t.name}: ${c.name}`,
+    `${parcel ? t.senderPhone : t.phone}: ${c.phone}`,
     ...(c.phone2 ? [`${t.phone2}: ${c.phone2}`] : []),
     `${t.area}: ${c.area}`,
     ...(c.tole ? [`${t.tole}: ${c.tole}`] : []),
     ...(c.house ? [`${t.house}: ${c.house}`] : []),
     ...(c.landmark ? [`${t.landmark}: ${c.landmark}`] : []),
     `${t.payment}: ${t.payments[c.payment]}`,
-    ...(c.scheduled === false ? [] : [`${t.delivery}: ${when}`]),
+    ...(c.scheduled === false ? [] : [`${parcel ? t.pickupTime : t.delivery}: ${when}`]),
     ...(promo.trim() ? [`🎟️ ${t.promo}: ${promo.trim().toUpperCase()}`] : []),
     ...(c.location ? [`📍 ${t.location}: ${mapLink(c.location)}`] : []),
     ...(c.note.trim() ? [`${t.note}: ${c.note.trim()}`] : []),
@@ -160,7 +161,7 @@ export function parcelMessage(lang: Lang, p: ParcelOrder, customer: Customer): s
     `${t.receiverPhone}: ${p.receiverPhone}`,
     deliveryLine(lang, customer),
     "",
-    ...customerBlock(lang, customer),
+    ...customerBlock(lang, customer, "", "parcel"),
   ].join("\n");
 }
 
@@ -172,7 +173,7 @@ export function anythingMessage(lang: Lang, a: AnythingOrder, customer: Customer
     "",
     `${t.need}: ${a.need}`,
     ...(a.buyFrom.trim() ? [`${t.buyFrom}: ${a.buyFrom.trim()}`] : []),
-    ...(a.budget.trim() ? [`${t.budget}: ${a.budget.trim()}`] : []),
+    ...(a.budget.trim() ? [`${t.budget}: ${/^\d+$/.test(a.budget.trim()) ? formatNPR(Number(a.budget.trim())) : a.budget.trim()}`] : []),
     deliveryLine(lang, customer),
     "",
     ...customerBlock(lang, customer),
@@ -185,6 +186,8 @@ export type Vehicle = "bike" | "scooter" | "bicycle" | "other";
 export interface PartnerRequest {
   business: string;
   type: BusinessType;
+  /** What the business is, when the type is "other". */
+  typeOther?: string;
   contactName: string;
   phone: string;
   area: string;
@@ -195,6 +198,8 @@ export interface RiderApplication {
   name: string;
   phone: string;
   area: string;
+  /** False when the rider has no vehicle of their own. Default true. */
+  hasVehicle?: boolean;
   vehicle: Vehicle;
   hasLicense: boolean;
   availability: string;
@@ -205,7 +210,7 @@ export function partnerMessage(lang: Lang, p: PartnerRequest): string {
   return [
     t.header,
     `${t.business}: ${p.business}`,
-    `${t.type}: ${t.types[p.type]}`,
+    `${t.type}: ${t.types[p.type]}${p.type === "other" && p.typeOther?.trim() ? ` – ${p.typeOther.trim()}` : ""}`,
     `${t.contactName}: ${p.contactName}`,
     `${t.phone}: ${p.phone}`,
     `${t.area}: ${p.area}`,
@@ -223,7 +228,8 @@ export function riderMessage(lang: Lang, r: RiderApplication): string {
     `${t.riderName}: ${r.name}`,
     `${t.phone}: ${r.phone}`,
     `${t.area}: ${r.area}`,
-    `${t.vehicle}: ${t.vehicles[r.vehicle]}`,
+    `${t.ownVehicle}: ${r.hasVehicle === false ? t.no : t.yes}`,
+    ...(r.hasVehicle === false ? [] : [`${t.vehicle}: ${t.vehicles[r.vehicle]}`]),
     `${t.license}: ${r.hasLicense ? t.yes : t.no}`,
     ...(r.availability.trim() ? [`${t.availability}: ${r.availability.trim()}`] : []),
   ].join("\n");

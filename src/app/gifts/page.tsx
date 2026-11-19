@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { getSettings } from "@/lib/data";
 import TypeMenus from "@/components/shop/TypeMenus";
 import GiftForm from "@/components/shop/GiftForm";
+import GiftOrderButton from "@/components/shop/GiftOrderButton";
 import PageHeader from "@/components/ui/PageHeader";
 import ServiceIcon from "@/components/ui/ServiceIcon";
 
@@ -20,6 +21,7 @@ export default async function GiftsPage() {
       <PageHeader icon={<ServiceIcon name="gifts" className="h-9 w-9" />} tone="pink" title={t("giftsTitle")} subtitle={s("gifts")} />
       <TypeMenus type="gifts" />
       <GiftForm openTime={settings.open_time} closeTime={settings.close_time} />
+      <GiftOrderButton />
     </div>
   );
 }
