@@ -47,6 +47,8 @@ export default function DetailsSheet({ open, onClose, onConfirm, areas, initial,
   const [day, setDay] = useState<"today" | "tomorrow">("today");
   const [time, setTime] = useState("");
   const [errors, setErrors] = useState<Errors>({});
+  /** A message disappears as soon as the customer starts fixing that field. */
+  const fix = (...keys: (keyof Errors)[]) => setErrors((e) => (keys.some((k) => e[k]) ? Object.fromEntries(Object.entries(e).filter(([k]) => !keys.includes(k as keyof Errors))) : e));
   const firstRef = useRef<HTMLInputElement>(null);
 
   // Prefill from saved details each time the sheet opens.
@@ -157,20 +159,20 @@ export default function DetailsSheet({ open, onClose, onConfirm, areas, initial,
 
         <label className="block space-y-1">
           <span className="text-sm font-semibold">{t("name")}</span>
-          <input ref={firstRef} className={input} autoComplete="name" value={d.name} onChange={(e) => setD({ ...d, name: e.target.value })} aria-invalid={!!errors.name} />
+          <input ref={firstRef} className={input} autoComplete="name" value={d.name} onChange={(e) => { setD({ ...d, name: e.target.value }); fix("name"); }} aria-invalid={!!errors.name} />
           {errText(errors.name)}
         </label>
 
         <label className="block space-y-1">
           <span className="text-sm font-semibold">{t("phone")}</span>
-          <input className={input} type="tel" inputMode="numeric" autoComplete="tel" placeholder="98XXXXXXXX" value={d.phone} onChange={(e) => setD({ ...d, phone: e.target.value })} aria-invalid={!!errors.phone} />
+          <input className={input} type="tel" inputMode="numeric" autoComplete="tel" placeholder="98XXXXXXXX" value={d.phone} onChange={(e) => { setD({ ...d, phone: e.target.value }); fix("phone"); }} aria-invalid={!!errors.phone} />
           <span className="block text-xs text-slate-500">{t("phoneHelp")}</span>
           {errText(errors.phone)}
         </label>
 
         <label className="block space-y-1">
           <span className="text-sm font-semibold">{t("area")}</span>
-          <select className={input} value={d.areaId} onChange={(e) => setD({ ...d, areaId: e.target.value })} aria-invalid={!!errors.area}>
+          <select className={input} value={d.areaId} onChange={(e) => { setD({ ...d, areaId: e.target.value }); fix("area", "areaOther"); }} aria-invalid={!!errors.area}>
             <option value="">{t("areaChoose")}</option>
             {GROUPS.map((g) => {
               const list = areas.filter((a) => a.area_group === g);
@@ -189,14 +191,14 @@ export default function DetailsSheet({ open, onClose, onConfirm, areas, initial,
         {d.areaId === "other" && (
           <label className="block space-y-1">
             <span className="text-sm font-semibold">{t("areaOtherLabel")}</span>
-            <input className={input} value={d.areaOther} onChange={(e) => setD({ ...d, areaOther: e.target.value })} aria-invalid={!!errors.areaOther} />
+            <input className={input} value={d.areaOther} onChange={(e) => { setD({ ...d, areaOther: e.target.value }); fix("areaOther"); }} aria-invalid={!!errors.areaOther} />
             {errText(errors.areaOther)}
           </label>
         )}
 
         <label className="block space-y-1">
           <span className="text-sm font-semibold">{t("landmark")}</span>
-          <input className={input} autoComplete="street-address" value={d.landmark} onChange={(e) => setD({ ...d, landmark: e.target.value })} aria-invalid={!!errors.landmark} />
+          <input className={input} autoComplete="street-address" value={d.landmark} onChange={(e) => { setD({ ...d, landmark: e.target.value }); fix("landmark"); }} aria-invalid={!!errors.landmark} />
           <span className="block text-xs text-slate-500">{t("landmarkHelp")}</span>
           {errText(errors.landmark)}
         </label>
@@ -211,7 +213,7 @@ export default function DetailsSheet({ open, onClose, onConfirm, areas, initial,
                 <label key={w} className={`flex min-h-[48px] cursor-pointer items-center justify-center rounded-lg border px-2 text-center font-semibold ${when === w ? "border-brand-blue bg-blue-50 text-brand-blue" : "border-slate-300"}`}>
                   <input
                     type="radio" name="when" className="sr-only" checked={when === w}
-                    onChange={() => { setWhen(w); if (w === "later") setDay(todayPossible ? "today" : "tomorrow"); }}
+                    onChange={() => { setWhen(w); fix("time"); if (w === "later") setDay(todayPossible ? "today" : "tomorrow"); }}
                   />
                   {t(w)}
                 </label>
@@ -222,14 +224,14 @@ export default function DetailsSheet({ open, onClose, onConfirm, areas, initial,
                 <div className="grid grid-cols-2 gap-2">
                   <label className="block space-y-1">
                     <span className="text-sm font-semibold">{t("day")}</span>
-                    <select className={input} value={day} onChange={(e) => setDay(e.target.value as "today" | "tomorrow")}>
+                    <select className={input} value={day} onChange={(e) => { setDay(e.target.value as "today" | "tomorrow"); fix("time"); }}>
                       <option value="today" disabled={!todayPossible}>{t("today")}</option>
                       <option value="tomorrow">{t("tomorrow")}</option>
                     </select>
                   </label>
                   <label className="block space-y-1">
                     <span className="text-sm font-semibold">{t("timeLabel")}</span>
-                    <input className={input} type="time" min={openLabel} max={closeLabel} value={time} onChange={(e) => setTime(e.target.value)} aria-invalid={!!errors.time} />
+                    <input className={input} type="time" min={openLabel} max={closeLabel} value={time} onChange={(e) => { setTime(e.target.value); fix("time"); }} aria-invalid={!!errors.time} />
                   </label>
                 </div>
                 <p className="text-xs text-slate-600">{t("timeRange", { open: openLabel, close: closeLabel })}</p>
