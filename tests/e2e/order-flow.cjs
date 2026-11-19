@@ -99,7 +99,7 @@ const ok = (name, pass, extra = "") => { results.push({ name, pass }); console.l
   ok("Message has the order type and café", /NEW ORDER/.test(msg) && /Olive Cafe/.test(msg));
   ok("Message has quantities and totals", /3 x Chicken Momo|2 x Chicken Momo/.test(msg) && /Items total: Rs\./.test(msg));
   ok("Message has name, phone (cleaned) and landmark", /Sita Rai/.test(msg) && /9812345678/.test(msg) && /Near Nabil Bank/.test(msg));
-  ok("Message has the delivery time for Later", /Deliver: Tomorrow 14:30/.test(msg));
+  ok("Message has the delivery time for Later", /Delivery: Later – Tomorrow 14:30/.test(msg));
   ok("Message has the note", /Less spicy please/.test(msg));
 
   // 7. Edit keeps what was typed

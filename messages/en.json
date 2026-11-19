@@ -679,7 +679,10 @@
     "house": "House / gate",
     "phone2": "Other phone",
     "deliveryFrom": "(Delivery charge starts from {amount}; depends on location and order – to be confirmed)",
-    "deliveryFixed": "(Delivery charge for {area}: {amount})"
+    "deliveryFixed": "(Delivery charge for {area}: {amount})",
+    "delivery": "Delivery",
+    "asap": "As soon as possible",
+    "later": "Later"
   },
   "weekHours": {
     "d0": "Sun",

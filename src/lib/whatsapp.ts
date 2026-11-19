@@ -18,6 +18,8 @@ export interface Customer {
   deliveryFrom?: number | null;
   /** The chosen area has a fixed delivery charge. */
   deliveryFixed?: { area: string; amount: number } | null;
+  /** False when the order has its own date and time (gifts), so no "Delivery:" line is written. Default true. */
+  scheduled?: boolean;
   tole?: string;
   house?: string;
   phone2?: string;
@@ -53,8 +55,13 @@ export function mapLink(p: { lat: number; lng: number }): string {
   return `https://www.google.com/maps?q=${p.lat.toFixed(6)},${p.lng.toFixed(6)}`;
 }
 
-function customerBlock(lang: Lang, c: Customer): string[] {
+/**
+ * Who, where, how to pay, when, and anything extra. Order: name, phone, address, payment, delivery time,
+ * promo code (basket orders only), map location, note. Lines that are empty are left out.
+ */
+function customerBlock(lang: Lang, c: Customer, promo = ""): string[] {
   const t = L[lang];
+  const when = c.deliverAt ? `${t.later} – ${t[c.deliverAt.day]} ${c.deliverAt.time}` : t.asap;
   return [
     `${t.name}: ${c.name}`,
     `${t.phone}: ${c.phone}`,
@@ -63,9 +70,10 @@ function customerBlock(lang: Lang, c: Customer): string[] {
     ...(c.tole ? [`${t.tole}: ${c.tole}`] : []),
     ...(c.house ? [`${t.house}: ${c.house}`] : []),
     ...(c.landmark ? [`${t.landmark}: ${c.landmark}`] : []),
-    ...(c.location ? [`📍 ${t.location}: ${mapLink(c.location)}`] : []),
-    ...(c.deliverAt ? [`🕒 ${t.deliver}: ${t[c.deliverAt.day]} ${c.deliverAt.time}`] : []),
     `${t.payment}: ${t.payments[c.payment]}`,
+    ...(c.scheduled === false ? [] : [`${t.delivery}: ${when}`]),
+    ...(promo.trim() ? [`🎟️ ${t.promo}: ${promo.trim().toUpperCase()}`] : []),
+    ...(c.location ? [`📍 ${t.location}: ${mapLink(c.location)}`] : []),
     ...(c.note.trim() ? [`${t.note}: ${c.note.trim()}`] : []),
   ];
 }
@@ -116,7 +124,7 @@ function buildBasketMessage(
     }
   }
   if (o.lines.length > 0) out.push("", `${t.itemsTotal}: ${formatNPR(o.total)}`);
-  if (o.extras.promo.trim()) out.push(`🎟️ ${t.promo}: ${o.extras.promo.trim().toUpperCase()}`);
+  // (The promo code is written with the customer's details below, not here.)
 
   if (o.extras.shoppingList.trim()) out.push("", `${t.shoppingList}:`, o.extras.shoppingList.trim());
 
@@ -132,7 +140,7 @@ function buildBasketMessage(
     if (gl.length) out.push("", ...gl);
   }
 
-  out.push(deliveryLine(lang, o.customer), "", ...customerBlock(lang, o.customer));
+  out.push(deliveryLine(lang, o.customer), "", ...customerBlock(lang, o.customer, o.extras.promo));
   return out.join("\n");
 }
 

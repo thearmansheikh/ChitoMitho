@@ -123,6 +123,62 @@ for (const lang of ["en", "ne"]) {
   eq("delivery line: order-anything gets it too", anything.split("\n").includes("(Delivery charge starts from Rs. 50; depends on location and order – to be confirmed)"), true);
 }
 
+// ---- Task 1: the full order message, in the order the team reads it
+{
+  const mk = (over) => ({ ...base, itemId: "x", price: 100, qty: 1, ...over });
+  const cust = { name: "Sita Rai", phone: "9812345678", area: "Dharan-5", landmark: "Near Nabil Bank", payment: "cod", note: "", deliverAt: null };
+  const ex = (over = {}) => ({ ...extras, ...over });
+
+  // items from two places: grouped under their own "From:" line
+  const two = [
+    mk({ itemId: "a1", name: "Combo 4", price: 669, qty: 2 }),
+    mk({ itemId: "a2", name: "Peri Peri Fries", price: 179, qty: 1 }),
+    mk({ itemId: "b1", placeId: "p2", placeName: "Sweet Treats", placeNameNe: null, name: "Birthday Cake", price: 1500, qty: 1 }),
+  ];
+  const total2 = 2 * 669 + 179 + 1500;
+  const m = w.basketMessage("en", { lines: two, extras: ex(), total: total2, customer: cust });
+  const rows = m.split("\n");
+  eq("several places: each place has its own From: line", rows.filter((r) => r.startsWith("From: ")).join("|"), "From: The Chicken Box|From: Sweet Treats");
+  eq("several places: items sit under the right place", rows.indexOf("From: Sweet Treats") > rows.indexOf("• 1 x Peri Peri Fries (Rs. 179) = Rs. 179") && rows.indexOf("• 1 x Birthday Cake (Rs. 1,500) = Rs. 1,500") === rows.indexOf("From: Sweet Treats") + 1, true);
+  eq("several places: one total for everything", rows.includes("Items total: Rs. " + total2.toLocaleString("en-US")), true);
+  eq("several places: the order type lists both kinds only once", rows.includes("Order type: Food"), true);
+
+  // the order of the lines
+  const full = w.basketMessage("en", { lines: [two[0], two[1]], extras: ex({ promo: "first" }), total: 1517, customer: { ...cust, location: { lat: 26.8125, lng: 87.2813 }, note: "Less spicy", deliverAt: { day: "tomorrow", time: "14:30" }, tole: "Putali Line", house: "House 14" } });
+  const fr = full.split("\n");
+  const at = (prefix) => fr.findIndex((r) => r.includes(prefix));
+  const sequence = ["NEW ORDER", "Order type:", "From:", "Items total:", "Name:", "Phone:", "Area:", "Tole / street:", "House / gate:", "Landmark:", "Payment:", "Delivery:", "Promo code:", "Map location:", "Note:"].map(at);
+  eq("line order: header, items, total, name, phone, address, payment, delivery, promo, location, note", sequence.every((x, i) => x >= 0 && (i === 0 || x > sequence[i - 1])), true);
+  eq("payment line", fr.includes("Payment: Cash on delivery"), true);
+  eq("QR payment line", w.basketMessage("en", { lines: [two[0]], extras: ex(), total: 1338, customer: { ...cust, payment: "qr" } }).includes("Payment: QR at door"), true);
+  eq("later: date and time", fr.includes("Delivery: Later – Tomorrow 14:30"), true);
+  eq("promo code is written in capitals, once", fr.includes("🎟️ Promo code: FIRST") && fr.filter((r) => r.includes("Promo code")).length === 1, true);
+  eq("location link is a Google Maps link", fr.some((r) => /^📍 Map location: https:\/\/www\.google\.com\/maps\?q=26\.812500,87\.281300$/.test(r)), true);
+  eq("note", fr.includes("Note: Less spicy"), true);
+
+  // lines that do not apply are left out
+  const plain = w.basketMessage("en", { lines: [two[0]], extras: ex(), total: 1338, customer: cust }).split("\n");
+  eq("as soon as possible when no time was chosen", plain.includes("Delivery: As soon as possible"), true);
+  eq("no promo line when none was entered", plain.some((r) => r.includes("Promo code")), false);
+  eq("no map line when no location was shared", plain.some((r) => r.includes("Map location")), false);
+  eq("no note line when the note is empty", plain.some((r) => r.startsWith("Note:")), false);
+  const gift = w.basketMessage("en", { lines: [two[0]], extras: ex(), total: 1338, customer: { ...cust, scheduled: false } }).split("\n");
+  eq("gift orders (own date and time) have no Delivery: line", gift.some((r) => r.startsWith("Delivery:")), false);
+
+  // names with & # % + survive, and so do emoji and Nepali
+  const odd = [mk({ itemId: "o1", name: "Fish & Chips #5 (100% fresh) +cheese", price: 250, qty: 2, note: "no salt & pepper, 50% less oil" })];
+  const mo = w.basketMessage("en", { lines: odd, extras: ex(), total: 500, customer: cust });
+  eq("special characters in names and notes are kept", mo.includes("• 2 x Fish & Chips #5 (100% fresh) +cheese (Rs. 250) = Rs. 500") && mo.includes("↳ no salt & pepper, 50% less oil"), true);
+  eq("special characters survive the link", textOf(w.buildWhatsAppUrl("9805338257", mo)), mo);
+  const emoji = w.basketMessage("en", { lines: [mk({ itemId: "e1", name: "Momo 🥟🔥", price: 250 })], extras: ex(), total: 250, customer: cust });
+  eq("emoji in an item name survive the link", textOf(w.buildWhatsAppUrl("9805338257", emoji)).includes("Momo 🥟🔥") && !w.buildWhatsAppUrl("9805338257", emoji).includes("%EF%BF%BD"), true);
+
+  // Nepali
+  const ne = w.basketMessage("ne", { lines: [two[0]], extras: ex({ promo: "first" }), total: 1338, customer: { ...cust, payment: "qr", deliverAt: { day: "today", time: "18:00" }, location: { lat: 26.8, lng: 87.28 }, note: "कम पिरो" } }).split("\n");
+  eq("Nepali: delivery later, payment, promo, note labels", ne.includes("डेलिभरी: पछि – आज 18:00") && ne.some((r) => r.startsWith("भुक्तानी: ")) && ne.includes("🎟️ प्रोमो कोड: FIRST") && ne.includes("टिप्पणी: कम पिरो"), true);
+  eq("Nepali: as soon as possible", w.basketMessage("ne", { lines: [two[0]], extras: ex(), total: 1338, customer: cust }).split("\n").includes("डेलिभरी: सकेसम्म चाँडो"), true);
+}
+
 // ---- a very long basket gets shorter lines but keeps every item, quantity and the total
 const big = Array.from({ length: 30 }, (_, i) => ({ ...base, itemId: "b" + i, name: `Crispy Boneless Strips - ${i + 1}pc special`, price: 100 + i, qty: 2 + (i % 3), note: "extra crispy please, not too salty and well done" }));
 const bigTotal = big.reduce((n, l) => n + l.qty * l.price, 0);

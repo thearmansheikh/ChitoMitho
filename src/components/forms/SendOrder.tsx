@@ -132,7 +132,7 @@ export default function SendOrder({ service, placeId, itemsTotal, build, validat
     };
     const areaText = area ? (areaName.startsWith(groupName) ? areaName : `${groupName} – ${areaName}`) : d.areaOther;
     const text = build(
-      { deliveryFrom: config.deliveryFrom ?? null, deliveryFixed: fixedFor(area), name: d.name, phone: d.phone, phone2: d.phone2, area: areaText, tole: d.tole, house: d.house, landmark: d.landmark, location: extra.location, deliverAt: extra.deliverAt, payment: d.payment, note },
+      { scheduled: allowSchedule, deliveryFrom: config.deliveryFrom ?? null, deliveryFixed: fixedFor(area), name: d.name, phone: d.phone, phone2: d.phone2, area: areaText, tole: d.tole, house: d.house, landmark: d.landmark, location: extra.location, deliverAt: extra.deliverAt, payment: d.payment, note },
       locale,
     );
     return { text, area };

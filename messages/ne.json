@@ -679,7 +679,10 @@
     "house": "घर / गेट",
     "phone2": "अर्को फोन",
     "deliveryFrom": "(डेलिभरी शुल्क {amount} बाट सुरु; स्थान र अर्डरमा भर पर्छ – पुष्टि गरिनेछ)",
-    "deliveryFixed": "({area} को डेलिभरी शुल्क: {amount})"
+    "deliveryFixed": "({area} को डेलिभरी शुल्क: {amount})",
+    "delivery": "डेलिभरी",
+    "asap": "सकेसम्म चाँडो",
+    "later": "पछि"
   },
   "weekHours": {
     "d0": "आइत",
