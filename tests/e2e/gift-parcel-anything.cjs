@@ -35,7 +35,7 @@ const ok = (name, pass, extra) => { results.push(pass); console.log((pass ? "PAS
     await page.type('form[role="dialog"] input[type="tel"]', "9812345678");
     const areaVal = await page.$eval('form[role="dialog"] select option[value]:not([value=""]):not([value="other"])', (o) => o.value);
     await page.select('form[role="dialog"] select', areaVal);
-    await page.type('form[role="dialog"] input[autocomplete="street-address"]', "Blue gate");
+    await page.type('form[role="dialog"] input[list="tole-suggestions"]', "Blue gate");
     console.log("-- clicking the sheet submit button --");
     const submitInfo = await page.evaluate(() => [...document.querySelectorAll('form[role="dialog"] button')].map((b) => (b.getAttribute("type") || "(none)") + ":" + b.textContent.trim().slice(0, 24)));
     console.log("sheet buttons:", JSON.stringify(submitInfo));

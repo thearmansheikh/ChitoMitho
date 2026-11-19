@@ -5,7 +5,13 @@ export interface Details {
   phone: string;
   areaId: string; // area uuid, "other", or "" when not chosen
   areaOther: string;
+  /** Tole or street. */
+  tole: string;
+  /** House or gate number. */
+  house: string;
   landmark: string;
+  /** A second number the rider can call. Optional. */
+  phone2: string;
   payment: Payment;
 }
 
@@ -14,7 +20,10 @@ export const EMPTY_DETAILS: Details = {
   phone: "",
   areaId: "",
   areaOther: "",
+  tole: "",
+  house: "",
   landmark: "",
+  phone2: "",
   payment: "cod",
 };
 

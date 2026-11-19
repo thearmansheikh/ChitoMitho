@@ -93,7 +93,7 @@ async function run(browser, prof) {
   await page.type('[role="dialog"] input[type="tel"]', "98 12345678");
   const areaVal = await page.$eval('form[role="dialog"] select option[value]:not([value=""]):not([value="other"])', (o) => o.value);
   await page.select('form[role="dialog"] select', areaVal);
-  await page.type('[role="dialog"] input[autocomplete="street-address"]', "Near Nabil Bank, blue gate");
+  await page.type('[role="dialog"] input[list="tole-suggestions"]', "Near Nabil Bank, blue gate");
   await page.click('form[role="dialog"] button:not([type])');
   await page.waitForSelector("#review-title", { visible: true, timeout: 8000 });
   const shown = await page.$eval("[role='dialog'] pre", (e) => e.textContent);

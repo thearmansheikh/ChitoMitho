@@ -7,12 +7,13 @@ import { EMPTY_DETAILS, PHONE_RE, normalizePhone, type Details, type Payment } f
 import { nowMinutesNPT, parseTimeToMinutes } from "@/lib/format";
 import type { Area, AreaGroup } from "@/types/db";
 import LocationButton, { type Coords } from "./LocationButton";
+import { useToles } from "@/lib/toles";
 
 const GROUPS: AreaGroup[] = ["dharan", "itahari", "biratnagar", "nearby"];
 const input =
   "w-full min-h-[48px] rounded-lg border border-slate-300 px-3 py-2 text-base focus:border-brand-blue focus:outline-none focus:ring-2 focus:ring-brand-blue/30";
 
-type Errors = Partial<Record<"name" | "phone" | "area" | "areaOther" | "landmark" | "time", string>>;
+type Errors = Partial<Record<"name" | "phone" | "phone2" | "area" | "areaOther" | "tole" | "landmark" | "time", string>>;
 
 export interface SheetExtra {
   location: Coords | null;
@@ -47,6 +48,7 @@ export default function DetailsSheet({ open, onClose, onConfirm, areas, initial,
   const [day, setDay] = useState<"today" | "tomorrow">("today");
   const [time, setTime] = useState("");
   const [errors, setErrors] = useState<Errors>({});
+  const toles = useToles(open);
   /** A message disappears as soon as the customer starts fixing that field. */
   const fix = (...keys: (keyof Errors)[]) => setErrors((e) => (keys.some((k) => e[k]) ? Object.fromEntries(Object.entries(e).filter(([k]) => !keys.includes(k as keyof Errors))) : e));
   const firstRef = useRef<HTMLInputElement>(null);
@@ -96,10 +98,16 @@ export default function DetailsSheet({ open, onClose, onConfirm, areas, initial,
       else if (day === "today" && m < nowMinutesNPT() + LEAD_MINUTES) err.time = t("timeTooSoon");
       else deliverAt = { day, time };
     }
-    if (!d.landmark.trim()) err.landmark = t("required");
+    // The rider needs somewhere to go: a tole or street, or a landmark (ideally both).
+    if (!d.tole.trim() && !d.landmark.trim()) err.tole = t("addressRequired");
+    const phone2 = normalizePhone(d.phone2);
+    if (d.phone2.trim() && !PHONE_RE.test(phone2)) err.phone2 = t("phoneInvalid");
     setErrors(err);
     if (Object.keys(err).length) return;
-    const clean = { ...d, name: d.name.trim(), phone, areaOther: d.areaOther.trim(), landmark: d.landmark.trim() };
+    const clean = {
+      ...d, name: d.name.trim(), phone, phone2: d.phone2.trim() ? phone2 : "", areaOther: d.areaOther.trim(),
+      tole: d.tole.trim(), house: d.house.trim(), landmark: d.landmark.trim(),
+    };
     const extra: SheetExtra = { location: loc, deliverAt };
     // Show the customer exactly what will be sent before WhatsApp opens.
     if (preview) return setReview({ d: clean, note, extra, text: preview(clean, note, extra) });
@@ -171,6 +179,13 @@ export default function DetailsSheet({ open, onClose, onConfirm, areas, initial,
         </label>
 
         <label className="block space-y-1">
+          <span className="text-sm font-semibold">{t("phone2")}</span>
+          <input className={input} type="tel" inputMode="numeric" autoComplete="off" placeholder="98XXXXXXXX" value={d.phone2} onChange={(e) => { setD({ ...d, phone2: e.target.value }); fix("phone2"); }} aria-invalid={!!errors.phone2} />
+          <span className="block text-xs text-slate-500">{t("phone2Help")}</span>
+          {errText(errors.phone2)}
+        </label>
+
+        <label className="block space-y-1">
           <span className="text-sm font-semibold">{t("area")}</span>
           <select className={input} value={d.areaId} onChange={(e) => { setD({ ...d, areaId: e.target.value }); fix("area", "areaOther"); }} aria-invalid={!!errors.area}>
             <option value="">{t("areaChoose")}</option>
@@ -197,10 +212,30 @@ export default function DetailsSheet({ open, onClose, onConfirm, areas, initial,
         )}
 
         <label className="block space-y-1">
+          <span className="text-sm font-semibold">{t("tole")}</span>
+          <input
+            className={input} list="tole-suggestions" autoComplete="off" placeholder={t("tolePlaceholder")} value={d.tole}
+            onChange={(e) => { setD({ ...d, tole: e.target.value }); fix("tole"); }} aria-invalid={!!errors.tole}
+          />
+          <datalist id="tole-suggestions">
+            {toles
+              .filter((x) => x.area_id === null || x.area_id === d.areaId)
+              .map((x) => <option key={x.id} value={pick(x.name, x.name_ne, locale)} />)}
+          </datalist>
+          <span className="block text-xs text-slate-500">{t("toleHelp")}</span>
+          {errText(errors.tole)}
+        </label>
+
+        <label className="block space-y-1">
+          <span className="text-sm font-semibold">{t("house")}</span>
+          <input className={input} autoComplete="off" value={d.house} onChange={(e) => setD({ ...d, house: e.target.value })} />
+          <span className="block text-xs text-slate-500">{t("houseHelp")}</span>
+        </label>
+
+        <label className="block space-y-1">
           <span className="text-sm font-semibold">{t("landmark")}</span>
-          <input className={input} autoComplete="street-address" value={d.landmark} onChange={(e) => { setD({ ...d, landmark: e.target.value }); fix("landmark"); }} aria-invalid={!!errors.landmark} />
+          <input className={input} autoComplete="off" value={d.landmark} onChange={(e) => { setD({ ...d, landmark: e.target.value }); fix("tole"); }} aria-invalid={!!errors.landmark} />
           <span className="block text-xs text-slate-500">{t("landmarkHelp")}</span>
-          {errText(errors.landmark)}
         </label>
 
         <LocationButton value={loc} onChange={setLoc} />

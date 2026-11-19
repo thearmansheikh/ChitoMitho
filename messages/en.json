@@ -466,8 +466,8 @@
     "areaChoose": "Choose your ward or area",
     "areaOther": "My area is not in the list (I will type it)",
     "areaOtherLabel": "Your area, ward or town",
-    "landmark": "Full address",
-    "landmarkHelp": "Tole or street, house or gate number, and a landmark. e.g. Putali Line, house 14, near Nabil Bank, blue gate",
+    "landmark": "Nearby landmark",
+    "landmarkHelp": "Something the rider can spot, e.g. Near Nabil Bank, opposite the temple",
     "payment": "Payment",
     "cod": "Cash on delivery",
     "qr": "QR at door (eSewa, Khalti, Fonepay)",
@@ -521,7 +521,15 @@
     "timeLabel": "Time",
     "timeRange": "Between {open} and {close}, at least 30 minutes from now.",
     "timeOutside": "Please choose a time between {open} and {close}.",
-    "timeTooSoon": "Please choose a time at least 30 minutes from now."
+    "timeTooSoon": "Please choose a time at least 30 minutes from now.",
+    "phone2": "Another phone number (optional)",
+    "phone2Help": "A second number the rider can call if you do not pick up.",
+    "tole": "Tole / street",
+    "tolePlaceholder": "Start typing, e.g. Putali Line",
+    "toleHelp": "Choose from the suggestions or type your own. A tole or street, or a landmark below, is needed.",
+    "house": "House / gate number (optional)",
+    "houseHelp": "e.g. House 14, blue gate, second floor",
+    "addressRequired": "Please enter your tole or street, or a nearby landmark."
   },
   "parcel": {
     "title": "Parcel / Pick & Drop",
@@ -575,7 +583,7 @@
     "name": "Name",
     "phone": "Phone",
     "area": "Area",
-    "landmark": "Address",
+    "landmark": "Landmark",
     "payment": "Payment",
     "note": "Note",
     "shoppingList": "Shopping list",
@@ -656,7 +664,10 @@
       "cod": "Cash on delivery",
       "qr": "QR at door"
     },
-    "greeting": "Hi Chitto Mitho, I have a question."
+    "greeting": "Hi Chitto Mitho, I have a question.",
+    "tole": "Tole / street",
+    "house": "House / gate",
+    "phone2": "Other phone"
   },
   "weekHours": {
     "d0": "Sun",

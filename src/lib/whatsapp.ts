@@ -13,6 +13,10 @@ export interface Customer {
   name: string;
   phone: string;
   area: string;
+  /** Tole or street, house or gate number and a second phone number are optional extras for the rider. */
+  tole?: string;
+  house?: string;
+  phone2?: string;
   landmark: string;
   /** Optional GPS position the customer chose to share. */
   location?: { lat: number; lng: number } | null;
@@ -50,8 +54,11 @@ function customerBlock(lang: Lang, c: Customer): string[] {
   return [
     `${t.name}: ${c.name}`,
     `${t.phone}: ${c.phone}`,
+    ...(c.phone2 ? [`${t.phone2}: ${c.phone2}`] : []),
     `${t.area}: ${c.area}`,
-    `${t.landmark}: ${c.landmark}`,
+    ...(c.tole ? [`${t.tole}: ${c.tole}`] : []),
+    ...(c.house ? [`${t.house}: ${c.house}`] : []),
+    ...(c.landmark ? [`${t.landmark}: ${c.landmark}`] : []),
     ...(c.location ? [`📍 ${t.location}: ${mapLink(c.location)}`] : []),
     ...(c.deliverAt ? [`🕒 ${t.deliver}: ${t[c.deliverAt.day]} ${c.deliverAt.time}`] : []),
     `${t.payment}: ${t.payments[c.payment]}`,

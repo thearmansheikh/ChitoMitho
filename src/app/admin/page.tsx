@@ -7,6 +7,7 @@ const TILES = [
   ["/admin/items", "Items", "Menus, prices, sold-out"],
   ["/admin/import", "Import a menu", "Paste or upload a whole menu at once"],
   ["/admin/areas", "Areas", "Delivery area list"],
+  ["/admin/toles", "Toles", "Streets and toles customers can pick"],
   ["/admin/offers", "Offers", "Deals and promo codes"],
   ["/admin/closures", "Holiday closures", "Days when orders are closed"],
   ["/admin/settings", "Settings", "WhatsApp, hours, pause orders"],

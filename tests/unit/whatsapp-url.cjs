@@ -81,6 +81,33 @@ for (const lang of ["en", "ne"]) {
   eq(`[${lang}] a normal basket stays under the limit`, back.length <= w.MAX_MESSAGE_CHARS, true);
 }
 
+// ---- the address block a rider reads
+{
+  const one = [lines[0]];
+  const withAll = { ...customer, phone2: "9801112233", tole: "Putali Line", house: "House 14, blue gate", landmark: "Near Nabil Bank", area: "Dharan-5" };
+  const full = w.basketMessage("en", { lines: one, extras, total: 600, customer: withAll });
+  const rows = full.split("\n");
+  const has = (list, line) => list.includes(line);
+  const at = (label) => full.indexOf(label + ":");
+  eq("address block: every part is there", ["Phone", "Other phone", "Area", "Tole / street", "House / gate", "Landmark"].every((l) => at(l) >= 0), true);
+  eq("address block: parts come in the order a rider needs them", ["Area", "Tole / street", "House / gate", "Landmark"].map(at).every((x, i, a) => i === 0 || x > a[i - 1]), true);
+  eq("address block: each value is on its own line", [
+    "Other phone: 9801112233", "Area: Dharan-5", "Tole / street: Putali Line", "House / gate: House 14, blue gate", "Landmark: Near Nabil Bank",
+  ].every((line) => has(rows, line)), true);
+
+  const bare = w.basketMessage("en", { lines: one, extras, total: 600, customer: { ...customer, landmark: "Near Nabil Bank", area: "Dharan-5" } });
+  eq("address block: empty optional parts leave no lines", ["Other phone:", "Tole / street:", "House / gate:"].every((l) => !bare.includes(l)), true);
+
+  const toleOnly = w.basketMessage("en", { lines: one, extras, total: 600, customer: { ...customer, landmark: "", tole: "Hatkhola", area: "Dharan-9" } });
+  eq("address block: a tole alone is enough (no empty Landmark line)", toleOnly.split("\n").includes("Tole / street: Hatkhola") && !toleOnly.includes("Landmark:"), true);
+
+  const ne = w.basketMessage("ne", { lines: one, extras, total: 600, customer: { ...withAll, tole: "पुतली लाइन", house: "घर नं. १४", landmark: "नबिल बैंक नजिक", area: "धरान-५" } });
+  const neRows = ne.split("\n");
+  eq("address block (Nepali): labels and values", [
+    "अर्को फोन: 9801112233", "क्षेत्र: धरान-५", "टोल / सडक: पुतली लाइन", "घर / गेट: घर नं. १४", "चिनारी: नबिल बैंक नजिक",
+  ].every((line) => has(neRows, line)), true);
+}
+
 // ---- a very long basket gets shorter lines but keeps every item, quantity and the total
 const big = Array.from({ length: 30 }, (_, i) => ({ ...base, itemId: "b" + i, name: `Crispy Boneless Strips - ${i + 1}pc special`, price: 100 + i, qty: 2 + (i % 3), note: "extra crispy please, not too salty and well done" }));
 const bigTotal = big.reduce((n, l) => n + l.qty * l.price, 0);

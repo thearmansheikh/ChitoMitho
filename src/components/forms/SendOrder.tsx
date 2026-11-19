@@ -125,7 +125,7 @@ export default function SendOrder({ service, placeId, itemsTotal, build, validat
     // "Dharan-5" already names the town, so it is not written as "Dharan – Dharan-5".
     const areaText = area ? (areaName.startsWith(groupName) ? areaName : `${groupName} – ${areaName}`) : d.areaOther;
     const text = build(
-      { name: d.name, phone: d.phone, area: areaText, landmark: d.landmark, location: extra.location, deliverAt: extra.deliverAt, payment: d.payment, note },
+      { name: d.name, phone: d.phone, phone2: d.phone2, area: areaText, tole: d.tole, house: d.house, landmark: d.landmark, location: extra.location, deliverAt: extra.deliverAt, payment: d.payment, note },
       locale,
     );
     return { text, area };

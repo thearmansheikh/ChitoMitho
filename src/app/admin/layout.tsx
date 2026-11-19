@@ -11,6 +11,7 @@ const NAV = [
   ["/admin/items", "Items"],
   ["/admin/import", "Import"],
   ["/admin/areas", "Areas"],
+  ["/admin/toles", "Toles"],
   ["/admin/offers", "Offers"],
   ["/admin/closures", "Closures"],
   ["/admin/settings", "Settings"],

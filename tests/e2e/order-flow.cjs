@@ -77,7 +77,7 @@ const ok = (name, pass, extra = "") => { results.push({ name, pass }); console.l
   await page.type('[role="dialog"] input[type="tel"]', "98 12345678");
   const areaVal = await page.$eval('form[role="dialog"] select option[value]:not([value=""]):not([value="other"])', (o) => o.value);
   await page.select('form[role="dialog"] select', areaVal);
-  await page.type('[role="dialog"] input[autocomplete="street-address"]', "Near Nabil Bank, blue gate");
+  await page.type('[role="dialog"] input[list="tole-suggestions"]', "Near Nabil Bank, blue gate");
   // choose "Later" tomorrow 14:30
   const laterLabel = await page.$x ? null : null;
   const radios = await page.$$('[role="dialog"] input[name="when"]');

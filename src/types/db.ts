@@ -90,6 +90,14 @@ export interface Closure {
   message_ne: string | null;
   created_at: string;
 }
+export interface Tole {
+  id: string;
+  name: string;
+  name_ne: string | null;
+  /** The area (for example a ward) this tole sits in, or null to suggest it everywhere. */
+  area_id: string | null;
+  is_active: boolean;
+}
 export interface Offer {
   id: string;
   title: string;

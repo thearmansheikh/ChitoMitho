@@ -122,7 +122,7 @@ const ok = (name, pass, extra = "") => { results.push({ name, pass }); console.l
   const areaVal = await page.$eval('form[role="dialog"] select option[value]:not([value=""]):not([value="other"])', (o) => o.value);
   const areaLabel = await page.$eval('form[role="dialog"] select option[value]:not([value=""]):not([value="other"])', (o) => o.textContent.trim());
   await page.select('form[role="dialog"] select', areaVal);
-  await page.type('[role="dialog"] input[autocomplete="street-address"]', "Near Nabil Bank, blue gate");
+  await page.type('[role="dialog"] input[list="tole-suggestions"]', "Near Nabil Bank, blue gate");
   await sleep(150);
   const staleErrors = await page.$$eval('[role="dialog"] [role="alert"]', (els) => els.map((e) => e.textContent));
   ok("Error messages clear once the fields are filled in", staleErrors.length === 0, JSON.stringify(staleErrors));
