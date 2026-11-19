@@ -1,14 +1,17 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { imageProblem, shrinkToWebp } from "@/lib/image";
 
 export function slugify(s: string): string {
   return s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
 
-/** Upload an image to the public "media" bucket and return its public URL. */
+/** Shrink a picture to WebP (longest side ~800px) and upload it to the public "media" bucket. Returns its public URL. */
 export async function uploadImage(sb: SupabaseClient, file: File, folder: string): Promise<string> {
-  const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
+  const problem = imageProblem(file);
+  if (problem) throw new Error(problem);
+  const { blob, ext } = await shrinkToWebp(file);
   const path = `${folder}/${crypto.randomUUID()}.${ext}`;
-  const { error } = await sb.storage.from("media").upload(path, file, { contentType: file.type, upsert: false });
+  const { error } = await sb.storage.from("media").upload(path, blob, { contentType: blob.type || file.type, upsert: false, cacheControl: "31536000" });
   if (error) throw error;
   return sb.storage.from("media").getPublicUrl(path).data.publicUrl;
 }

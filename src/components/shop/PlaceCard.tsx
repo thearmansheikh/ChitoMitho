@@ -3,6 +3,7 @@ import Link from "next/link";
 import DishIcon, { DISH_TINT, dishFor, type DishName } from "@/components/ui/DishIcon";
 import type { Place, PlaceType } from "@/types/db";
 import PlaceOpenChip from "./PlaceOpenChip";
+import PlaceLogo from "./PlaceLogo";
 import { hasMenu } from "@/lib/places";
 
 const BY_TYPE: Record<PlaceType, DishName> = { food: "burger", grocery: "grocery", liquor: "beer", gifts: "bouquet" };
@@ -22,18 +23,17 @@ export default function PlaceCard({ place, name, tags = [], comingSoon }: { plac
       className="group block overflow-hidden rounded-2xl bg-white shadow-card ring-1 ring-slate-200/70 transition duration-200 hover:-translate-y-0.5 hover:shadow-lg active:scale-[0.99]"
     >
       <div className={`relative flex h-28 items-center justify-center gap-3 overflow-hidden bg-gradient-to-br ${DISH_TINT[dishes[0]]}`}>
-        <span aria-hidden className="absolute -right-6 -top-8 h-28 w-28 rounded-full bg-white/40" />
-        <span aria-hidden className="absolute -bottom-10 left-6 h-20 w-20 rounded-full bg-white/30" />
-        {dishes.map((d, i) => (
+        {place.cover_url && <Image src={place.cover_url} alt="" fill sizes="(max-width: 640px) 100vw, 400px" loading="lazy" className="object-cover" />}
+        {!place.cover_url && <span aria-hidden className="absolute -right-6 -top-8 h-28 w-28 rounded-full bg-white/40" />}
+        {!place.cover_url && <span aria-hidden className="absolute -bottom-10 left-6 h-20 w-20 rounded-full bg-white/30" />}
+        {!place.cover_url && dishes.map((d, i) => (
           <DishIcon key={d} name={d} className={`relative drop-shadow-sm transition-transform duration-200 group-hover:scale-110 ${i === 0 ? "h-20 w-20" : "h-14 w-14"}`} />
         ))}
         <PlaceOpenChip opensAt={place.opens_at} closesAt={place.closes_at} />
         {comingSoon && !hasMenu(place) && (
           <span className="absolute left-2 top-2 rounded-full bg-white/95 px-2.5 py-1 text-xs font-bold text-slate-700 shadow-sm">{comingSoon}</span>
         )}
-        {place.logo_url && (
-          <Image src={place.logo_url} alt={name} width={44} height={44} loading="lazy" className="absolute bottom-2 left-2 h-11 w-11 rounded-full object-cover ring-2 ring-white" />
-        )}
+        <PlaceLogo logoUrl={place.logo_url} name={name} className="absolute bottom-2 left-2" />
       </div>
       <div className="space-y-1.5 p-3.5">
         <div className="flex items-center justify-between gap-2">

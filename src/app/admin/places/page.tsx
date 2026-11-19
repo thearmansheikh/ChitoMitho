@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { firstLetter } from "@/lib/image";
 import { slugify, swapOrder, uploadImage } from "@/lib/admin";
 import { btnDanger, btnGhost, btnPrimary, Card, Field, inputCls, Notice } from "@/components/admin/ui";
 import type { Place, PlaceType } from "@/types/db";
@@ -21,6 +22,7 @@ export default function PlacesPage() {
   const [error, setError] = useState<string | null>(null);
   const [ok, setOk] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [uploading, setUploading] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     const { data, error } = await createClient().from("places").select("*").order("sort_order").order("name");
@@ -84,26 +86,22 @@ export default function PlacesPage() {
     if (err) setError(err.message); else load();
   }
 
-  async function logo(p: Place, file?: File) {
+  /** Shrinks the picture to WebP (~800px), uploads it and saves it on the place. */
+  async function setImage(p: Place, column: "logo_url" | "cover_url", folder: string, file?: File) {
     if (!file) return;
-    setError(null);
+    setError(null); setOk(null); setUploading(p.id + column);
     try {
-      const url = await uploadImage(sb, file, "logos");
-      const { error } = await sb.from("places").update({ logo_url: url }).eq("id", p.id);
+      const url = await uploadImage(sb, file, folder);
+      const { error } = await sb.from("places").update({ [column]: url }).eq("id", p.id);
       if (error) throw error;
+      setOk(column === "logo_url" ? "Logo saved (resized to WebP)." : "Cover photo saved (resized to WebP).");
       load();
     } catch (e) { setError((e as Error).message); }
+    setUploading(null);
   }
-
-  async function cover(p: Place, file?: File) {
-    if (!file) return;
-    setError(null);
-    try {
-      const url = await uploadImage(sb, file, "covers");
-      const { error } = await sb.from("places").update({ cover_url: url }).eq("id", p.id);
-      if (error) throw error;
-      load();
-    } catch (e) { setError((e as Error).message); }
+  async function clearImage(p: Place, column: "logo_url" | "cover_url") {
+    const { error } = await sb.from("places").update({ [column]: null }).eq("id", p.id);
+    if (error) setError(error.message); else load();
   }
 
   async function remove(p: Place) {
@@ -133,7 +131,7 @@ export default function PlacesPage() {
           <div className="sm:col-span-2"><Field label="Google Maps link (optional)"><input className={inputCls} inputMode="url" value={form.maps_url} onChange={(e) => setForm({ ...form, maps_url: e.target.value })} placeholder="https://maps.app.goo.gl/…" /></Field></div>
           <Field label="Opens (optional)"><input type="time" className={inputCls} value={form.opens_at} onChange={(e) => setForm({ ...form, opens_at: e.target.value })} /></Field>
           <Field label="Closes (optional)"><input type="time" className={inputCls} value={form.closes_at} onChange={(e) => setForm({ ...form, closes_at: e.target.value })} /></Field>
-          <p className="text-xs text-slate-500 sm:col-span-2">Leave the times empty if this place keeps the shop’s hours. Upload a logo or cover photo with the buttons on the place’s card below.</p>
+          <p className="text-xs text-slate-500 sm:col-span-2">Leave the times empty if this place keeps the shop’s hours. Upload a logo or cover photo with the buttons on the place’s card below. Pictures are shrunk to about 800 px and saved as WebP automatically, so any phone photo is fine. A place with no logo shows its first letter.</p>
           <div className="flex gap-2 sm:col-span-2">
             <button className={btnPrimary} disabled={busy}>{editing ? "Save" : "Add place"}</button>
             {editing && <button type="button" className={btnGhost} onClick={reset}>Cancel</button>}
@@ -147,8 +145,8 @@ export default function PlacesPage() {
             <div className="flex items-center gap-3">
               {p.logo_url
                 // eslint-disable-next-line @next/next/no-img-element
-                ? <img src={p.logo_url} alt="" className="h-12 w-12 rounded-lg object-cover" />
-                : <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-slate-100 text-xl" aria-hidden>🏪</div>}
+                ? <img src={p.logo_url} alt="" className="h-12 w-12 rounded-full object-cover" />
+                : <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-xl font-extrabold text-brand-blue" aria-hidden>{firstLetter(p.name)}</div>}
               <div className="min-w-0 flex-1">
                 <p className="truncate font-bold">{p.name} {p.name_ne && <span className="font-normal text-slate-500">· {p.name_ne}</span>}</p>
                 <p className="text-sm text-slate-500">{p.type} · /p/{p.slug}</p>
@@ -161,13 +159,15 @@ export default function PlacesPage() {
               <button className={btnGhost} onClick={() => startEdit(p)}>Edit</button>
               <Link className={`${btnGhost} flex items-center`} href={`/admin/items?place=${p.id}`}>Items</Link>
               <label className={`${btnGhost} flex cursor-pointer items-center`}>
-                Logo
-                <input type="file" accept="image/*" className="sr-only" onChange={(e) => logo(p, e.target.files?.[0])} />
+                {uploading === p.id + "logo_url" ? "Uploading…" : p.logo_url ? "Change logo" : "Upload logo"}
+                <input type="file" accept="image/*" className="sr-only" onChange={(e) => { setImage(p, "logo_url", "logos", e.target.files?.[0]); e.target.value = ""; }} />
               </label>
+              {p.logo_url && <button className={btnGhost} onClick={() => clearImage(p, "logo_url")}>Remove logo</button>}
               <label className={`${btnGhost} flex cursor-pointer items-center`}>
-                {p.cover_url ? "Change cover" : "Cover photo"}
-                <input type="file" accept="image/*" className="sr-only" onChange={(e) => cover(p, e.target.files?.[0])} />
+                {uploading === p.id + "cover_url" ? "Uploading…" : p.cover_url ? "Change cover" : "Upload cover"}
+                <input type="file" accept="image/*" className="sr-only" onChange={(e) => { setImage(p, "cover_url", "covers", e.target.files?.[0]); e.target.value = ""; }} />
               </label>
+              {p.cover_url && <button className={btnGhost} onClick={() => clearImage(p, "cover_url")}>Remove cover</button>}
               <button className={btnDanger} onClick={() => remove(p)}>Delete</button>
             </div>
           </Card>

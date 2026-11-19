@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test:unit": "node tests/unit/whatsapp-url.cjs && node tests/unit/places.cjs"
+    "test:unit": "node tests/unit/whatsapp-url.cjs && node tests/unit/places.cjs && node tests/unit/image.cjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
