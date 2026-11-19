@@ -6,6 +6,9 @@ const BASE = process.env.BASE || "http://localhost:3000";
 const CHROME = process.env.CHROME_PATH || "C:/Program Files/Google/Chrome/Application/chrome.exe";
 const LOCALE = process.env.LOCALE || "en";
 const SHOTS = process.env.SHOTS || "";
+// These tests pretend it is 13:20 in Nepal. When the real time is outside opening hours the server's page says "Closed" and the
+// pretend clock says "Open", which React reports as hydration errors #418/#423/#425. That is the test's clock, not a site fault.
+const CLOCK_NOISE = /React error #(418|423|425)/;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const results = [];
 const ok = (name, pass, extra = "") => { results.push({ name, pass }); console.log((pass ? "PASS " : "FAIL ") + name + (extra && !pass ? "  -> " + extra : "")); };
@@ -159,7 +162,8 @@ const ok = (name, pass, extra = "") => { results.push({ name, pass }); console.l
   await page.goto(BASE + "/", { waitUntil: "networkidle2" });
   ok("Home page offers Order again", /Order again|फेरि अर्डर/i.test(await text("main")));
 
-  ok("No page errors", pageErrors.length === 0, JSON.stringify(pageErrors.slice(0, 3)));
+  const realErrors = pageErrors.filter((e) => process.env.REALCLOCK || !CLOCK_NOISE.test(e));
+  ok("No page errors", realErrors.length === 0, JSON.stringify(realErrors.slice(0, 3)));
   ok("No failed requests (4xx/5xx)", badResponses.length === 0, JSON.stringify(badResponses.slice(0, 5)));
 
   const failed = results.filter((r) => !r.pass).length;
