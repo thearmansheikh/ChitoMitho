@@ -120,7 +120,10 @@ export default function SendOrder({ service, placeId, itemsTotal, build, validat
   /** The exact message the customer's WhatsApp will open with, built the same way for the preview and the send. */
   function makeText(d: Details, note: string, extra: SheetExtra) {
     const area = areas.find((a) => a.id === d.areaId);
-    const areaText = area ? `${t(`groups.${area.area_group}`)} – ${pick(area.name, area.name_ne, locale)}` : d.areaOther;
+    const areaName = area ? pick(area.name, area.name_ne, locale) : "";
+    const groupName = area ? t(`groups.${area.area_group}`) : "";
+    // "Dharan-5" already names the town, so it is not written as "Dharan – Dharan-5".
+    const areaText = area ? (areaName.startsWith(groupName) ? areaName : `${groupName} – ${areaName}`) : d.areaOther;
     const text = build(
       { name: d.name, phone: d.phone, area: areaText, landmark: d.landmark, location: extra.location, deliverAt: extra.deliverAt, payment: d.payment, note },
       locale,
