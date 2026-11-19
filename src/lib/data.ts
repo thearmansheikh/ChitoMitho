@@ -4,7 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 import type { Area, Category, Closure, Item, Offer, Place, PlaceType, Settings } from "@/types/db";
 import { nepalDates } from "./format";
 import { liquorEnabledOf } from "./liquor";
-import { DAY_NAMES, DAY_NAMES_NE, hoursFor, nepalWeekday, validWeekHours } from "./hours";
+import { DAY_NAMES, DAY_NAMES_NE, hoursFor, nepalWeekday, nextOpenHours, validWeekHours } from "./hours";
 import {
   SAMPLE_OFFERS,
   SAMPLE_AREAS, SAMPLE_CATEGORIES, SAMPLE_ITEMS, SAMPLE_PLACES, SAMPLE_SETTINGS,
@@ -32,7 +32,8 @@ export const getSettings = unstable_cache(
     if (week) {
       const day = nepalWeekday();
       const h = hoursFor(week, day);
-      settings = { ...settings, open_time: h.open, close_time: h.close };
+      const next = nextOpenHours(week, day);
+      settings = { ...settings, open_time: h.open, close_time: h.close, tomorrow_open_time: next.open, tomorrow_close_time: next.close };
       if (h.closed && !settings.orders_paused) {
         settings = {
           ...settings,

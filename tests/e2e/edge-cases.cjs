@@ -5,7 +5,7 @@ const BASE = process.env.BASE || "http://localhost:3000";
 const CHROME = process.env.CHROME_PATH || "C:/Program Files/Google/Chrome/Application/chrome.exe";
 // These tests pretend it is 13:20 in Nepal. When the real time is outside opening hours the server's page says "Closed" and the
 // pretend clock says "Open", which React reports as hydration errors #418/#423/#425. That is the test's clock, not a site fault.
-const CLOCK_NOISE = /React error #(418|423|425)/;
+const CLOCK_NOISE = /React error #(418|423|425)|Text content does not match|error while hydrating|Hydration failed/;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const results = [];
 const ok = (n, p, extra = "") => { results.push(p); console.log((p ? "PASS " : "FAIL ") + n + (extra && !p ? "  -> " + extra : "")); };
@@ -44,9 +44,9 @@ const text = (page, sel) => page.$eval(sel, (e) => e.innerText).catch(() => "");
     ok("Closed: browsing and adding to the basket still works", !!(await page.$("button[aria-label^='Add one: Combo 1']")));
     await page.goto(BASE + "/basket", { waitUntil: "networkidle2" }); await page.waitForSelector("main li", { timeout: 15000 });
     const basket = await text(page, "main");
-    ok("Closed: the basket explains the shop is closed", /closed right now/i.test(basket), basket.slice(-300));
-    const state = await page.evaluate(() => { const b = [...document.querySelectorAll("main button")].find((x) => /Order on WhatsApp/.test(x.textContent)); return b ? { disabled: b.disabled, ariaDisabled: b.getAttribute("aria-disabled") } : null; });
-    ok("Closed: the order button is switched off", !!state && (state.disabled || state.ariaDisabled === "true"), JSON.stringify(state));
+    ok("Closed: the basket says 'Closed now · Opens tomorrow at 10:00' and that you can order for later", /Closed now · Opens tomorrow at 10:00/.test(basket) && /order for later/.test(basket), basket.slice(-300));
+    const state = await page.evaluate(() => { const b = [...document.querySelectorAll("main button")].find((x) => /Order on WhatsApp/.test(x.textContent)); return b ? { disabled: b.disabled } : null; });
+    ok("Closed: the order button stays on, so the customer can order for later", !!state && state.disabled === false, JSON.stringify(state));
     await page.close();
   }
 
@@ -56,7 +56,7 @@ const text = (page, sel) => page.$eval(sel, (e) => e.innerText).catch(() => "");
     const errs = []; page.on("pageerror", (e) => errs.push(e.message));
     await page.goto(BASE + "/food", { waitUntil: "networkidle2", timeout: 90000 });
     const nav = await page.$$eval("header a", (as) => as.map((a) => a.getAttribute("href")));
-    ok("Laptop: the header has links to every service", ["/food", "/groceries", "/liquor", "/gifts", "/parcel", "/anything"].every((h) => nav.includes(h)), JSON.stringify(nav));
+    ok("Laptop: the header has links to every service", ["/food", "/groceries", "/gifts", "/parcel", "/anything"].every((h) => nav.includes(h)), JSON.stringify(nav));
     ok("Laptop: the header has a Basket link", nav.includes("/basket"));
     await page.goto(BASE + "/p/the-chicken-box", { waitUntil: "networkidle2" }); await sleep(800);
     await page.evaluate(() => document.querySelector("button[aria-label$=': Cheesy Zinger Burger (Signature Burger)']").click());
@@ -97,12 +97,12 @@ const text = (page, sel) => page.$eval(sel, (e) => e.innerText).catch(() => "");
     await page.close();
   }
 
-  // ---- 4. Liquor: age check
+  // ---- 4. Liquor: switched off by default, so it says so (the age gate and 18+ line are tested in sections.cjs)
   {
     const page = await newPage(browser, { width: 390, height: 844, mobile: true, clock: fakeClock(13, 20) });
     await page.goto(BASE + "/liquor", { waitUntil: "networkidle2", timeout: 90000 }); await sleep(800);
     const t = await text(page, "main");
-    ok("Liquor: asks for age before showing the menu", /18/.test(t) && !/Beer 650ml/.test(t), t.slice(0, 200));
+    ok("Liquor: while switched off the page says it is coming soon and shows no menu", /coming soon/i.test(t) && !/Beer 650ml/.test(t), t.slice(0, 200));
     await page.close();
   }
 

@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { pick } from "@/lib/names";
 import { EMPTY_DETAILS, PHONE_RE, normalizePhone, type Details, type Payment } from "@/lib/details";
 import { formatNPR, nowMinutesNPT, parseTimeToMinutes } from "@/lib/format";
+import { todayStillPossible } from "@/lib/openStatus";
 import { fixedChargeOf } from "@/lib/areaCharges";
 import type { Area, AreaGroup } from "@/types/db";
 import LocationButton, { type Coords } from "./LocationButton";
@@ -26,12 +27,17 @@ export interface SheetExtra {
 /** A customer can pick a time at least this long from now, so the team has time to prepare. */
 const LEAD_MINUTES = 30;
 
-export default function DetailsSheet({ open, onClose, onConfirm, areas, initial, busy, openTime, closeTime, allowSchedule, preview, deliveryFrom = null, whenTitle }: {
+export default function DetailsSheet({ open, onClose, onConfirm, areas, initial, busy, openTime, closeTime, tomorrowOpen = null, tomorrowClose = null, closedNow = false, allowSchedule, preview, deliveryFrom = null, whenTitle }: {
   open: boolean;
   onClose: () => void;
   onConfirm: (d: Details, note: string, extra: SheetExtra) => void;
   openTime: string;
   closeTime: string;
+  /** Tomorrow's hours, when they differ from today's. */
+  tomorrowOpen?: string | null;
+  tomorrowClose?: string | null;
+  /** The shop is closed right now: only "later" can be chosen. */
+  closedNow?: boolean;
   /** The delivery charge starts from this amount (Settings). */
   deliveryFrom?: number | null;
   /** Replaces the "When do you want it?" question. */
@@ -58,6 +64,11 @@ export default function DetailsSheet({ open, onClose, onConfirm, areas, initial,
   /** A message disappears as soon as the customer starts fixing that field. */
   const fix = (...keys: (keyof Errors)[]) => setErrors((e) => (keys.some((k) => e[k]) ? Object.fromEntries(Object.entries(e).filter(([k]) => !keys.includes(k as keyof Errors))) : e));
   const firstRef = useRef<HTMLInputElement>(null);
+  // Read when the sheet opens; kept in a ref so a change of the clock never wipes what the customer has typed.
+  const laterOnlyRef = useRef(false);
+  laterOnlyRef.current = closedNow && allowSchedule;
+  const hoursRef = useRef({ open: openTime, close: closeTime });
+  hoursRef.current = { open: openTime, close: closeTime };
 
   // Prefill from saved details each time the sheet opens.
   useEffect(() => {
@@ -66,7 +77,8 @@ export default function DetailsSheet({ open, onClose, onConfirm, areas, initial,
     setErrors({});
     setLoc(null);
     setReview(null);
-    setWhen("asap");
+    setWhen(laterOnlyRef.current ? "later" : "asap");
+    setDay(laterOnlyRef.current && !todayStillPossible(hoursRef.current, LEAD_MINUTES) ? "tomorrow" : "today");
     setTime("");
     const id = setTimeout(() => firstRef.current?.focus(), 50);
     return () => clearTimeout(id);
@@ -81,12 +93,16 @@ export default function DetailsSheet({ open, onClose, onConfirm, areas, initial,
 
   if (!open) return null;
 
-  const openMin = parseTimeToMinutes(openTime);
-  const closeMin = parseTimeToMinutes(closeTime);
-  const openLabel = openTime.slice(0, 5);
-  const closeLabel = closeTime.slice(0, 5);
+  // Tomorrow can have different hours from today (weekday hours).
+  const dayOpen = day === "tomorrow" && tomorrowOpen ? tomorrowOpen : openTime;
+  const dayClose = day === "tomorrow" && tomorrowOpen ? (tomorrowClose ?? closeTime) : closeTime;
+  const openMin = parseTimeToMinutes(dayOpen);
+  const closeMin = parseTimeToMinutes(dayClose);
+  const openLabel = dayOpen.slice(0, 5);
+  const closeLabel = dayClose.slice(0, 5);
   // "Today" only makes sense while there is still room before closing.
-  const todayPossible = nowMinutesNPT() + LEAD_MINUTES < closeMin;
+  const todayPossible = todayStillPossible({ open: openTime, close: closeTime }, LEAD_MINUTES);
+  const laterOnly = closedNow && allowSchedule;
 
   const selectedArea = areas.find((a) => a.id === d.areaId);
   const selectedFixed = selectedArea ? fixedChargeOf(selectedArea) : null;
@@ -254,15 +270,16 @@ export default function DetailsSheet({ open, onClose, onConfirm, areas, initial,
             <legend className="text-sm font-semibold">{whenTitle ?? t("whenTitle")}</legend>
             <div className="grid grid-cols-2 gap-2">
               {(["asap", "later"] as const).map((w) => (
-                <label key={w} className={`flex min-h-[48px] cursor-pointer items-center justify-center rounded-lg border px-2 text-center font-semibold ${when === w ? "border-brand-blue bg-blue-50 text-brand-blue" : "border-slate-300"}`}>
+                <label key={w} className={`flex min-h-[48px] items-center justify-center rounded-lg border px-2 text-center font-semibold ${w === "asap" && laterOnly ? "cursor-not-allowed opacity-50 " : "cursor-pointer "}${when === w ? "border-brand-blue bg-blue-50 text-brand-blue" : "border-slate-300"}`}>
                   <input
-                    type="radio" name="when" className="sr-only" checked={when === w}
+                    type="radio" name="when" className="sr-only" checked={when === w} disabled={w === "asap" && laterOnly}
                     onChange={() => { setWhen(w); fix("time"); if (w === "later") setDay(todayPossible ? "today" : "tomorrow"); }}
                   />
                   {t(w)}
                 </label>
               ))}
             </div>
+            {laterOnly && <p className="text-sm font-semibold text-yellow-900">{t("closedLaterOnly")}</p>}
             {when === "later" && (
               <div className="space-y-2 rounded-lg bg-slate-50 p-3">
                 <div className="grid grid-cols-2 gap-2">

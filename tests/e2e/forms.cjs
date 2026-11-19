@@ -7,7 +7,7 @@ const LOCALE = process.env.LOCALE || "en";
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const results = [];
 const ok = (n, p, extra = "") => { results.push(p); console.log((p ? "PASS " : "FAIL ") + n + (extra && !p ? "  -> " + String(extra).slice(0, 500) : "")); };
-const CLOCK_NOISE = /React error #(418|423|425)/;
+const CLOCK_NOISE = /React error #(418|423|425)|Text content does not match|error while hydrating|Hydration failed/;
 const NE = LOCALE === "ne";
 
 (async () => {

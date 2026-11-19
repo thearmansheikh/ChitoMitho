@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import type { SheetExtra } from "./DetailsSheet";
 import { formatNPR, isOpenNow } from "@/lib/format";
+import { openStatus } from "@/lib/openStatus";
 import { fixedChargeOf } from "@/lib/areaCharges";
 import { loadDetails, saveDetails, type Details } from "@/lib/details";
 import { pick } from "@/lib/names";
@@ -19,6 +20,9 @@ const DetailsSheet = dynamic(() => import("./DetailsSheet"));
 export interface OrderConfig {
   openTime: string;
   closeTime: string;
+  /** Tomorrow's hours, when they differ from today's. */
+  tomorrowOpen?: string | null;
+  tomorrowClose?: string | null;
   paused: boolean;
   pauseMessage: string | null;
   pauseMessageNe?: string | null;
@@ -95,7 +99,12 @@ export default function SendOrder({ service, placeId, itemsTotal, build, validat
     return () => clearInterval(id);
   }, [config.openTime, config.closeTime]);
 
-  const blocked = config.paused ? (config.pauseMessage ? pick(config.pauseMessage, config.pauseMessageNe, locale) : h("paused")) : !open ? h("closedNow") : null;
+  // Paused (holiday, rain, a closed weekday) blocks ordering. Merely being outside opening hours does not: the customer orders for later.
+  const blocked = config.paused ? (config.pauseMessage ? pick(config.pauseMessage, config.pauseMessageNe, locale) : h("paused")) : null;
+  const closedNow = !config.paused && !open;
+  const tomorrow = config.tomorrowOpen ? { open: config.tomorrowOpen, close: config.tomorrowClose ?? config.closeTime } : null;
+  const status = openStatus({ open: config.openTime, close: config.closeTime }, tomorrow);
+  const closedText = closedNow && !status.open ? h(status.opensTomorrow ? "closedOpensTomorrow" : "closedOpensToday", { time: status.opensAt }) : null;
 
   function start() {
     setError(null);
@@ -147,9 +156,11 @@ export default function SendOrder({ service, placeId, itemsTotal, build, validat
   /** Runs inside the customer's tap. Nothing here waits, so the phone allows WhatsApp to open. */
   function confirm(d: Details, note: string, extra: SheetExtra) {
     // Re-check at the moment of sending: the page may have been open since before closing time.
-    if (config.paused || !isOpenNow(config.openTime, config.closeTime)) {
+    // A closed shop only takes orders for later: an "as soon as possible" order is refused.
+    const nowOpen = isOpenNow(config.openTime, config.closeTime);
+    if (config.paused || (!nowOpen && allowSchedule && !extra.deliverAt)) {
       setSheet(false);
-      setOpen(isOpenNow(config.openTime, config.closeTime));
+      setOpen(nowOpen);
       return;
     }
     saveDetails(d);
@@ -206,10 +217,11 @@ export default function SendOrder({ service, placeId, itemsTotal, build, validat
         💬 {label ?? b("orderOnWhatsapp")}
       </button>
       {blocked && <p role="status" className="mt-2 rounded-lg bg-yellow-50 p-3 text-sm font-semibold text-yellow-900">{blocked}</p>}
+      {closedText && <p role="status" className="mt-2 rounded-lg bg-yellow-50 p-3 text-sm font-semibold text-yellow-900">{closedText}<span className="block font-normal">{h("closedOrderLater")}</span></p>}
       {error && <p role="alert" className="mt-2 rounded-lg bg-red-50 p-3 text-sm font-semibold text-brand-red">{error}</p>}
       <DetailsSheet
         open={sheet} onClose={() => setSheet(false)} onConfirm={confirm} areas={areas} initial={saved} busy={busy}
-        openTime={config.openTime} closeTime={config.closeTime} allowSchedule={allowSchedule} whenTitle={whenTitle} deliveryFrom={config.deliveryFrom ?? null}
+        openTime={config.openTime} closeTime={config.closeTime} tomorrowOpen={config.tomorrowOpen ?? null} tomorrowClose={config.tomorrowClose ?? null} closedNow={closedNow} allowSchedule={allowSchedule} whenTitle={whenTitle} deliveryFrom={config.deliveryFrom ?? null}
         preview={(d, note, extra) => makeText(d, note, extra).text}
       />
     </>

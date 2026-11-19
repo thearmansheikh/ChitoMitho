@@ -39,7 +39,7 @@ export default async function Header() {
         <NavLinks items={items} label={n("main")} />
 
         <div className="flex items-center gap-2">
-          <OpenBadge openTime={s.open_time} closeTime={s.close_time} paused={s.orders_paused} />
+          <OpenBadge openTime={s.open_time} closeTime={s.close_time} paused={s.orders_paused} tomorrowOpen={s.tomorrow_open_time ?? null} tomorrowClose={s.tomorrow_close_time ?? null} />
           <LangToggle />
           {/* On phones these two live in the floating bottom bar; from tablet width up they live here. */}
           <Link

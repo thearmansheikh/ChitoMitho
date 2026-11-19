@@ -8,7 +8,7 @@ const LOCALE = process.env.LOCALE || "en";
 const SHOTS = process.env.SHOTS || "";
 // These tests pretend it is 13:20 in Nepal. When the real time is outside opening hours the server's page says "Closed" and the
 // pretend clock says "Open", which React reports as hydration errors #418/#423/#425. That is the test's clock, not a site fault.
-const CLOCK_NOISE = /React error #(418|423|425)/;
+const CLOCK_NOISE = /React error #(418|423|425)|Text content does not match|error while hydrating|Hydration failed/;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const results = [];
 const ok = (name, pass, extra = "") => { results.push({ name, pass }); console.log((pass ? "PASS " : "FAIL ") + name + (extra && !pass ? "  -> " + extra : "")); };

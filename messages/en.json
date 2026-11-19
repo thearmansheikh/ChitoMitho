@@ -7,7 +7,8 @@
   "header": {
     "open": "Open now",
     "closed": "Closed",
-    "langToggle": "Change language"
+    "langToggle": "Change language",
+    "opensAt": "Opens {time}"
   },
   "common": {
     "add": "Add",
@@ -46,9 +47,11 @@
     "step2Body": "Your order is written for you. Just press send.",
     "step3Title": "We deliver",
     "step3Body": "We confirm the delivery charge, then a rider brings it. Pay cash or QR at the door.",
-    "closedNow": "We are closed right now. You can still browse and order when we open (10am – 10pm).",
     "paused": "Orders are paused right now.",
-    "servicesLabel": "Our services"
+    "servicesLabel": "Our services",
+    "closedOpensToday": "Closed now · Opens {time}",
+    "closedOpensTomorrow": "Closed now · Opens tomorrow at {time}",
+    "closedOrderLater": "You can still browse, and order for later."
   },
   "services": {
     "food": "Food",
@@ -563,7 +566,8 @@
     "next2From": "We reply with the delivery charge (it starts from {amount} and depends on your location and order) and when to expect it.",
     "chargeFixed": "Delivery to {area} is {amount}.",
     "checkFields": "Please check the fields marked below.",
-    "whenPickup": "When should we pick it up?"
+    "whenPickup": "When should we pick it up?",
+    "closedLaterOnly": "We are closed right now, so please choose a time for later."
   },
   "parcel": {
     "title": "Parcel / Pick & Drop",

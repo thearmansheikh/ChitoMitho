@@ -38,6 +38,15 @@ export function hoursFor(week: WeekHours, weekday: number): DayHours {
   return week[((weekday % 7) + 7) % 7];
 }
 
+/** The hours of the next day the shop is open after the given weekday (skips closed days). Falls back to that day's own hours. */
+export function nextOpenHours(week: WeekHours, weekday: number): DayHours {
+  for (let i = 1; i <= 7; i++) {
+    const h = hoursFor(week, weekday + i);
+    if (!h.closed) return h;
+  }
+  return hoursFor(week, weekday);
+}
+
 /** Days in the order people read a week (Monday first). */
 export const WEEK_ORDER = [1, 2, 3, 4, 5, 6, 0] as const;
 

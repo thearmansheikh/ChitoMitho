@@ -80,6 +80,9 @@ export interface Settings {
   timezone: string;
   orders_paused: boolean;
   pause_message: string | null;
+  /** Tomorrow's opening and closing time (set when weekday hours are used), so "opens tomorrow at ..." is right. */
+  tomorrow_open_time?: string;
+  tomorrow_close_time?: string;
   /** Liquor is sold only when this is true. Off by default. */
   liquor_enabled?: boolean;
   /** What to do with a place that has no menu yet. */

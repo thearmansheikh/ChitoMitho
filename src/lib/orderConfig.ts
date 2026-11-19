@@ -11,6 +11,8 @@ export function toOrderConfig(s: Settings): OrderConfig {
   return {
     openTime: s.open_time,
     closeTime: s.close_time,
+    tomorrowOpen: s.tomorrow_open_time ?? null,
+    tomorrowClose: s.tomorrow_close_time ?? null,
     paused: s.orders_paused,
     pauseMessage: s.pause_message,
     pauseMessageNe: s.pause_message_ne ?? null,
