@@ -61,12 +61,12 @@ const ok = (name, pass, extra = "") => { results.push({ name, pass }); console.l
   await shot("2-food");
   await page.evaluate(() => document.querySelector("a[href='/p/the-chicken-box']").click());
   await page.waitForFunction(() => location.pathname === "/p/the-chicken-box", { timeout: 15000 });
-  await page.waitForSelector("button[aria-label^='Add:'], button[aria-label^='Choose:']", { timeout: 15000 });
+  await page.waitForSelector("button[aria-label$=': Combo - 1']", { timeout: 15000 });
   await sleep(Number(process.env.SETTLE || 500));
 
   // 3. Café page
   const place = await text("main");
-  ok("Café page shows the café name and menu", /The Chicken Box/.test(place) && /Combo - 1/.test(place));
+  ok("Café page shows the café name and menu", /The Chicken Box|द चिकेन बक्स/.test(place) && /Combo - 1/.test(place));
   const tabs = await page.$$eval("nav a[href^='#'], [aria-label] a[href^='#']", (a) => a.length);
   ok("Category tabs are present", tabs >= 5, String(tabs));
   await shot("3-cafe");
@@ -79,7 +79,7 @@ const ok = (name, pass, extra = "") => { results.push({ name, pass }); console.l
   ok("Add button turns into a stepper (a second tap adds another)", await byName("Combo - 1", "^(Add one|एउटा थप्नुहोस्):"));
   await sleep(Number(process.env.SETTLE || 200));
   // detail sheet
-  await tap("button[aria-label^='Details: Cheesy Zinger Burger']");
+  await tap("button[aria-label$=': Cheesy Zinger Burger (Signature Burger)']");
   await page.waitForSelector("[role=dialog]", { timeout: 5000 });
   const sheet = await text("[role=dialog]");
   ok("Item detail sheet opens with the price", /Rs\. ?299/.test(sheet), sheet.slice(0, 120));
@@ -133,7 +133,7 @@ const ok = (name, pass, extra = "") => { results.push({ name, pass }); console.l
   ok("Review screen shows the WhatsApp message", msg.length > 100, msg.slice(0, 80));
   console.log("---- message the customer sees ----\n" + msg + "\n------------------------------------");
   await shot("10-review");
-  ok("Message names the café", /The Chicken Box/.test(msg));
+  ok("Message names the café", /The Chicken Box|द चिकेन बक्स/.test(msg));
   ok("Message lists both items with quantities and prices", /2 x Combo - 1/.test(msg) && /1 x Cheesy Zinger Burger/.test(msg) && /Rs\. ?918/.test(msg) && /Rs\. ?299/.test(msg), msg);
   ok("Message carries the note", /no onions|प्याज नहाल्नुहोस्/.test(msg));
   ok("Message has the total", /1,?217/.test(msg), msg);
@@ -148,8 +148,8 @@ const ok = (name, pass, extra = "") => { results.push({ name, pass }); console.l
   const sentText = await text("[role='dialog']");
   ok("Confirmation screen explains what happens next", /What happens next|के हुन्छ|अब के/i.test(sentText), sentText.slice(0, 200));
   const opened = await page.evaluate(() => window.__opened);
-  ok("The WhatsApp link goes to the order number", typeof opened === "string" && opened.startsWith("https://wa.me/9779805338257?text="), String(opened).slice(0, 70));
-  ok("The link carries the whole message unchanged", decodeURIComponent(String(opened).split("text=")[1] || "") === msg.replace(/\r/g, ""));
+  ok("The WhatsApp link goes to the order number", typeof opened === "string" && opened.startsWith("https://api.whatsapp.com/send?phone=9779805338257&text="), String(opened).slice(0, 70));
+  ok("The link carries the whole message unchanged", new URL(String(opened)).searchParams.get("text") === msg.replace(/\r/g, ""));
   ok("The order count was attempted once (blocked for this test)", blockedCounts === 1, String(blockedCounts));
 
   // 10. Afterwards

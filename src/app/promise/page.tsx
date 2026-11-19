@@ -1,3 +1,4 @@
+import WhatsAppLink from "@/components/WhatsAppLink";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
@@ -44,9 +45,9 @@ export default async function PromisePage() {
       <section className="space-y-3 rounded-xl bg-slate-50 p-4">
         <h2 className="font-bold">{t("questions")}</h2>
         <div className="grid gap-2 sm:grid-cols-2">
-          <a href={`https://wa.me/977${s.whatsapp_number}`} className="flex min-h-[52px] items-center justify-center rounded-xl bg-green-700 font-bold text-white">
+          <WhatsAppLink number={s.whatsapp_number} className="flex min-h-[52px] items-center justify-center rounded-xl bg-green-700 font-bold text-white">
             💬 {c("whatsapp")}
-          </a>
+          </WhatsAppLink>
           <a href={`tel:+977${s.phone_numbers[0] ?? s.whatsapp_number}`} className="flex min-h-[52px] items-center justify-center rounded-xl bg-brand-blue font-bold text-white">
             📞 {c("call")}
           </a>

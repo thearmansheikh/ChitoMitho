@@ -1,3 +1,4 @@
+import WhatsAppLink from "@/components/WhatsAppLink";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { getSettings } from "@/lib/data";
@@ -56,9 +57,9 @@ export default async function HelpPage() {
         <h2 className="font-bold">{t("stuckTitle")}</h2>
         <p className="text-slate-700">{t("stuckBody")}</p>
         <div className="grid gap-2 sm:grid-cols-2">
-          <a href={`https://wa.me/977${s.whatsapp_number}`} className="flex min-h-[52px] items-center justify-center gap-2 rounded-xl bg-green-700 font-bold text-white">
+          <WhatsAppLink number={s.whatsapp_number} className="flex min-h-[52px] items-center justify-center gap-2 rounded-xl bg-green-700 font-bold text-white">
             <span aria-hidden>💬</span> {c("whatsapp")}
-          </a>
+          </WhatsAppLink>
           <a href={`tel:+977${s.phone_numbers[0] ?? s.whatsapp_number}`} className="flex min-h-[52px] items-center justify-center gap-2 rounded-xl bg-brand-blue font-bold text-white">
             <span aria-hidden>📞</span> {c("call")}
           </a>

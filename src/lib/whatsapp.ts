@@ -59,9 +59,22 @@ function customerBlock(lang: Lang, c: Customer): string[] {
   ];
 }
 
+/** WhatsApp handles far more, but a short message is easier to read and to check before sending. */
+export const MAX_MESSAGE_CHARS = 1500;
+
 export function basketMessage(
   lang: Lang,
   o: { lines: BasketLine[]; extras: Extras; total: number; customer: Customer },
+): string {
+  const full = buildBasketMessage(lang, o, false);
+  // A very long basket gets shorter item lines, but never loses an item, a quantity or the total.
+  return full.length <= MAX_MESSAGE_CHARS ? full : buildBasketMessage(lang, o, true);
+}
+
+function buildBasketMessage(
+  lang: Lang,
+  o: { lines: BasketLine[]; extras: Extras; total: number; customer: Customer },
+  compact: boolean,
 ): string {
   const t = L[lang];
   const types = [...new Set(o.lines.map((l) => l.placeType))];
@@ -77,8 +90,11 @@ export function basketMessage(
     out.push("", `${t.from}: ${pick(ls[0].placeName, ls[0].placeNameNe, lang)}`);
     for (const l of ls) {
       const chosen = (l.options ?? []).map((o) => pick(o.choice, o.choiceNe, lang)).join(", ");
-      out.push(`• ${l.qty} x ${pick(l.name, l.nameNe, lang)}${chosen ? ` – ${chosen}` : ""} (${formatNPR(l.price)}) = ${formatNPR(l.qty * l.price)}`);
-      if (l.note.trim()) out.push(`   ↳ ${l.note.trim()}`);
+      const name = `${pick(l.name, l.nameNe, lang)}${chosen ? ` – ${chosen}` : ""}`;
+      out.push(compact
+        ? `• ${l.qty} x ${name} = ${formatNPR(l.qty * l.price)}`
+        : `• ${l.qty} x ${name} (${formatNPR(l.price)}) = ${formatNPR(l.qty * l.price)}`);
+      if (l.note.trim()) out.push(`   ↳ ${compact ? l.note.trim().slice(0, 40) : l.note.trim()}`);
     }
   }
   if (o.lines.length > 0) out.push("", `${t.itemsTotal}: ${formatNPR(o.total)}`);
@@ -187,9 +203,21 @@ export function riderMessage(lang: Lang, r: RiderApplication): string {
   ].join("\n");
 }
 
-/** wa.me link for a Nepal number. Accepts "98XXXXXXXX", "+977 98…" or "97798…". */
-export function whatsappUrl(number: string, text: string): string {
+/**
+ * The one place a WhatsApp link is made. Accepts "98XXXXXXXX", "+977 98…" or "97798…" and gives
+ * https://api.whatsapp.com/send?phone=97798XXXXXXXX&text=<message>.
+ * The message is always percent-encoded, so line breaks, & and #, and Nepali text arrive as written.
+ *
+ * Why not wa.me? wa.me forwards to this same address, but on the way it turns every emoji into a broken "�"
+ * (checked 19 Nov 2026: 🛵 📍 🕒 ✅ 🍔 all came out as %EF%BF%BD). Going straight to api.whatsapp.com keeps them intact.
+ */
+export function buildWhatsAppUrl(number: string, message: string): string {
   let d = number.replace(/\D/g, "");
   if (d.startsWith("977") && d.length > 10) d = d.slice(3);
-  return `https://wa.me/977${d}?text=${encodeURIComponent(text)}`;
+  return `https://api.whatsapp.com/send?phone=977${d}&text=${encodeURIComponent(message)}`;
+}
+
+/** What a plain "WhatsApp us" button opens with, so the chat is never blank. */
+export function greetingMessage(lang: Lang): string {
+  return L[lang].greeting;
 }

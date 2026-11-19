@@ -1,3 +1,4 @@
+import WhatsAppLink from "@/components/WhatsAppLink";
 import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
 import { getFeatured, getMenu, getOffers, getPlaces, getSettings } from "@/lib/data";
@@ -164,9 +165,9 @@ export default async function Home() {
         <a href={`tel:+977${settings.phone_numbers[0] ?? settings.whatsapp_number}`} className="flex min-h-[56px] items-center justify-center gap-2 rounded-2xl bg-brand-blue font-bold text-white shadow-pop transition active:scale-95">
           <span aria-hidden>📞</span> {c("call")}
         </a>
-        <a href={`https://wa.me/977${settings.whatsapp_number}`} className="flex min-h-[56px] items-center justify-center gap-2 rounded-2xl bg-green-700 font-bold text-white shadow-lg shadow-green-900/20 transition active:scale-95">
+        <WhatsAppLink number={settings.whatsapp_number} className="flex min-h-[56px] items-center justify-center gap-2 rounded-2xl bg-green-700 font-bold text-white shadow-lg shadow-green-900/20 transition active:scale-95">
           <span aria-hidden>💬</span> {c("whatsapp")}
-        </a>
+        </WhatsAppLink>
       </section>
     </div>
   );

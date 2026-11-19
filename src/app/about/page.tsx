@@ -1,3 +1,4 @@
+import WhatsAppLink from "@/components/WhatsAppLink";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { getSettings } from "@/lib/data";
@@ -37,7 +38,7 @@ export default async function AboutPage() {
           {s.phone_numbers.map((p) => (
             <a key={p} href={`tel:+977${p}`} className={`${btn} bg-brand-blue text-white`}>📞 {c("call")} {p}</a>
           ))}
-          <a href={`https://wa.me/977${s.whatsapp_number}`} className={`${btn} bg-green-700 text-white`}>💬 {c("whatsapp")}</a>
+          <WhatsAppLink number={s.whatsapp_number} className={`${btn} bg-green-700 text-white`}>💬 {c("whatsapp")}</WhatsAppLink>
           <a href={`https://www.tiktok.com/@${SITE.tiktok}`} target="_blank" rel="noopener noreferrer" className={`${btn} border border-slate-300`}>{f("tiktok")} @{SITE.tiktok}</a>
           <a href={`https://www.instagram.com/${SITE.instagram}`} target="_blank" rel="noopener noreferrer" className={`${btn} border border-slate-300`}>{f("instagram")} @{SITE.instagram}</a>
         </div>

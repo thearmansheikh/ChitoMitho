@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
@@ -8,7 +8,9 @@ import type { SheetExtra } from "./DetailsSheet";
 import { isOpenNow } from "@/lib/format";
 import { loadDetails, saveDetails, type Details } from "@/lib/details";
 import { pick } from "@/lib/names";
-import { whatsappUrl, type Customer, type Lang } from "@/lib/whatsapp";
+import { buildWhatsAppUrl, type Customer, type Lang } from "@/lib/whatsapp";
+import { openWhatsApp } from "@/lib/openWhatsApp";
+import { ORDER_REQUEST_EVENT } from "@/components/WhatsAppLink";
 import type { Area, Service } from "@/types/db";
 // The sheet is only needed after the customer taps the order button.
 const DetailsSheet = dynamic(() => import("./DetailsSheet"));
@@ -24,23 +26,32 @@ export interface OrderConfig {
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-/** Count the order (never the customer). Failures are ignored so ordering is never blocked. */
-async function logOrderClick(row: { service: Service; place_id: string | null; items_total_npr: number | null; area_id: string | null }) {
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return;
+/**
+ * Count the order (never the customer). Fire and forget: it is never awaited, so WhatsApp opens inside the tap.
+ * keepalive lets the request finish even when the phone switches to the WhatsApp app straight away.
+ */
+function logOrderClick(row: { service: Service; place_id: string | null; items_total_npr: number | null; area_id: string | null }) {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) return;
   try {
-    const { createClient } = await import("@/lib/supabase/client");
-    await createClient().from("order_clicks").insert({
-      service: row.service,
-      place_id: row.place_id && UUID.test(row.place_id) ? row.place_id : null,
-      items_total_npr: row.items_total_npr,
-      area_id: row.area_id && UUID.test(row.area_id) ? row.area_id : null,
-    });
+    void fetch(`${url}/rest/v1/order_clicks`, {
+      method: "POST",
+      keepalive: true,
+      headers: { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json", Prefer: "return=minimal" },
+      body: JSON.stringify({
+        service: row.service,
+        place_id: row.place_id && UUID.test(row.place_id) ? row.place_id : null,
+        items_total_npr: row.items_total_npr,
+        area_id: row.area_id && UUID.test(row.area_id) ? row.area_id : null,
+      }),
+    }).catch(() => { /* ignore: counting must never block an order */ });
   } catch {
     /* ignore */
   }
 }
 
-export default function SendOrder({ service, placeId, itemsTotal, build, validate, config, areas, onDone, onSent, label, allowSchedule = true }: {
+export default function SendOrder({ service, placeId, itemsTotal, build, validate, config, areas, onDone, onSent, label, allowSchedule = true, openOnRequest = false }: {
   service: Service;
   placeId: string | null;
   itemsTotal: number | null;
@@ -54,6 +65,8 @@ export default function SendOrder({ service, placeId, itemsTotal, build, validat
   onSent?: () => void;
   /** Offer "as soon as possible / later" in the details sheet. Off for gifts, which pick their own date. */
   allowSchedule?: boolean;
+  /** Open the details form when the header or bottom-bar WhatsApp button is tapped with a full basket (or /basket?order=1 is opened). */
+  openOnRequest?: boolean;
   label?: string;
 }) {
   const t = useTranslations("order");
@@ -87,6 +100,23 @@ export default function SendOrder({ service, placeId, itemsTotal, build, validat
     setSheet(true);
   }
 
+  // The latest start(), so the listeners below never run an old copy.
+  const startRef = useRef(start);
+  startRef.current = start;
+  useEffect(() => {
+    if (!openOnRequest) return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("order") === "1") {
+      params.delete("order");
+      const rest = params.toString();
+      window.history.replaceState(window.history.state, "", window.location.pathname + (rest ? "?" + rest : ""));
+      startRef.current();
+    }
+    const run = () => startRef.current();
+    window.addEventListener(ORDER_REQUEST_EVENT, run);
+    return () => window.removeEventListener(ORDER_REQUEST_EVENT, run);
+  }, [openOnRequest]);
+
   /** The exact message the customer's WhatsApp will open with, built the same way for the preview and the send. */
   function makeText(d: Details, note: string, extra: SheetExtra) {
     const area = areas.find((a) => a.id === d.areaId);
@@ -98,32 +128,27 @@ export default function SendOrder({ service, placeId, itemsTotal, build, validat
     return { text, area };
   }
 
-  async function confirm(d: Details, note: string, extra: SheetExtra) {
+  /** Runs inside the customer's tap. Nothing here waits, so the phone allows WhatsApp to open. */
+  function confirm(d: Details, note: string, extra: SheetExtra) {
     // Re-check at the moment of sending: the page may have been open since before closing time.
     if (config.paused || !isOpenNow(config.openTime, config.closeTime)) {
       setSheet(false);
       setOpen(isOpenNow(config.openTime, config.closeTime));
       return;
     }
-    setBusy(true);
     saveDetails(d);
 
     const { text, area } = makeText(d, note, extra);
-    const url = whatsappUrl(config.whatsapp, text);
+    const url = buildWhatsAppUrl(config.whatsapp, text);
 
-    // Give the count a moment to send, but never make the customer wait long.
-    await Promise.race([
-      logOrderClick({ service, place_id: placeId, items_total_npr: itemsTotal, area_id: area?.id ?? null }),
-      new Promise((r) => setTimeout(r, 800)),
-    ]);
-
+    // Both happen inside the tap and neither waits for anything: the count is started (it carries on in the
+    // background even if the phone switches to WhatsApp), then WhatsApp opens.
+    logOrderClick({ service, place_id: placeId, items_total_npr: itemsTotal, area_id: area?.id ?? null });
+    openWhatsApp(url);
     setSentUrl(url);
     setSheet(false);
     setBusy(false);
     onSent?.();
-    // A new tab works on desktop; if the browser blocks it (common on iPhone), go in this tab.
-    const w = window.open(url, "_blank", "noopener");
-    if (!w) window.location.href = url;
   }
 
   if (sentUrl) {

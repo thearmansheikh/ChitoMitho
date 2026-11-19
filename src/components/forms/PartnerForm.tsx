@@ -4,7 +4,8 @@ import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { PHONE_RE, normalizePhone } from "@/lib/details";
 import PageHeader from "@/components/ui/PageHeader";
-import { partnerMessage, riderMessage, whatsappUrl, type BusinessType, type Lang, type Vehicle } from "@/lib/whatsapp";
+import { partnerMessage, riderMessage, buildWhatsAppUrl, type BusinessType, type Lang, type Vehicle } from "@/lib/whatsapp";
+import { openWhatsApp } from "@/lib/openWhatsApp";
 
 const input =
   "w-full min-h-[48px] rounded-lg border border-slate-300 px-3 py-2 text-base focus:border-brand-blue focus:outline-none focus:ring-2 focus:ring-brand-blue/30";
@@ -27,9 +28,8 @@ export default function PartnerForm({ whatsapp }: { whatsapp: string }) {
   const [r, setR] = useState({ name: "", phone: "", area: "", vehicle: "bike" as Vehicle, hasLicense: true, availability: "" });
 
   function open(url: string) {
+    openWhatsApp(url);
     setSentUrl(url);
-    const w = window.open(url, "_blank", "noopener");
-    if (!w) window.location.href = url;
   }
 
   function submit(e: React.FormEvent) {
@@ -39,14 +39,14 @@ export default function PartnerForm({ whatsapp }: { whatsapp: string }) {
       if (!b.business.trim() || !b.contactName.trim() || !b.area.trim()) return setError(o("required"));
       if (!PHONE_RE.test(normalizePhone(b.phone))) return setError(o("phoneInvalid"));
       if (!b.consent) return setError(t("consentRequired"));
-      open(whatsappUrl(whatsapp, partnerMessage(lang, {
+      open(buildWhatsAppUrl(whatsapp, partnerMessage(lang, {
         business: b.business.trim(), type: b.type, contactName: b.contactName.trim(),
         phone: normalizePhone(b.phone), area: b.area.trim(), offer: b.offer,
       })));
     } else {
       if (!r.name.trim() || !r.area.trim()) return setError(o("required"));
       if (!PHONE_RE.test(normalizePhone(r.phone))) return setError(o("phoneInvalid"));
-      open(whatsappUrl(whatsapp, riderMessage(lang, {
+      open(buildWhatsAppUrl(whatsapp, riderMessage(lang, {
         name: r.name.trim(), phone: normalizePhone(r.phone), area: r.area.trim(),
         vehicle: r.vehicle, hasLicense: r.hasLicense, availability: r.availability,
       })));

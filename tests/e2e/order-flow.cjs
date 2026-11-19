@@ -118,7 +118,7 @@ const ok = (name, pass, extra = "") => { results.push({ name, pass }); console.l
   const sentText = await page.$eval("[role='dialog']", (e) => e.innerText).catch(() => "");
   ok("Confirmation explains what happens next", /What happens next/.test(sentText) && /delivery charge/.test(sentText) && /10:00 and 22:00/.test(sentText));
   const opened = await page.evaluate(() => window.__opened);
-  ok("WhatsApp link goes to the order number", typeof opened === "string" && opened.startsWith("https://wa.me/9779805338257?text="), String(opened).slice(0, 60));
+  ok("WhatsApp link goes to the order number", typeof opened === "string" && opened.startsWith("https://api.whatsapp.com/send?phone=9779805338257&text="), String(opened).slice(0, 60));
   ok("The link carries the whole message", decodeURIComponent(String(opened).split("text=")[1] || "") === msg.replace(/\r/g, ""));
   ok("The order count was attempted exactly once (and blocked for this test)", blockedCounts === 1, String(blockedCounts));
 

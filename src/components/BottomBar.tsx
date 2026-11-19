@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { getSettings } from "@/lib/data";
 import BasketCount from "./BasketCount";
+import WhatsAppLink from "./WhatsAppLink";
 
 /** Floating pill on phones: the basket and WhatsApp are always one tap away. */
 export default async function BottomBar() {
@@ -18,9 +19,9 @@ export default async function BottomBar() {
           <span aria-hidden>🧺</span> {t("basket")}
           <BasketCount />
         </Link>
-        <a href={`https://wa.me/977${s.whatsapp_number}`} aria-label={t("whatsapp")} className={`${btn} bg-green-700 text-white`}>
+        <WhatsAppLink basketAware number={s.whatsapp_number} ariaLabel={t("whatsapp")} className={`${btn} bg-green-700 text-white`}>
           <span aria-hidden>💬</span> {t("whatsapp")}
-        </a>
+        </WhatsAppLink>
       </div>
     </nav>
   );

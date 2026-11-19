@@ -145,6 +145,7 @@ export default function BasketView({ config, areas, offers }: { config: OrderCon
 
       <div className="space-y-2">
         <SendOrder
+          openOnRequest
           service={service}
           placeId={main?.id ?? null}
           itemsTotal={lines.length ? total : null}

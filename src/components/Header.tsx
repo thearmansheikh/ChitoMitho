@@ -6,6 +6,7 @@ import BasketCount from "./BasketCount";
 import LangToggle from "./LangToggle";
 import NavLinks from "./NavLinks";
 import OpenBadge from "./OpenBadge";
+import WhatsAppLink from "./WhatsAppLink";
 
 export default async function Header() {
   const t = await getTranslations("brand");
@@ -48,13 +49,14 @@ export default async function Header() {
             <span aria-hidden>🧺</span> {bar("basket")}
             <BasketCount />
           </Link>
-          <a
-            href={`https://wa.me/977${s.whatsapp_number}`}
-            aria-label={bar("whatsapp")}
+          <WhatsAppLink
+            basketAware
+            number={s.whatsapp_number}
+            ariaLabel={bar("whatsapp")}
             className="hidden h-11 w-11 items-center justify-center rounded-full bg-green-700 text-lg text-white transition hover:bg-green-800 active:scale-95 xl:inline-flex"
           >
             <span aria-hidden>💬</span>
-          </a>
+          </WhatsAppLink>
         </div>
       </div>
     </header>

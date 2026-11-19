@@ -6,6 +6,7 @@ import { SITE } from "@/lib/config";
 import { validWeekHours } from "@/lib/hours";
 import { weekLines } from "@/lib/weekText";
 import SocialIcon from "@/components/ui/SocialIcon";
+import WhatsAppLink from "@/components/WhatsAppLink";
 
 export default async function Footer() {
   const t = await getTranslations("footer");
@@ -92,12 +93,12 @@ export default async function Footer() {
 
             <div className="space-y-3">
               <h2 className="text-xs font-bold uppercase tracking-[0.14em] text-white/50">{t("contact")}</h2>
-              <a
-                href={`https://wa.me/977${s.whatsapp_number}`}
+              <WhatsAppLink
+                number={s.whatsapp_number}
                 className="flex min-h-[52px] items-center justify-center gap-2 rounded-xl bg-green-700 px-5 font-bold text-white shadow-lg shadow-black/20 transition hover:bg-green-600 active:scale-95 sm:max-w-xs"
               >
                 <SocialIcon name="whatsapp" className="h-5 w-5" /> {t("whatsapp")} · {s.whatsapp_number}
-              </a>
+              </WhatsAppLink>
               <div className="flex flex-wrap gap-2">
                 {s.phone_numbers.map((p) => (
                   <a

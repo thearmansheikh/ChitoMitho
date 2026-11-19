@@ -655,7 +655,8 @@
     "payments": {
       "cod": "Cash on delivery",
       "qr": "QR at door"
-    }
+    },
+    "greeting": "Hi Chitto Mitho, I have a question."
   },
   "weekHours": {
     "d0": "Sun",
