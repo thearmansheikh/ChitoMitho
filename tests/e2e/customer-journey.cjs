@@ -150,6 +150,7 @@ const ok = (name, pass, extra = "") => { results.push({ name, pass }); console.l
   const opened = await page.evaluate(() => window.__opened);
   ok("The WhatsApp link goes to the order number", typeof opened === "string" && opened.startsWith("https://api.whatsapp.com/send?phone=9779805338257&text="), String(opened).slice(0, 70));
   ok("The link carries the whole message unchanged", new URL(String(opened)).searchParams.get("text") === msg.replace(/\r/g, ""));
+  await sleep(1500); // the count is sent in the background, a moment after WhatsApp opens
   ok("The order count was attempted once (blocked for this test)", blockedCounts === 1, String(blockedCounts));
 
   // 10. Afterwards
