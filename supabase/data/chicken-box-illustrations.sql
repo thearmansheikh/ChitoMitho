@@ -1,7 +1,7 @@
 -- Attaches drawn illustrations (public/images/menu/the-chicken-box/) to the sandwiches, wraps, drinks and mocktails.
 -- Safe to run again.
 update items i set image_url = '/images/menu/the-chicken-box/' || case
-  when c.name = 'Sandwich' and i.name like '%Panner%' then 'sandwich-paneer'
+  when c.name = 'Sandwich' and i.name like '%Paneer%' then 'sandwich-paneer'
   when c.name = 'Sandwich' and i.name like '%Corn%' then 'sandwich-corn'
   when c.name = 'Sandwich' and i.name like '%Chicken%' then 'sandwich-chicken'
   when c.name = 'Sandwich' then 'sandwich-veg'
@@ -12,7 +12,7 @@ update items i set image_url = '/images/menu/the-chicken-box/' || case
   when i.name = 'Green Apple Mojito' then 'drink-green-apple-mojito'
   when i.name = 'Blue Lemon Mojito' then 'drink-blue-lemon-mojito'
   when i.name = 'Watermelon Mojito' then 'drink-watermelon-mojito'
-  when i.name = 'Cocacola' then 'drink-cola'
+  when i.name = 'Coca-Cola' then 'drink-cola'
   when i.name = 'Masala Cola' then 'drink-masala-cola'
   when i.name = 'Sprite' then 'drink-sprite'
   when i.name = 'Masala Sprite' then 'drink-masala-sprite'

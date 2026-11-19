@@ -2,9 +2,9 @@
 -- Run after chicken-box.sql. Safe to run again.
 with p as (select id from places where slug = 'the-chicken-box'),
 m(cat, file) as (values
-  ('Hot & Crispy Leg Pic','leg'),('Hot & Crispy Chest','chest'),('Crispy Hot Wings','wings'),
+  ('Hot & Crispy Leg Piece','leg'),('Hot & Crispy Chest','chest'),('Crispy Hot Wings','wings'),
   ('Crispy Boneless Strips','strips'),('Crispy Chicken Popcorn','popcorn'),('Chicken Nuggets','nuggets'),
-  ('Smoky Grilled Chicken','grilled'),('Burger','burger'),('Pizza','pizza'),('Maxican Tacos','tacos'),
+  ('Smoky Grilled Chicken','grilled'),('Burger','burger'),('Pizza','pizza'),('Mexican Tacos','tacos'),
   ('Dips','dips'),('French Fries','fries'))
 update items i set image_url = '/images/menu/the-chicken-box/' || m.file || '.webp'
 from categories c, m, p

@@ -65,7 +65,7 @@ const lines = [
   { ...base, itemId: "1", name: "Fish & Chips #5", price: 300, qty: 2, note: "no salt & no pepper" },
   { ...base, itemId: "2", name: "Cheesy Zinger Burger (Signature Burger)", price: 299, qty: 1 },
   { ...base, itemId: "3", name: "Momo 🥟", nameNe: "चिकेन मोमो", price: 250, qty: 3 },
-  { ...base, itemId: "4", name: "Cocacola", price: 89, qty: 4 },
+  { ...base, itemId: "4", name: "Coca-Cola", price: 89, qty: 4 },
 ];
 const total = lines.reduce((n, l) => n + l.qty * l.price, 0);
 for (const lang of ["en", "ne"]) {
@@ -74,7 +74,7 @@ for (const lang of ["en", "ne"]) {
   const back = textOf(url);
   eq(`[${lang}] basket message arrives unchanged`, back, msg);
   eq(`[${lang}] every item, quantity and line total is there`,
-    [/2 x Fish & Chips #5/, /1 x Cheesy Zinger Burger/, lang === "ne" ? /3 x चिकेन मोमो/ : /3 x Momo 🥟/, /4 x Cocacola/, /Rs\. 600/, /Rs\. 750/, /Rs\. 356/].every((r) => r.test(back)), true);
+    [/2 x Fish & Chips #5/, /1 x Cheesy Zinger Burger/, lang === "ne" ? /3 x चिकेन मोमो/ : /3 x Momo 🥟/, /4 x Coca-Cola/, /Rs\. 600/, /Rs\. 750/, /Rs\. 356/].every((r) => r.test(back)), true);
   eq(`[${lang}] the total is there`, back.includes("Rs. " + total.toLocaleString("en-US")), true);
   eq(`[${lang}] the customer's details are there`, /Sita Rai & Co/.test(back) && /9812345678/.test(back) && /#5 gate 🏠/.test(back) && /Ring the bell\nthen wait/.test(back), true);
   eq(`[${lang}] the note under the item is there`, /no salt & no pepper/.test(back), true);
