@@ -70,7 +70,7 @@ const T = LOCALE === "ne"
   const reviewMsg = async () => { await page.waitForSelector("#review-title", { visible: true, timeout: 8000 }); return page.$eval("[role='dialog'] pre", (e) => e.textContent); };
 
   await page.goto(BASE + "/p/the-chicken-box", { waitUntil: "networkidle2", timeout: 90000 }); await sleep(1500);
-  await page.evaluate(() => [...document.querySelectorAll("button")].find((x) => (x.getAttribute("aria-label") || "").startsWith("Add: ") || /^(थप्नुहोस्): Combo - 1/.test(x.getAttribute("aria-label") || "")).click());
+  await page.evaluate(() => [...document.querySelectorAll("button")].find((x) => (x.getAttribute("aria-label") || "").startsWith("Add: ") || /^(थप्नुहोस्): Combo 1/.test(x.getAttribute("aria-label") || "")).click());
   await sleep(400);
   await page.goto(BASE + "/basket", { waitUntil: "networkidle2" }); await page.waitForSelector("main li", { timeout: 15000 });
   await page.evaluate(() => [...document.querySelectorAll("main button")].find((x) => /Order on WhatsApp|व्हाट्सएपमा अर्डर/.test(x.textContent)).click());

@@ -14,6 +14,7 @@ export interface SheetItem {
   name: string;
   name_ne: string | null;
   description: string | null;
+  unit?: string | null;
   image_url: string | null;
   is_available: boolean;
   options?: unknown;
@@ -116,8 +117,9 @@ export default function ItemSheet({ item, line, placeType, tileText, onClose }: 
 
         <div className="space-y-4 p-5">
           <div>
-            <h2 id="item-sheet-title" className="text-xl font-extrabold leading-tight">{name}</h2>
-            <p className="mt-1 inline-block rounded-full bg-blue-50 px-3 py-0.5 text-base font-bold text-brand-blue">{formatNPR(line.price)}</p>
+            <h2 id="item-sheet-title" className="text-xl font-extrabold leading-tight">{name}</h2>{" "}
+            {item.unit && <><p className="text-sm font-semibold text-slate-600">{item.unit}</p>{" "}</>}
+            <p className="mt-1 inline-block rounded-full bg-blue-50 px-3 py-0.5 text-base font-bold text-brand-blue"><span className="sr-only">{c("price")}: </span>{formatNPR(line.price)}</p>{" "}
             {item.description && <p className="mt-2 text-slate-700">{item.description}</p>}
           </div>
 

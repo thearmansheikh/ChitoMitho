@@ -64,12 +64,12 @@ const ok = (name, pass, extra = "") => { results.push({ name, pass }); console.l
   await shot("2-food");
   await page.evaluate(() => document.querySelector("a[href='/p/the-chicken-box']").click());
   await page.waitForFunction(() => location.pathname === "/p/the-chicken-box", { timeout: 15000 });
-  await page.waitForSelector("button[aria-label$=': Combo - 1']", { timeout: 15000 });
+  await page.waitForSelector("button[aria-label$=': Combo 1']", { timeout: 15000 });
   await sleep(Number(process.env.SETTLE || 500));
 
   // 3. Café page
   const place = await text("main");
-  ok("Café page shows the café name and menu", /The Chicken Box|द चिकेन बक्स/.test(place) && /Combo - 1/.test(place));
+  ok("Café page shows the café name and menu", /The Chicken Box|द चिकेन बक्स/.test(place) && /Combo 1/.test(place));
   const tabs = await page.$$eval("nav a[href^='#'], [aria-label] a[href^='#']", (a) => a.length);
   ok("Category tabs are present", tabs >= 5, String(tabs));
   await shot("3-cafe");
@@ -77,9 +77,9 @@ const ok = (name, pass, extra = "") => { results.push({ name, pass }); console.l
   // 4. Add items: a plain item, then the same again (stepper), then another via the detail sheet with a note
   // The aria-labels are "Add: <name>" / "Add one: <name>" in English; match by item name so Nepali works too.
   const byName = (name, prefixRe) => page.evaluate((n, src) => { const re = new RegExp(src); const b = [...document.querySelectorAll("button")].find((x) => re.test(x.getAttribute("aria-label") || "") && (x.getAttribute("aria-label") || "").endsWith(": " + n)); if (!b) return false; b.scrollIntoView({ block: "center" }); b.click(); return true; }, name, prefixRe);
-  ok("Quick add works", await byName("Combo - 1", "^(Add|थप्नुहोस्):"), "no Add button for Combo - 1");
+  ok("Quick add works", await byName("Combo 1", "^(Add|थप्नुहोस्):"), "no Add button for Combo 1");
   await sleep(Number(process.env.SETTLE || 250));
-  ok("Add button turns into a stepper (a second tap adds another)", await byName("Combo - 1", "^(Add one|एउटा थप्नुहोस्):"));
+  ok("Add button turns into a stepper (a second tap adds another)", await byName("Combo 1", "^(Add one|एउटा थप्नुहोस्):"));
   await sleep(Number(process.env.SETTLE || 200));
   // detail sheet
   await tap("button[aria-label$=': Cheesy Zinger Burger (Signature Burger)']");
@@ -99,7 +99,7 @@ const ok = (name, pass, extra = "") => { results.push({ name, pass }); console.l
   await page.goto(BASE + "/basket", { waitUntil: "networkidle2" });
   await page.waitForSelector("main li", { timeout: 15000 });
   const basket = await text("main");
-  ok("Basket lists both items with the right totals", /Combo - 1/.test(basket) && /Cheesy Zinger Burger/.test(basket) && /918/.test(basket) && /299/.test(basket), basket.slice(0, 300));
+  ok("Basket lists both items with the right totals", /Combo 1/.test(basket) && /Cheesy Zinger Burger/.test(basket) && /918/.test(basket) && /299/.test(basket), basket.slice(0, 300));
   ok("Basket says the delivery charge starts from Rs. 50 and depends on location and order", /starts from Rs\. 50|Rs\. 50 बाट सुरु/i.test(basket) && /location|स्थान/i.test(basket), basket.slice(-400));
   ok("Basket says delivery inside BPKIHS is a fixed Rs. 50", /BPKIHS|बीपीकेआईएचएस/.test(basket) && /Rs. 50/.test(basket), basket.slice(-400));
   ok("Basket remembers the note on the burger", await page.$$eval("main input", (is) => is.some((i) => /no onions|प्याज नहाल्नुहोस्/.test(i.value))));
@@ -141,7 +141,7 @@ const ok = (name, pass, extra = "") => { results.push({ name, pass }); console.l
   console.log("---- message the customer sees ----\n" + msg + "\n------------------------------------");
   await shot("10-review");
   ok("Message names the café", /The Chicken Box|द चिकेन बक्स/.test(msg));
-  ok("Message lists both items with quantities and prices", /2 x Combo - 1/.test(msg) && /1 x Cheesy Zinger Burger/.test(msg) && /Rs\. ?918/.test(msg) && /Rs\. ?299/.test(msg), msg);
+  ok("Message lists both items with quantities and prices", /2 x Combo 1/.test(msg) && /1 x Cheesy Zinger Burger/.test(msg) && /Rs\. ?918/.test(msg) && /Rs\. ?299/.test(msg), msg);
   ok("Message carries the note", /no onions|प्याज नहाल्नुहोस्/.test(msg));
   ok("Message has the total", /1,?217/.test(msg), msg);
   ok("Message has name, cleaned phone, landmark and area", /Sita Rai/.test(msg) && /9812345678/.test(msg) && /Near Nabil Bank/.test(msg) && msg.includes(areaLabel.split(/[·(]/)[0].trim()), areaLabel);

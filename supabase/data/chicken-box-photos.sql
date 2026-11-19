@@ -14,4 +14,5 @@ with p as (select id from places where slug = 'the-chicken-box')
 update items i set image_url = '/images/menu/the-chicken-box/' ||
   case i.name when 'TCB Special Bucket' then 'bucket' else 'combo-' || substring(i.name from '[0-9]+$') end || '.webp'
 from p
-where i.place_id = p.id and (i.name like 'Combo - %' or i.name = 'TCB Special Bucket');
+where i.place_id = p.id and (i.name ~ '^Combo [0-9]+;
+ or i.name = 'TCB Special Bucket');

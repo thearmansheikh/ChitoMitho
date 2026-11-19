@@ -8,6 +8,7 @@ import SectionTitle from "@/components/ui/SectionTitle";
 import DishIcon, { DISH_TINT, dishFor, type DishName } from "@/components/ui/DishIcon";
 import type { PlaceType } from "@/types/db";
 import AddToBasket from "./AddToBasket";
+import { withUnit } from "@/lib/itemName";
 
 const BY_TYPE: Record<PlaceType, DishName> = { food: "burger", grocery: "grocery", liquor: "beer", gifts: "bouquet" };
 
@@ -43,18 +44,19 @@ export default async function TodaysPicks({ picks }: { picks: FeaturedItem[] }) 
                 </div>
                 <div className="flex flex-1 flex-col gap-1 p-3">
                   <h3 className="line-clamp-2 font-bold leading-snug">{name}</h3>
+                  {item.unit && <p className="text-xs font-semibold text-slate-600">{item.unit}</p>}
                   <Link href={`/p/${place.slug}`} className="truncate text-xs font-semibold text-brand-blue underline-offset-2 hover:underline">
                     {placeName}
                   </Link>
                   <div className="mt-auto space-y-2 pt-2">
-                    <p className="text-base font-bold text-brand-blue">{formatNPR(item.price_npr)}</p>
+                    <p className="text-base font-bold text-brand-blue">{formatNPR(item.price_npr)}</p>{" "}
                     <AddToBasket
-                      item={{ name: item.name, name_ne: item.name_ne, description: item.description, image_url: item.image_url, is_available: item.is_available, options: item.options }}
+                      item={{ name: item.name, name_ne: item.name_ne, description: item.description, image_url: item.image_url, is_available: item.is_available, options: item.options, unit: item.unit }}
                       available={item.is_available}
                       label={name}
                       line={{
                         itemId: item.id, placeId: place.id, placeName: place.name, placeNameNe: place.name_ne, placeSlug: place.slug,
-                        placeType: place.type, name: item.name, nameNe: item.name_ne, price: Number(item.price_npr),
+                        placeType: place.type, name: withUnit(item.name, item.unit), nameNe: item.name_ne ? withUnit(item.name_ne, item.unit) : null, price: Number(item.price_npr),
                       }}
                     />
                   </div>

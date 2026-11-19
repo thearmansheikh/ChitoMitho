@@ -2,6 +2,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { pick } from "@/lib/names";
 import type { Category, Item, Place } from "@/types/db";
 import ItemRow from "./ItemRow";
+import { withUnit } from "@/lib/itemName";
 import CategoryTabs from "./CategoryTabs";
 
 interface Props {
@@ -44,12 +45,12 @@ export default async function Menu({ place, categories, items, showTitle = false
             {g.items.map((i) => (
               <ItemRow
                 key={i.id}
-                item={{ name: i.name, name_ne: i.name_ne, description: i.description, image_url: i.image_url, is_available: i.is_available, options: i.options }}
+                item={{ name: i.name, name_ne: i.name_ne, description: i.description, image_url: i.image_url, is_available: i.is_available, options: i.options, unit: i.unit }}
                 placeType={place.type}
                 tileText={`${i.name} ${i.name_ne ?? ""} ${g.label}`}
                 line={{
                   itemId: i.id, placeId: place.id, placeName: place.name, placeNameNe: place.name_ne, placeSlug: place.slug,
-                  placeType: place.type, name: i.name, nameNe: i.name_ne, price: Number(i.price_npr),
+                  placeType: place.type, name: withUnit(i.name, i.unit), nameNe: i.name_ne ? withUnit(i.name_ne, i.unit) : null, price: Number(i.price_npr),
                 }}
               />
             ))}

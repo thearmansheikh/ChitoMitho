@@ -71,12 +71,12 @@ async function run(browser, prof) {
 
   // --- B. Put things in the basket
   await page.goto(BASE + "/p/the-chicken-box", { waitUntil: "networkidle2" }); await sleep(1500);
-  await page.evaluate(() => { const b = [...document.querySelectorAll("button")].find((x) => (x.getAttribute("aria-label") || "").startsWith("Add: Combo - 1")); b && b.click(); });
+  await page.evaluate(() => { const b = [...document.querySelectorAll("button")].find((x) => (x.getAttribute("aria-label") || "").startsWith("Add: Combo 1")); b && b.click(); });
   await sleep(200);
-  await page.evaluate(() => { const b = [...document.querySelectorAll("button")].find((x) => (x.getAttribute("aria-label") || "").startsWith("Add one: Combo - 1")); b && b.click(); });
+  await page.evaluate(() => { const b = [...document.querySelectorAll("button")].find((x) => (x.getAttribute("aria-label") || "").startsWith("Add one: Combo 1")); b && b.click(); });
   await sleep(300);
   const stored = await page.evaluate(() => JSON.parse(localStorage.getItem("cm-basket-v1") || "{}").lines || []);
-  ok("The basket holds 2 x Combo - 1", stored.length === 1 && stored[0].qty === 2, JSON.stringify(stored.map((l) => [l.name, l.qty])));
+  ok("The basket holds 2 x Combo 1", stored.length === 1 && stored[0].qty === 2, JSON.stringify(stored.map((l) => [l.name, l.qty])));
 
   // --- C. WhatsApp button WITH a full basket: goes to the order details, not a blank chat
   log.length = 0; waRequests = []; popups.length = 0;
@@ -100,7 +100,7 @@ async function run(browser, prof) {
   await page.click('form[role="dialog"] button:not([type])');
   await page.waitForSelector("#review-title", { visible: true, timeout: 8000 });
   const shown = await page.$eval("[role='dialog'] pre", (e) => e.textContent);
-  ok("The review screen shows the full order message", /2 x Combo - 1/.test(shown) && /Sita Rai/.test(shown), shown.slice(0, 200));
+  ok("The review screen shows the full order message", /2 x Combo 1/.test(shown) && /Sita Rai/.test(shown), shown.slice(0, 200));
 
   log.length = 0; waRequests = []; popups.length = 0;
   // A real mouse click (a scripted click is not a user tap, so browsers would block a new tab).
@@ -114,7 +114,7 @@ async function run(browser, prof) {
   ok(`Send: WhatsApp opens (${prof.mobile ? "in this tab" : "in a new tab"})`, urls.length === 1, JSON.stringify(log));
   const url = urls[0] || "";
   ok("Send: the link goes to WhatsApp, to 9779805338257", url.startsWith("https://api.whatsapp.com/send?phone=9779805338257&text=") || url.startsWith("https://api.whatsapp.com/send/?phone=9779805338257&text="), url.slice(0, 90));
-  ok("Send: the chat is NOT empty: the whole order is in the link", /2 x Combo - 1 \(Rs\. 459\) = Rs\. 918/.test(decode(url)) && /Items total: Rs\. 918/.test(decode(url)) && /Sita Rai/.test(decode(url)), decode(url).slice(0, 200));
+  ok("Send: the chat is NOT empty: the whole order is in the link", /2 x Combo 1 \(Rs\. 459\) = Rs\. 918/.test(decode(url)) && /Items total: Rs\. 918/.test(decode(url)) && /Sita Rai/.test(decode(url)), decode(url).slice(0, 200));
   ok("Send: the message is exactly what the customer reviewed", decode(url) === shown.replace(/\r/g, ""));
   ok("Send: the scooter emoji in the title is intact (not a broken character)", decode(url).startsWith("🛵"), decode(url).slice(0, 10));
   // On a phone the order of events is exact. A new tab reports itself late, so the order is only checked there.

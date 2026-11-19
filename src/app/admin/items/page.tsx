@@ -39,7 +39,7 @@ function formToGroups(groups: OptGroupForm[]): { ok: true; value: unknown[] } | 
   return { ok: true, value };
 }
 
-const EMPTY = { name: "", name_ne: "", description: "", price: "", category_id: "", options: [] as OptGroupForm[] };
+const EMPTY = { name: "", name_ne: "", unit: "", description: "", price: "", category_id: "", options: [] as OptGroupForm[] };
 
 function ItemsManager() {
   const sb = createClient();
@@ -94,7 +94,7 @@ function ItemsManager() {
     const price = Number(form.price);
     if (!Number.isFinite(price) || price < 0) return setError("Enter a valid price.");
     const row = {
-      name: form.name.trim(), name_ne: form.name_ne.trim() || null,
+      name: form.name.trim(), name_ne: form.name_ne.trim() || null, unit: form.unit.trim() || null,
       description: form.description.trim() || null, price_npr: price,
       category_id: form.category_id || null,
     } as Record<string, unknown>;
@@ -106,6 +106,7 @@ function ItemsManager() {
       ? await sb.from("items").update(row).eq("id", editing)
       : await sb.from("items").insert({ ...row, place_id: placeId, sort_order: (items.at(-1)?.sort_order ?? 0) + 1 });
     if (res.error) {
+      if (/\bunit\b/.test(res.error.message)) return setError("The unit column is missing. Run supabase/migrations/0015_item_unit_and_combos.sql in the Supabase SQL Editor first.");
       return setError(/options/.test(res.error.message) ? "The options column is missing. Run supabase/migrations/0009_item_options.sql in the Supabase SQL Editor first." : res.error.message);
     }
     setEditing(null); setHadOptions(false); setForm(EMPTY); load();
@@ -114,7 +115,7 @@ function ItemsManager() {
   function startEdit(i: Item) {
     setEditing(i.id);
     setHadOptions(cleanOptions(i.options).length > 0);
-    setForm({ name: i.name, name_ne: i.name_ne ?? "", description: i.description ?? "", price: String(i.price_npr), category_id: i.category_id ?? "", options: groupsToForm(i.options) });
+    setForm({ name: i.name, name_ne: i.name_ne ?? "", unit: i.unit ?? "", description: i.description ?? "", price: String(i.price_npr), category_id: i.category_id ?? "", options: groupsToForm(i.options) });
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
@@ -183,6 +184,7 @@ function ItemsManager() {
               <h2 className="font-bold sm:col-span-2">{editing ? "Edit item" : "Add item"}</h2>
               <Field label="Name"><input className={inputCls} required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></Field>
               <Field label="Nepali name (optional)"><input className={inputCls} value={form.name_ne} onChange={(e) => setForm({ ...form, name_ne: e.target.value })} /></Field>
+              <Field label="Unit or size (optional)"><input className={inputCls} value={form.unit} onChange={(e) => setForm({ ...form, unit: e.target.value })} placeholder="e.g. 5 kg, 650 ml, 1 lb" /></Field>
               <Field label="Price (Rs.)"><input className={inputCls} required inputMode="decimal" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} /></Field>
               <Field label="Category">
                 <select className={inputCls} value={form.category_id} onChange={(e) => setForm({ ...form, category_id: e.target.value })}>
@@ -236,7 +238,7 @@ function ItemsManager() {
                       ? <img src={i.image_url} alt="" className="h-12 w-12 rounded-lg object-cover" />
                       : <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-slate-100" aria-hidden>🍽️</div>}
                     <div className="min-w-0 flex-1">
-                      <p className="truncate font-semibold">{i.name} {i.name_ne && <span className="font-normal text-slate-500">· {i.name_ne}</span>}</p>
+                      <p className="truncate font-semibold">{i.name}{i.unit && <span className="font-normal text-slate-600"> · {i.unit}</span>} {i.name_ne && <span className="font-normal text-slate-500">· {i.name_ne}</span>}</p>
                       <p className="text-sm text-slate-600">{formatNPR(i.price_npr)} {!i.is_available && <b className="text-brand-red">· Sold out</b>} {i.is_featured && <b className="text-brand-blue">· ★ On home page</b>} {cleanOptions(i.options).length > 0 && <b className="text-slate-700">· {cleanOptions(i.options).length} option{cleanOptions(i.options).length === 1 ? "" : "s"}</b>}</p>
                     </div>
                   </div>

@@ -12,6 +12,7 @@ import DishIcon, { DISH_TINT } from "@/components/ui/DishIcon";
 import DishTile from "@/components/ui/DishTile";
 import ScooterArt from "@/components/ui/ScooterArt";
 import AddToBasket from "./AddToBasket";
+import { withUnit } from "@/lib/itemName";
 import PlaceCard from "./PlaceCard";
 
 const clean = (s: string) => s.toLowerCase().trim();
@@ -140,21 +141,22 @@ export default function FoodBrowser({ places, categories, items, initialQuery }:
                 <li key={i.id} className={`flex items-center gap-3 rounded-2xl p-3 ring-1 ${i.is_available ? "bg-white shadow-card ring-slate-200/70" : "bg-slate-100 ring-slate-200"}`}>
                   <DishTile text={`${i.name} ${cat?.name ?? ""}`} type={place.type} />
                   <div className="min-w-0 flex-1">
-                    <p className={`font-bold leading-snug ${i.is_available ? "" : "text-slate-600 line-through"}`}>{name}</p>
+                    <p className={`font-bold leading-snug ${i.is_available ? "" : "text-slate-600 line-through"}`}>{name}</p>{" "}
+                    {i.unit && <><p className="text-sm font-semibold text-slate-600">{i.unit}</p>{" "}</>}
                     <Link href={`/p/${place.slug}`} className="block truncate text-xs font-semibold text-brand-blue underline-offset-2 hover:underline">
                       {pick(place.name, place.name_ne, locale)}
-                    </Link>
+                    </Link>{" "}
                     <p className={`mt-1 inline-block rounded-full px-2.5 py-0.5 text-sm font-bold ${i.is_available ? "bg-blue-50 text-brand-blue" : "bg-slate-200 text-slate-600"}`}>
                       {formatNPR(i.price_npr)}
                     </p>
-                  </div>
+                  </div>{" "}
                   <AddToBasket
-                    item={{ name: i.name, name_ne: i.name_ne, description: i.description, image_url: i.image_url, is_available: i.is_available, options: i.options }}
+                    item={{ name: i.name, name_ne: i.name_ne, description: i.description, image_url: i.image_url, is_available: i.is_available, options: i.options, unit: i.unit }}
                     available={i.is_available}
                     label={name}
                     line={{
                       itemId: i.id, placeId: place.id, placeName: place.name, placeNameNe: place.name_ne, placeSlug: place.slug,
-                      placeType: place.type, name: i.name, nameNe: i.name_ne, price: Number(i.price_npr),
+                      placeType: place.type, name: withUnit(i.name, i.unit), nameNe: i.name_ne ? withUnit(i.name_ne, i.unit) : null, price: Number(i.price_npr),
                     }}
                   />
                 </li>

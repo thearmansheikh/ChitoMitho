@@ -21,6 +21,7 @@ export default function ItemRow({ item, line, placeType, tileText }: {
 }) {
   const locale = useLocale();
   const t = useTranslations("itemSheet");
+  const c = useTranslations("common");
   const [open, setOpen] = useState(false);
   const name = pick(item.name, item.name_ne, locale);
   const available = item.is_available;
@@ -38,13 +39,14 @@ export default function ItemRow({ item, line, placeType, tileText }: {
           <DishTile text={tileText} type={placeType} className={`h-[72px] w-[72px] ${available ? "" : "opacity-50 grayscale"}`} />
         )}
         <span className="min-w-0 flex-1">
-          <span className={`block font-bold leading-snug ${available ? "" : "text-slate-600 line-through"}`}>{name}</span>
-          {item.description && <span className="mt-0.5 line-clamp-2 block text-sm text-slate-600">{item.description}</span>}
+          <span className={`block font-bold leading-snug ${available ? "" : "text-slate-600 line-through"}`}>{name}</span>{" "}
+          {item.unit && <><span className="block text-sm font-semibold text-slate-600">{item.unit}</span>{" "}</>}
+          {item.description && <><span className="mt-0.5 line-clamp-2 block text-sm text-slate-600">{item.description}</span>{" "}</>}
           <span className={`mt-1 inline-block rounded-full px-2.5 py-0.5 text-sm font-bold ${available ? "bg-blue-50 text-brand-blue" : "bg-slate-200 text-slate-600"}`}>
-            {hasOptions ? `${t("from")} ` : ""}{formatNPR(line.price)}
+            <span className="sr-only">{c("price")}: </span>{hasOptions ? `${t("from")} ` : ""}{formatNPR(line.price)}
           </span>
         </span>
-      </button>
+      </button>{" "}
       <AddToBasket available={available} label={name} line={line} item={item} />
       {open && <ItemSheet item={item} line={line} placeType={placeType} tileText={tileText} onClose={() => setOpen(false)} />}
     </li>

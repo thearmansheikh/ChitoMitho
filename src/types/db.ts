@@ -48,6 +48,8 @@ export interface Item {
   name: string;
   name_ne: string | null;
   description: string | null;
+  /** Size or pack, shown beside the name and apart from the price ("5 kg", "650 ml"). */
+  unit?: string | null;
   price_npr: number;
   image_url: string | null;
   is_available: boolean;

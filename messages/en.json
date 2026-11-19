@@ -17,7 +17,8 @@
     "whatsapp": "WhatsApp",
     "optional": "optional",
     "requiredWord": "required",
-    "requiredNote": "* marks a required field."
+    "requiredNote": "* marks a required field.",
+    "price": "Price"
   },
   "home": {
     "title": "Order anything, from anywhere",

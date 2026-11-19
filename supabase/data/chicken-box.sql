@@ -1,3 +1,5 @@
+-- NOTE: this is the first import, with the names exactly as printed on the menu. After running it, run the later migrations
+-- 0014_menu_spelling.sql and 0015_item_unit_and_combos.sql, which correct the spelling and tidy the combo names and descriptions.
 -- Replaces The Chicken Box with the menu exactly as printed (spelling and prices unchanged).
 delete from places where slug='the-chicken-box';
 with p as (insert into places(name,name_ne,slug,type,logo_url,cover_url,description,is_active,sort_order) values('The Chicken Box','द चिकेन बक्स','the-chicken-box','food','/images/places/the-chicken-box-logo.webp','/images/places/the-chicken-box-cover.webp','Finger Lickin'' Chicken',true,1) returning id)
