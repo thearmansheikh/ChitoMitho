@@ -98,7 +98,7 @@ export default async function Home() {
       <ReorderCard />
 
       {/* Services */}
-      <section aria-label="Services" className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+      <section aria-label={t("servicesLabel")} className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {SERVICES.filter((x) => x.key !== "liquor" || liquorEnabledOf(settings)).map((x, i) => (
           <Link
             key={x.key}

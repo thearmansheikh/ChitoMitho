@@ -47,7 +47,8 @@
     "step3Title": "We deliver",
     "step3Body": "We confirm the delivery charge, then a rider brings it. Pay cash or QR at the door.",
     "closedNow": "We are closed right now. You can still browse and order when we open (10am – 10pm).",
-    "paused": "Orders are paused right now."
+    "paused": "Orders are paused right now.",
+    "servicesLabel": "Our services"
   },
   "services": {
     "food": "Food",
