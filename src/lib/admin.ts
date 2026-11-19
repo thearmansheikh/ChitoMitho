@@ -6,10 +6,10 @@ export function slugify(s: string): string {
 }
 
 /** Shrink a picture to WebP (longest side ~800px) and upload it to the public "media" bucket. Returns its public URL. */
-export async function uploadImage(sb: SupabaseClient, file: File, folder: string): Promise<string> {
+export async function uploadImage(sb: SupabaseClient, file: File, folder: string, maxEdge?: number): Promise<string> {
   const problem = imageProblem(file);
   if (problem) throw new Error(problem);
-  const { blob, ext } = await shrinkToWebp(file);
+  const { blob, ext } = await shrinkToWebp(file, maxEdge);
   const path = `${folder}/${crypto.randomUUID()}.${ext}`;
   const { error } = await sb.storage.from("media").upload(path, blob, { contentType: blob.type || file.type, upsert: false, cacheControl: "31536000" });
   if (error) throw error;

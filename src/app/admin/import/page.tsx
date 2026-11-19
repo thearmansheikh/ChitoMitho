@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { formatNPR } from "@/lib/format";
 import {
-  EXAMPLE_MENU, MAX_ROWS, newCategoryNames, norm, parseMenu, planImport,
+  CSV_TEMPLATE, EXAMPLE_MENU, MAX_ROWS, newCategoryNames, norm, parseMenu, planImport,
   type ExistingCategory, type ExistingItem, type PlannedRow,
 } from "@/lib/menuImport";
 import { btnGhost, btnPrimary, Card, Field, inputCls, Notice } from "@/components/admin/ui";
@@ -124,6 +124,14 @@ export default function ImportPage() {
     }
   }
 
+  function downloadTemplate() {
+    // A byte-order mark makes Excel show Nepali text correctly.
+    const url = URL.createObjectURL(new Blob(["\uFEFF" + CSV_TEMPLATE], { type: "text/csv;charset=utf-8" }));
+    const a = document.createElement("a");
+    a.href = url; a.download = "menu-template.csv"; a.click();
+    URL.revokeObjectURL(url);
+  }
+
   const placeName = places.find((p) => p.id === placeId)?.name;
 
   return (
@@ -154,6 +162,7 @@ export default function ImportPage() {
             Upload CSV or text file
             <input type="file" accept=".csv,.tsv,.txt,text/csv,text/plain" className="sr-only" onChange={(e) => readFile(e.target.files?.[0])} />
           </label>
+          <button type="button" className={btnGhost} onClick={downloadTemplate}>Download CSV template</button>
           <button type="button" className={btnGhost} onClick={() => { setText(EXAMPLE_MENU); setFileName(""); setLeft(new Set()); setDone(null); }}>Use an example</button>
           {text && <button type="button" className={btnGhost} onClick={() => { setText(""); setFileName(""); setLeft(new Set()); }}>Clear</button>}
           {fileName && <span className="text-sm text-slate-600">{fileName}</span>}

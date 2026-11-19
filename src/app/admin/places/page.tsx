@@ -23,11 +23,16 @@ export default function PlacesPage() {
   const [ok, setOk] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [uploading, setUploading] = useState<string | null>(null);
+  const [counts, setCounts] = useState<Record<string, number>>({});
 
   const load = useCallback(async () => {
     const { data, error } = await createClient().from("places").select("*").order("sort_order").order("name");
     if (error) setError(error.message);
     else setPlaces(data as Place[]);
+    const ir = await createClient().from("items").select("place_id").limit(5000);
+    const n: Record<string, number> = {};
+    for (const r of (ir.data ?? []) as { place_id: string }[]) n[r.place_id] = (n[r.place_id] ?? 0) + 1;
+    setCounts(n);
   }, []);
   useEffect(() => { load(); }, [load]);
 
@@ -149,7 +154,13 @@ export default function PlacesPage() {
                 : <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-xl font-extrabold text-brand-blue" aria-hidden>{firstLetter(p.name)}</div>}
               <div className="min-w-0 flex-1">
                 <p className="truncate font-bold">{p.name} {p.name_ne && <span className="font-normal text-slate-500">· {p.name_ne}</span>}</p>
-                <p className="text-sm text-slate-500">{p.type} · /p/{p.slug}</p>
+                <p className="text-sm text-slate-500">{p.type} · /p/{p.slug} · {counts[p.id] ?? 0} item{(counts[p.id] ?? 0) === 1 ? "" : "s"}</p>
+                {((counts[p.id] ?? 0) === 0 || !p.logo_url) && (
+                  <p className="mt-1 flex flex-wrap gap-1.5 text-xs font-bold">
+                    {(counts[p.id] ?? 0) === 0 && <span className="rounded-full bg-yellow-100 px-2.5 py-1 text-yellow-900">⚠ No menu items yet</span>}
+                    {!p.logo_url && <span className="rounded-full bg-yellow-100 px-2.5 py-1 text-yellow-900">⚠ No logo</span>}
+                  </p>
+                )}
               </div>
             </div>
             <div className="mt-3 flex flex-wrap gap-2">

@@ -250,6 +250,12 @@ export function newCategoryNames(rows: PlannedRow[], categories: ExistingCategor
   return out;
 }
 
+/** A blank CSV to fill in and upload. The one sample row is clearly marked so it is not imported by accident. */
+export const CSV_TEMPLATE = [
+  "Category,Name,Price,Nepali name,Description",
+  "Starters,EXAMPLE - delete this row,100,,Optional description",
+].join("\r\n") + "\r\n";
+
 export const EXAMPLE_MENU = `Momo
 Chicken Momo 250
 Veg Momo 200

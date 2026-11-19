@@ -53,6 +53,10 @@ function ItemsManager() {
   const [editing, setEditing] = useState<string | null>(null);
   const [newCat, setNewCat] = useState({ name: "", name_ne: "" });
   const [error, setError] = useState<string | null>(null);
+  const [ok, setOk] = useState<string | null>(null);
+  const [prices, setPrices] = useState<Record<string, string>>({});
+  const [menuPhotos, setMenuPhotos] = useState<{ name: string; url: string }[]>([]);
+  const [uploadingMenu, setUploadingMenu] = useState(false);
 
   useEffect(() => {
     createClient().from("places").select("*").order("sort_order").then(({ data }) => setPlaces((data as Place[]) ?? []));
@@ -68,6 +72,9 @@ function ItemsManager() {
     if (cr.error || ir.error) setError((cr.error || ir.error)!.message);
     setCats((cr.data as Category[]) ?? []);
     setItems((ir.data as Item[]) ?? []);
+    setPrices({});
+    const list = await c.storage.from("media").list(`menu-photos/${placeId}`, { limit: 50, sortBy: { column: "created_at", order: "asc" } });
+    setMenuPhotos((list.data ?? []).filter((f) => f.name && !f.name.startsWith(".")).map((f) => ({ name: f.name, url: c.storage.from("media").getPublicUrl(`menu-photos/${placeId}/${f.name}`).data.publicUrl })));
   }, [placeId]);
   useEffect(() => { load(); }, [load]);
 
@@ -129,6 +136,64 @@ function ItemsManager() {
     if (error) setError(error.message); else load();
   }
 
+  /** Saves a price typed straight into the item's card. */
+  async function savePrice(i: Item) {
+    const raw = prices[i.id];
+    if (raw === undefined) return;
+    const price = Number(raw.replace(/,/g, ""));
+    if (raw.trim() === "" || !Number.isFinite(price) || price < 0) return setError(`"${raw}" is not a valid price for ${i.name}.`);
+    setError(null); setOk(null);
+    const { error } = await sb.from("items").update({ price_npr: price }).eq("id", i.id);
+    if (error) return setError(error.message);
+    setOk(`${i.name}: price is now ${formatNPR(price)}.`);
+    load();
+  }
+
+  /** Makes a copy of an item (same category, price, unit and options) so a similar one is quick to add. */
+  async function duplicate(i: Item) {
+    setError(null); setOk(null);
+    const copy: Record<string, unknown> = {
+      place_id: i.place_id, category_id: i.category_id, name: `${i.name} (copy)`, name_ne: i.name_ne, description: i.description,
+      unit: i.unit ?? null, price_npr: i.price_npr, image_url: i.image_url, is_available: true, is_featured: false,
+      sort_order: Math.max(0, ...items.map((x) => x.sort_order)) + 1,
+    };
+    if (cleanOptions(i.options).length > 0) copy.options = i.options;
+    const { error } = await sb.from("items").insert(copy);
+    if (error) return setError(error.message);
+    setOk(`Copied "${i.name}". Find "${i.name} (copy)" below and tap Edit to rename it.`);
+    load();
+  }
+
+  /** Marks every item in one category sold out, or available again. */
+  async function setCategoryAvailability(categoryId: string, label: string, available: boolean) {
+    const n = items.filter((i) => (i.category_id ?? "") === categoryId && i.is_available !== available).length;
+    if (n === 0) return setOk(available ? `Everything in ${label} is already available.` : `Everything in ${label} is already sold out.`);
+    if (!confirm(available ? `Mark all ${n} items in "${label}" available again?` : `Mark all ${n} items in "${label}" sold out?`)) return;
+    setError(null); setOk(null);
+    const q = sb.from("items").update({ is_available: available }).eq("place_id", placeId);
+    const { error } = await (categoryId ? q.eq("category_id", categoryId) : q.is("category_id", null));
+    if (error) return setError(error.message);
+    setOk(available ? `${n} items in ${label} are available again.` : `${n} items in ${label} are now sold out.`);
+    load();
+  }
+
+  /** Keeps a picture of the paper menu for reference. Customers never see these. */
+  async function addMenuPhoto(file?: File) {
+    if (!file) return;
+    setError(null); setOk(null); setUploadingMenu(true);
+    try {
+      await uploadImage(sb, file, `menu-photos/${placeId}`, 1600);
+      setOk("Menu photo saved for reference.");
+      await load();
+    } catch (e) { setError((e as Error).message); }
+    setUploadingMenu(false);
+  }
+  async function removeMenuPhoto(name: string) {
+    if (!confirm("Delete this menu photo?")) return;
+    const { error } = await sb.storage.from("media").remove([`menu-photos/${placeId}/${name}`]);
+    if (error) setError(error.message); else load();
+  }
+
   async function photo(i: Item, file?: File) {
     if (!file) return;
     try {
@@ -158,7 +223,7 @@ function ItemsManager() {
           {places.map((p) => <option key={p.id} value={p.id}>{p.name} ({p.type})</option>)}
         </select>
       </Field>
-      <Notice error={error} />
+      <Notice error={error} ok={ok} />
 
       {placeId && (
         <>
@@ -177,6 +242,28 @@ function ItemsManager() {
               <input className={`${inputCls} flex-1`} placeholder="Nepali name" value={newCat.name_ne} onChange={(e) => setNewCat({ ...newCat, name_ne: e.target.value })} />
               <button className={btnPrimary}>Add</button>
             </form>
+          </Card>
+
+          <Card>
+            <h2 className="mb-1 font-bold">Menu photos (for reference)</h2>
+            <p className="mb-3 text-sm text-slate-600">Keep a picture of the paper menu here so you can check prices while typing. Customers never see these.</p>
+            {menuPhotos.length > 0 && (
+              <ul className="mb-3 flex flex-wrap gap-3">
+                {menuPhotos.map((m) => (
+                  <li key={m.name} className="w-28 space-y-1">
+                    <a href={m.url} target="_blank" rel="noreferrer">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={m.url} alt="Menu photo (tap to open full size)" className="h-28 w-28 rounded-lg object-cover ring-1 ring-slate-200" />
+                    </a>
+                    <button type="button" className={`${btnDanger} w-full`} onClick={() => removeMenuPhoto(m.name)}>Delete</button>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <label className={`${btnGhost} inline-flex cursor-pointer items-center`}>
+              {uploadingMenu ? "Uploading…" : "Add a menu photo"}
+              <input type="file" accept="image/*" className="sr-only" onChange={(e) => { addMenuPhoto(e.target.files?.[0]); e.target.value = ""; }} />
+            </label>
           </Card>
 
           <Card>
@@ -229,7 +316,13 @@ function ItemsManager() {
 
           {groups.map((g) => (
             <section key={g.id || "none"} className="space-y-2">
-              <h2 className="font-bold text-slate-700">{g.label}</h2>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <h2 className="font-bold text-slate-700">{g.label} <span className="font-normal text-slate-500">({g.items.length})</span></h2>
+                <div className="flex flex-wrap gap-2">
+                  <button className={btnGhost} onClick={() => setCategoryAvailability(g.id, g.label, false)}>Mark all sold out</button>
+                  <button className={btnGhost} onClick={() => setCategoryAvailability(g.id, g.label, true)}>Mark all available</button>
+                </div>
+              </div>
               {g.items.map((i) => (
                 <Card key={i.id} className={i.is_available ? "" : "opacity-60"}>
                   <div className="flex items-center gap-3">
@@ -239,15 +332,25 @@ function ItemsManager() {
                       : <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-slate-100" aria-hidden>🍽️</div>}
                     <div className="min-w-0 flex-1">
                       <p className="truncate font-semibold">{i.name}{i.unit && <span className="font-normal text-slate-600"> · {i.unit}</span>} {i.name_ne && <span className="font-normal text-slate-500">· {i.name_ne}</span>}</p>
-                      <p className="text-sm text-slate-600">{formatNPR(i.price_npr)} {!i.is_available && <b className="text-brand-red">· Sold out</b>} {i.is_featured && <b className="text-brand-blue">· ★ On home page</b>} {cleanOptions(i.options).length > 0 && <b className="text-slate-700">· {cleanOptions(i.options).length} option{cleanOptions(i.options).length === 1 ? "" : "s"}</b>}</p>
+                      <p className="text-sm text-slate-600">{!i.is_available && <b className="text-brand-red">· Sold out</b>} {i.is_featured && <b className="text-brand-blue">· ★ On home page</b>} {cleanOptions(i.options).length > 0 && <b className="text-slate-700">· {cleanOptions(i.options).length} option{cleanOptions(i.options).length === 1 ? "" : "s"}</b>}</p>
                     </div>
                   </div>
+                  <form className="mt-3 flex items-center gap-2" onSubmit={(e) => { e.preventDefault(); savePrice(i); }}>
+                    <label className="text-sm font-semibold text-slate-700" htmlFor={`price-${i.id}`}>Price Rs.</label>
+                    <input
+                      id={`price-${i.id}`} inputMode="decimal" className={`${inputCls} w-28`}
+                      value={prices[i.id] ?? String(i.price_npr)}
+                      onChange={(e) => setPrices({ ...prices, [i.id]: e.target.value })}
+                    />
+                    {prices[i.id] !== undefined && prices[i.id] !== String(i.price_npr) && <button className={btnPrimary}>Save price</button>}
+                  </form>
                   <div className="mt-3 flex flex-wrap gap-2">
                     <button className={btnGhost} onClick={() => toggle(i)}>{i.is_available ? "Mark sold out" : "Mark available"}</button>
                     <button className={btnGhost} aria-pressed={i.is_featured} onClick={() => toggleFeatured(i)}>
                       {i.is_featured ? "★ Featured · remove" : "☆ Feature on home"}
                     </button>
                     <button className={btnGhost} onClick={() => startEdit(i)}>Edit</button>
+                    <button className={btnGhost} onClick={() => duplicate(i)}>Duplicate</button>
                     <label className={`${btnGhost} flex cursor-pointer items-center`}>
                       Photo
                       <input type="file" accept="image/*" className="sr-only" onChange={(e) => photo(i, e.target.files?.[0])} />
