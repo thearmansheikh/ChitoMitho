@@ -34,7 +34,7 @@ export default async function TodaysPicks({ picks }: { picks: FeaturedItem[] }) 
               <article className="flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-card ring-1 ring-slate-200/70">
                 <div className={`relative flex h-28 items-center justify-center overflow-hidden bg-gradient-to-br ${DISH_TINT[dish]}`}>
                   {item.image_url ? (
-                    <Image src={item.image_url} alt="" fill sizes="192px" loading="lazy" className="object-cover" />
+                    <Image src={item.image_url} alt={name} fill sizes="192px" loading="lazy" className="object-cover" />
                   ) : (
                     <DishIcon name={dish} className="h-16 w-16 drop-shadow-sm" />
                   )}

@@ -28,7 +28,7 @@ export default function PlaceCard({ place, name, tags = [] }: { place: Place; na
         ))}
         <PlaceOpenChip opensAt={place.opens_at} closesAt={place.closes_at} />
         {place.logo_url && (
-          <Image src={place.logo_url} alt="" width={44} height={44} loading="lazy" className="absolute bottom-2 left-2 h-11 w-11 rounded-full object-cover ring-2 ring-white" />
+          <Image src={place.logo_url} alt={name} width={44} height={44} loading="lazy" className="absolute bottom-2 left-2 h-11 w-11 rounded-full object-cover ring-2 ring-white" />
         )}
       </div>
       <div className="space-y-1.5 p-3.5">

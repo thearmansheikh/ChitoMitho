@@ -34,7 +34,7 @@ export default function ItemRow({ item, line, placeType, tileText }: {
         className="flex min-w-0 flex-1 items-center gap-3 rounded-xl text-left"
       >
         {item.image_url ? (
-          <Image src={item.image_url} alt="" width={72} height={72} loading="lazy" className={`h-[72px] w-[72px] flex-none rounded-xl object-cover ${available ? "" : "opacity-50 grayscale"}`} />
+          <Image src={item.image_url} alt={name} width={72} height={72} loading="lazy" className={`h-[72px] w-[72px] flex-none rounded-xl object-cover ${available ? "" : "opacity-50 grayscale"}`} />
         ) : (
           <DishTile text={tileText} type={placeType} className={`h-[72px] w-[72px] ${available ? "" : "opacity-50 grayscale"}`} />
         )}

@@ -27,7 +27,7 @@ export default async function Header() {
     <header className="sticky top-0 z-30 border-b border-slate-200/70 bg-white shadow-[0_6px_20px_-14px_rgba(26,43,76,.45)]">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-2">
         <Link href="/" className="flex flex-none items-center gap-2.5" aria-label={t("name")}>
-          <Image src="/icons/logo.png" alt="" width={44} height={44} priority className="rounded-full shadow-card" />
+          <Image src="/icons/logo.png" alt={t("logoAlt")} width={44} height={44} priority className="rounded-full shadow-card" />
           {/* The logo already carries the name, so small phones show the logo alone and keep room for the badge and language toggle. */}
           <span className="hidden leading-tight min-[480px]:block">
             <span className="block text-lg font-bold text-brand-blue">{t("name")}</span>

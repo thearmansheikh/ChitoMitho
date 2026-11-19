@@ -27,7 +27,7 @@ export default function PageHeader({ icon, title, subtitle, tone = "blue", image
     <header className={`relative overflow-hidden rounded-3xl bg-gradient-to-br ${TONES[tone]} p-5 text-white shadow-pop motion-safe:animate-fade-up ${image ? "min-h-[150px]" : ""}`}>
       {image ? (
         <>
-          <Image src={image} alt="" fill priority sizes="(max-width: 768px) 100vw, 768px" className="object-cover" />
+          <Image src={image} alt="" aria-hidden fill priority sizes="(max-width: 768px) 100vw, 768px" className="object-cover" />
           <span aria-hidden className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-black/10" />
         </>
       ) : (

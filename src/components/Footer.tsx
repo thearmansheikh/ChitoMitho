@@ -4,12 +4,14 @@ import { getTranslations } from "next-intl/server";
 import { getSettings } from "@/lib/data";
 import { SITE } from "@/lib/config";
 import { validWeekHours } from "@/lib/hours";
+import { callNumbers } from "@/lib/contact";
 import { weekLines } from "@/lib/weekText";
 import SocialIcon from "@/components/ui/SocialIcon";
 import WhatsAppLink from "@/components/WhatsAppLink";
 
 export default async function Footer() {
   const t = await getTranslations("footer");
+  const cm = await getTranslations("common");
   const b = await getTranslations("brand");
   const a = await getTranslations("about");
   const n = await getTranslations("nav");
@@ -50,7 +52,7 @@ export default async function Footer() {
     },
   ];
 
-  const social = "flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white ring-1 ring-white/15 transition hover:bg-white hover:text-ink";
+  const socialPill = "inline-flex min-h-[44px] items-center gap-2 rounded-xl px-4 text-sm font-semibold text-white ring-1 ring-white/25 transition hover:bg-white/10";
 
   return (
     <footer className="relative mt-16 overflow-hidden bg-ink text-white">
@@ -65,7 +67,7 @@ export default async function Footer() {
           {/* Brand and contact */}
           <div className="space-y-5">
             <div className="flex items-center gap-3">
-              <Image src="/icons/logo.png" alt="" width={56} height={56} className="rounded-full ring-2 ring-white/30" />
+              <Image src="/icons/logo.png" alt={b("logoAlt")} width={56} height={56} className="rounded-full ring-2 ring-white/30" />
               <div>
                 <p className="text-xl font-bold leading-tight">{b("name")}</p>
                 <p className="text-sm text-white/70">{b("tagline")}</p>
@@ -97,16 +99,16 @@ export default async function Footer() {
                 number={s.whatsapp_number}
                 className="flex min-h-[52px] items-center justify-center gap-2 rounded-xl bg-green-700 px-5 font-bold text-white shadow-lg shadow-black/20 transition hover:bg-green-600 active:scale-95 sm:max-w-xs"
               >
-                <SocialIcon name="whatsapp" className="h-5 w-5" /> {t("whatsapp")} · {s.whatsapp_number}
+                <SocialIcon name="whatsapp" className="h-5 w-5" /> {cm("whatsappLabel", { number: s.whatsapp_number })}
               </WhatsAppLink>
               <div className="flex flex-wrap gap-2">
-                {s.phone_numbers.map((p) => (
+                {callNumbers(s).map((p) => (
                   <a
                     key={p}
                     href={`tel:+977${p}`}
                     className="inline-flex min-h-[44px] items-center gap-2 rounded-xl px-4 text-sm font-semibold text-white ring-1 ring-white/25 transition hover:bg-white/10"
                   >
-                    <SocialIcon name="phone" className="h-4 w-4" /> {p}
+                    <SocialIcon name="phone" className="h-4 w-4" /> {cm("callLabel", { number: p })}
                   </a>
                 ))}
               </div>
@@ -114,12 +116,12 @@ export default async function Footer() {
 
             <div className="space-y-3">
               <h2 className="text-xs font-bold uppercase tracking-[0.14em] text-white/50">{t("follow")}</h2>
-              <div className="flex gap-3">
-                <a href={`https://www.tiktok.com/@${SITE.tiktok}`} target="_blank" rel="noopener noreferrer" aria-label={`${t("tiktok")} @${SITE.tiktok}`} className={social}>
-                  <SocialIcon name="tiktok" />
+              <div className="flex flex-wrap gap-2">
+                <a href={`https://www.tiktok.com/@${SITE.tiktok}`} target="_blank" rel="noopener noreferrer" aria-label={`${t("tiktok")} @${SITE.tiktok}`} className={socialPill}>
+                  <SocialIcon name="tiktok" className="h-5 w-5" /> {t("tiktok")} @{SITE.tiktok}
                 </a>
-                <a href={`https://www.instagram.com/${SITE.instagram}`} target="_blank" rel="noopener noreferrer" aria-label={`${t("instagram")} @${SITE.instagram}`} className={social}>
-                  <SocialIcon name="instagram" />
+                <a href={`https://www.instagram.com/${SITE.instagram}`} target="_blank" rel="noopener noreferrer" aria-label={`${t("instagram")} @${SITE.instagram}`} className={socialPill}>
+                  <SocialIcon name="instagram" className="h-5 w-5" /> {t("instagram")} @{SITE.instagram}
                 </a>
               </div>
             </div>

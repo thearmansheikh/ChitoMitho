@@ -1,4 +1,5 @@
 import WhatsAppLink from "@/components/WhatsAppLink";
+import { callNumbers } from "@/lib/contact";
 import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
 import { getFeatured, getMenu, getOffers, getPlaces, getSettings } from "@/lib/data";
@@ -162,11 +163,11 @@ export default async function Home() {
 
       {/* Contact */}
       <section className="grid grid-cols-2 gap-3">
-        <a href={`tel:+977${settings.phone_numbers[0] ?? settings.whatsapp_number}`} className="flex min-h-[56px] items-center justify-center gap-2 rounded-2xl bg-brand-blue font-bold text-white shadow-pop transition active:scale-95">
-          <span aria-hidden>📞</span> {c("call")}
+        <a href={`tel:+977${callNumbers(settings)[0]}`} className="flex min-h-[56px] items-center justify-center gap-2 rounded-2xl bg-brand-blue px-2 text-center font-bold text-white shadow-pop transition active:scale-95">
+          <span aria-hidden>📞</span> {c("callLabel", { number: callNumbers(settings)[0] })}
         </a>
         <WhatsAppLink number={settings.whatsapp_number} className="flex min-h-[56px] items-center justify-center gap-2 rounded-2xl bg-green-700 font-bold text-white shadow-lg shadow-green-900/20 transition active:scale-95">
-          <span aria-hidden>💬</span> {c("whatsapp")}
+          <span aria-hidden>💬</span> {c("whatsappLabel", { number: settings.whatsapp_number })}
         </WhatsAppLink>
       </section>
     </div>

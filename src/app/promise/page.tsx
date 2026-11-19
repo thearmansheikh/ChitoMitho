@@ -1,4 +1,5 @@
 import WhatsAppLink from "@/components/WhatsAppLink";
+import { callNumbers } from "@/lib/contact";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
@@ -46,10 +47,10 @@ export default async function PromisePage() {
         <h2 className="font-bold">{t("questions")}</h2>
         <div className="grid gap-2 sm:grid-cols-2">
           <WhatsAppLink number={s.whatsapp_number} className="flex min-h-[52px] items-center justify-center rounded-xl bg-green-700 font-bold text-white">
-            💬 {c("whatsapp")}
+            💬 {c("whatsappLabel", { number: s.whatsapp_number })}
           </WhatsAppLink>
-          <a href={`tel:+977${s.phone_numbers[0] ?? s.whatsapp_number}`} className="flex min-h-[52px] items-center justify-center rounded-xl bg-brand-blue font-bold text-white">
-            📞 {c("call")}
+          <a href={`tel:+977${callNumbers(s)[0]}`} className="flex min-h-[52px] items-center justify-center rounded-xl bg-brand-blue font-bold text-white">
+            📞 {c("callLabel", { number: callNumbers(s)[0] })}
           </a>
         </div>
         <Link href="/partner" className="inline-flex min-h-[44px] items-center text-sm font-semibold text-brand-blue underline">{t("partnerLink")}</Link>
