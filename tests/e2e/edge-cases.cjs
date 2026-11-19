@@ -64,7 +64,10 @@ const text = (page, sel) => page.$eval(sel, (e) => e.innerText).catch(() => "");
     const box = await page.$eval("[role=dialog]", (d) => { const r = d.getBoundingClientRect(); return { w: Math.round(r.width), centered: Math.abs(r.left + r.width / 2 - innerWidth / 2) < 4 }; });
     ok("Laptop: the item sheet is a centred card, not full width", box.w <= 520 && box.centered, JSON.stringify(box));
     await page.evaluate(() => [...document.querySelectorAll("[role=dialog] button")].find((x) => /Add to basket/.test(x.innerText)).click()); await sleep(300);
-    await page.click("header a[href='/basket']"); await page.waitForSelector("main li", { timeout: 15000 });
+    await page.click("header a[href='/basket']");
+    // A page change keeps the old page on screen until the new one is ready, so wait for the new address first.
+    await page.waitForFunction(() => location.pathname === "/basket", { timeout: 15000 });
+    await page.waitForSelector("main li", { timeout: 15000 }); await sleep(300);
     ok("Laptop: the basket opens from the header", /Cheesy Zinger Burger/.test(await text(page, "main")));
     await page.evaluate(() => [...document.querySelectorAll("main button")].find((x) => /Order on WhatsApp/.test(x.textContent)).click());
     await page.waitForSelector('[role="dialog"] input', { visible: true, timeout: 8000 });
