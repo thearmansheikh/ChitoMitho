@@ -77,7 +77,8 @@ const T = LOCALE === "ne"
   await page.evaluate(() => [...document.querySelectorAll("[role=dialog] button")].find((x) => /Edit my details|विवरण सच्याउनुहोस्/.test(x.textContent)).click());
   await page.waitForSelector('[role="dialog"] select', { visible: true }); await sleep(300);
   const box2 = await page.$$('form[role="dialog"] input:not([type=radio]):not([type=tel]):not([type=time]):not([autocomplete])');
-  await box2[0].click({ clickCount: 3 }); await page.keyboard.press("Backspace");
+  // Empty the box the way React expects (a triple-click does not select text on a phone-style browser).
+  await box2[0].evaluate((e) => { const set = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value").set; set.call(e, ""); e.dispatchEvent(new Event("input", { bubbles: true })); });
   await page.click('form[role="dialog"] button:not([type])'); await sleep(300);
   const alerts = await page.$$eval('[role="dialog"] [role="alert"]', (els) => els.map((e) => e.textContent));
   ok("Leaving the typed area empty is refused with a message", alerts.length >= 1 && !(await page.$("#review-title")), JSON.stringify(alerts));
