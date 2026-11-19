@@ -24,4 +24,4 @@ BASE=http://localhost:3000 W=360 node tests/e2e/phone-overflow.cjs / /food /bask
 Set `CHROME_PATH` if Chrome is not in the usual Windows location. Each script prints PASS or FAIL per check and
 exits with a non-zero code if anything fails.
 
-The scripts use the demo data (Olive Cafe, Chicken Momo, Red Rose Bouquet). Change those names if you replace the menu.
+`customer-journey.cjs`, `edge-cases.cjs` and `whatsapp-handoff.cjs` use The Chicken Box. `order-flow.cjs` and `gift-parcel-anything.cjs` still use the old demo data names. Unit tests: `npm run test:unit`.
