@@ -10,6 +10,7 @@ import SearchBar from "@/components/shop/SearchBar";
 import CravingRow from "@/components/shop/CravingRow";
 import PlaceCard from "@/components/shop/PlaceCard";
 import PartnerStrip from "@/components/shop/PartnerStrip";
+import { hasMenu, noMenuModeOf, visiblePlaces } from "@/lib/places";
 import ClosedNotice from "@/components/shop/ClosedNotice";
 import ReorderCard from "@/components/shop/ReorderCard";
 import OffersStrip from "@/components/shop/OffersStrip";
@@ -37,7 +38,11 @@ export default async function Home() {
   const pa = await getTranslations("partner");
   const c = await getTranslations("common");
   const settings = await getSettings();
-  const popular = (await getPlaces("food")).slice(0, 4);
+  const allPlaces = await getPlaces();
+  const mode = noMenuModeOf(settings);
+  // Popular places: up to six active cafés that really have a menu. The section hides itself with fewer than two.
+  const popular = allPlaces.filter((p) => p.type === "food" && hasMenu(p)).slice(0, 6);
+  const partnerPlaces = visiblePlaces(allPlaces, mode);
   const offers = await getOffers();
   const picks = await getFeatured();
   const locale = await getLocale();
@@ -112,7 +117,7 @@ export default async function Home() {
 
       <TodaysPicks picks={picks} />
 
-      {popular.length > 0 && (
+      {popular.length >= 2 && (
         <section className="space-y-4">
           <SectionTitle>{t("popular")}</SectionTitle>
           <div className="grid gap-3 sm:grid-cols-2">
@@ -123,7 +128,7 @@ export default async function Home() {
         </section>
       )}
 
-      <PartnerStrip title={t("partners")} />
+      <PartnerStrip title={t("partners")} places={partnerPlaces} />
 
       {/* How it works */}
       <section className="space-y-4">

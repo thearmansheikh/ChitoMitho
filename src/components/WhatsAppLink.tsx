@@ -3,7 +3,7 @@
 import { useRouter, usePathname } from "next/navigation";
 import { useLocale } from "next-intl";
 import { useBasket } from "@/context/BasketContext";
-import { buildWhatsAppUrl, greetingMessage, type Lang } from "@/lib/whatsapp";
+import { buildWhatsAppUrl, greetingMessage, placeOrderMessage, type Lang } from "@/lib/whatsapp";
 import { logWhatsAppUrl } from "@/lib/openWhatsApp";
 
 /** Lets the basket page open the details form when a WhatsApp button elsewhere is tapped. */
@@ -15,9 +15,11 @@ export const ORDER_REQUEST_EVENT = "cm:order-request";
  *   so the order goes out in one message. With an empty basket it opens a chat that starts with a short hello.
  * - otherwise (help, about, footer...): always the chat with the short hello.
  */
-export default function WhatsAppLink({ number, basketAware = false, className, ariaLabel, children }: {
+export default function WhatsAppLink({ number, basketAware = false, placeName, className, ariaLabel, children }: {
   number: string;
   basketAware?: boolean;
+  /** Opens the chat with "Hi, I'd like to order from {placeName}." instead of the general hello. */
+  placeName?: string;
   className?: string;
   ariaLabel?: string;
   children: React.ReactNode;
@@ -26,7 +28,7 @@ export default function WhatsAppLink({ number, basketAware = false, className, a
   const router = useRouter();
   const pathname = usePathname();
   const { count, extras, hydrated } = useBasket();
-  const href = buildWhatsAppUrl(number, greetingMessage(locale));
+  const href = buildWhatsAppUrl(number, placeName ? placeOrderMessage(locale, placeName) : greetingMessage(locale));
   const hasOrder = hydrated && (count > 0 || extras.shoppingList.trim().length > 0);
 
   function onClick(e: React.MouseEvent<HTMLAnchorElement>) {

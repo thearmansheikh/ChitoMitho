@@ -249,6 +249,11 @@ export function buildWhatsAppUrl(number: string, message: string): string {
   return `https://api.whatsapp.com/send?phone=977${d}&text=${encodeURIComponent(message)}`;
 }
 
+/** What the button on a place with no menu opens with: "Hi, I'd like to order from Anzee's Cafe & Bakery." */
+export function placeOrderMessage(lang: Lang, name: string): string {
+  return L[lang].placeOrder.replace("{name}", name);
+}
+
 /** What a plain "WhatsApp us" button opens with, so the chat is never blank. */
 export function greetingMessage(lang: Lang): string {
   return L[lang].greeting;

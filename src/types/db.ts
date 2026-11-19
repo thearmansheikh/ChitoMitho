@@ -19,6 +19,8 @@ export interface Place {
   closes_at: string | null;
   is_active: boolean;
   sort_order: number;
+  /** How many menu items this place has. Filled in by the data layer. */
+  item_count?: number;
 }
 export interface Category {
   id: string;
@@ -78,6 +80,8 @@ export interface Settings {
   timezone: string;
   orders_paused: boolean;
   pause_message: string | null;
+  /** What to do with a place that has no menu yet. */
+  places_without_menu?: "badge" | "hide";
   /** The delivery charge starts from this amount. Null: no amount is mentioned. */
   delivery_from_npr?: number | null;
   /** Hours for each day of the week (see lib/hours.ts). Null or missing: same hours every day. */

@@ -25,6 +25,7 @@ export default function FoodBrowser({ places, categories, items, initialQuery }:
   initialQuery: string;
 }) {
   const t = useTranslations("food");
+  const pg = useTranslations("pages");
   const c = useTranslations("craving");
   const locale = useLocale();
   const [q, setQ] = useState(initialQuery);
@@ -174,7 +175,7 @@ export default function FoodBrowser({ places, categories, items, initialQuery }:
           </h2>
           <div className="grid gap-3 sm:grid-cols-2">
             {matchedPlaces.map((p) => (
-              <PlaceCard key={p.id} place={p} name={pick(p.name, p.name_ne, locale)} tags={placeTags(p.id, categories, locale)} />
+              <PlaceCard key={p.id} place={p} name={pick(p.name, p.name_ne, locale)} tags={placeTags(p.id, categories, locale)} comingSoon={pg("comingSoon")} />
             ))}
           </div>
         </section>

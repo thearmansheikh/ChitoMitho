@@ -73,12 +73,20 @@ export const getAreas = unstable_cache(
 
 export const getPlaces = unstable_cache(
   async (type?: PlaceType): Promise<Place[]> => {
-    if (!isConfigured) return SAMPLE_PLACES.filter((p) => !type || p.type === type);
+    if (!isConfigured) return SAMPLE_PLACES.filter((p) => !type || p.type === type).map((p) => ({ ...p, item_count: SAMPLE_ITEMS.filter((i) => i.place_id === p.id).length }));
     let q = sb().from("places").select("*").order("sort_order").order("name");
     if (type) q = q.eq("type", type);
     const { data, error } = await q;
     if (error) console.error("getPlaces", error.message);
-    return (data as Place[]) ?? [];
+    const places = (data as Place[]) ?? [];
+    // How many items each place has, so a place with no menu can be shown as "Menu coming soon" (or hidden).
+    const counts = new Map<string, number>();
+    if (places.length > 0) {
+      const { data: rows, error: countError } = await sb().from("items").select("place_id").in("place_id", places.map((p) => p.id)).limit(10000);
+      if (countError) console.error("getPlaces counts", countError.message);
+      for (const r of (rows as { place_id: string }[] | null) ?? []) counts.set(r.place_id, (counts.get(r.place_id) ?? 0) + 1);
+    }
+    return places.map((p) => ({ ...p, item_count: counts.get(p.id) ?? 0 }));
   },
   ["places"],
   REVALIDATE,

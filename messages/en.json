@@ -63,7 +63,10 @@
     "groceriesTitle": "Groceries",
     "liquorTitle": "Liquor",
     "giftsTitle": "Gifts & Flowers",
-    "noPlaces": "No places available right now."
+    "noPlaces": "No places available right now.",
+    "comingSoon": "Menu coming soon",
+    "comingSoonBody": "This menu is not on the website yet. Message us on WhatsApp and we will arrange your order.",
+    "orderFrom": "Order from {name} on WhatsApp"
   },
   "menu": {
     "categories": "Menu categories",
@@ -701,7 +704,8 @@
     "later": "Later",
     "senderName": "Sender name",
     "senderPhone": "Sender phone",
-    "pickupTime": "Pickup time"
+    "pickupTime": "Pickup time",
+    "placeOrder": "Hi, I'd like to order from {name}."
   },
   "weekHours": {
     "d0": "Sun",

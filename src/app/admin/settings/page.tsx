@@ -15,6 +15,7 @@ type Form = {
   open_time: string;
   close_time: string;
   delivery_from: string;
+  places_without_menu: "badge" | "hide";
   different_days: boolean;
   week: DayHours[];
   orders_paused: boolean;
@@ -45,6 +46,7 @@ export default function SettingsPage() {
         open_time: (s?.open_time ?? "10:00").slice(0, 5),
         close_time: (s?.close_time ?? "22:00").slice(0, 5),
         delivery_from: s?.delivery_from_npr == null ? "" : String(Number(s.delivery_from_npr)),
+        places_without_menu: s?.places_without_menu === "hide" ? "hide" : "badge",
         ...weekState(s),
         orders_paused: s?.orders_paused ?? false,
         pause_message: s?.pause_message ?? "",
@@ -74,6 +76,7 @@ export default function SettingsPage() {
       open_time: f.open_time,
       close_time: f.close_time,
       delivery_from_npr: fromNum,
+      places_without_menu: f.places_without_menu,
       weekday_hours: f.different_days ? f.week : null,
       orders_paused: f.orders_paused,
       pause_message: f.pause_message.trim() || null,
@@ -81,7 +84,7 @@ export default function SettingsPage() {
       liquor_age_text: f.liquor_age_text.trim() || null,
     });
     setBusy(false);
-    if (error) setError(/weekday_hours/.test(error.message) ? "The weekday hours column is missing. Run supabase/migrations/0008_weekday_hours.sql in the Supabase SQL Editor first." : error.message); else setOk("Settings saved. The site updates within a minute.");
+    if (error) setError(/weekday_hours/.test(error.message) ? "The weekday hours column is missing. Run supabase/migrations/0008_weekday_hours.sql in the Supabase SQL Editor first." : /places_without_menu/.test(error.message) ? "The places setting is missing. Run supabase/migrations/0018_partner_places.sql in the Supabase SQL Editor first." : /delivery_from_npr/.test(error.message) ? "The delivery amount column is missing. Run supabase/migrations/0012_delivery_from.sql in the Supabase SQL Editor first." : error.message); else setOk("Settings saved. The site updates within a minute.");
   }
 
   return (
@@ -100,6 +103,12 @@ export default function SettingsPage() {
             <input className={inputCls} inputMode="decimal" value={f.delivery_from} onChange={(e) => set("delivery_from", e.target.value)} placeholder="50" />
           </Field>
           <p className="-mt-2 text-xs text-slate-500">Shown to customers as “Delivery charge starts from Rs. 50”, with a note that the exact charge depends on the location and the order. Leave it empty to show only that the charge is not fixed. A fixed charge for one area (for example BPKIHS) is set in Areas.</p>
+          <Field label="Places that have no menu yet">
+            <select className={inputCls} value={f.places_without_menu} onChange={(e) => set("places_without_menu", e.target.value as "badge" | "hide")}>
+              <option value="badge">Show them with a “Menu coming soon” badge and an order-on-WhatsApp button</option>
+              <option value="hide">Hide them until they have a menu</option>
+            </select>
+          </Field>
           <label className="flex min-h-[44px] items-center gap-3 rounded-lg bg-slate-50 p-3 font-semibold">
             <input type="checkbox" className="h-5 w-5" checked={f.different_days} onChange={(e) => set("different_days", e.target.checked)} />
             Different hours on different days

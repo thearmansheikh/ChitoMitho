@@ -3,6 +3,7 @@ import Link from "next/link";
 import DishIcon, { DISH_TINT, dishFor, type DishName } from "@/components/ui/DishIcon";
 import type { Place, PlaceType } from "@/types/db";
 import PlaceOpenChip from "./PlaceOpenChip";
+import { hasMenu } from "@/lib/places";
 
 const BY_TYPE: Record<PlaceType, DishName> = { food: "burger", grocery: "grocery", liquor: "beer", gifts: "bouquet" };
 
@@ -10,7 +11,7 @@ const BY_TYPE: Record<PlaceType, DishName> = { food: "burger", grocery: "grocery
  * A café or shop: a coloured cover showing what it sells, its name, a line about it and tag chips.
  * Takes plain, already-translated text so it works on the server and in the search page.
  */
-export default function PlaceCard({ place, name, tags = [] }: { place: Place; name: string; tags?: string[] }) {
+export default function PlaceCard({ place, name, tags = [], comingSoon }: { place: Place; name: string; tags?: string[]; /** The badge text, shown only when the place has no menu yet. */ comingSoon?: string }) {
   // Up to three different dishes, taken from the place's menu categories.
   const dishes = [...new Set(tags.map((t) => dishFor(t)).filter((d): d is DishName => d !== null))].slice(0, 3);
   if (dishes.length === 0) dishes.push(BY_TYPE[place.type]);
@@ -27,6 +28,9 @@ export default function PlaceCard({ place, name, tags = [] }: { place: Place; na
           <DishIcon key={d} name={d} className={`relative drop-shadow-sm transition-transform duration-200 group-hover:scale-110 ${i === 0 ? "h-20 w-20" : "h-14 w-14"}`} />
         ))}
         <PlaceOpenChip opensAt={place.opens_at} closesAt={place.closes_at} />
+        {comingSoon && !hasMenu(place) && (
+          <span className="absolute left-2 top-2 rounded-full bg-white/95 px-2.5 py-1 text-xs font-bold text-slate-700 shadow-sm">{comingSoon}</span>
+        )}
         {place.logo_url && (
           <Image src={place.logo_url} alt={name} width={44} height={44} loading="lazy" className="absolute bottom-2 left-2 h-11 w-11 rounded-full object-cover ring-2 ring-white" />
         )}

@@ -4,6 +4,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { getMenu, getPlaceBySlug, getSettings } from "@/lib/data";
 import { pick } from "@/lib/names";
 import Menu from "@/components/shop/Menu";
+import ComingSoon from "@/components/shop/ComingSoon";
 import PlaceInfo from "@/components/shop/PlaceInfo";
 import PageHeader, { type Tone } from "@/components/ui/PageHeader";
 import ServiceIcon, { type ServiceIconName } from "@/components/ui/ServiceIcon";
@@ -19,8 +20,13 @@ const LOOK: Record<PlaceType, { icon: ServiceIconName; tone: Tone; href: string;
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const place = await getPlaceBySlug(params.slug);
   if (!place) return {};
+  const { items } = await getMenu([place.id]);
   return {
     title: `${place.name} – menu & delivery in Dharan`,
+    // A page with no menu yet says little, so search engines are asked to leave it out until it has one.
+    ...(items.length === 0 ? { robots: { index: false, follow: true } } : {}),
+    // A page with no menu yet says little, so search engines are asked to leave it out until it has one.
+    ...(items.length === 0 ? { robots: { index: false, follow: true } } : {}),
     description: `Order from ${place.name} in Dharan${place.description ? `: ${place.description}` : ""}. Delivered by Chitto Mitho. Order on WhatsApp.`,
     alternates: { canonical: `/p/${place.slug}` },
     ...(place.cover_url ? { openGraph: { images: [{ url: place.cover_url }] } } : {}),
@@ -67,7 +73,7 @@ export default async function PlacePage({ params }: { params: { slug: string } }
         paused={settings.orders_paused}
       />
 
-      <Menu place={place} categories={categories} items={items} />
+      {items.length > 0 ? <Menu place={place} categories={categories} items={items} /> : <ComingSoon place={place} number={settings.whatsapp_number} />}
     </div>
   );
 }

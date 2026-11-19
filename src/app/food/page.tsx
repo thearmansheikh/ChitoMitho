@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { getMenu, getPlaces } from "@/lib/data";
+import { getMenu, getPlaces, getSettings } from "@/lib/data";
+import { noMenuModeOf, visiblePlaces } from "@/lib/places";
 import FoodBrowser from "@/components/shop/FoodBrowser";
 import PageHeader from "@/components/ui/PageHeader";
 import ServiceIcon from "@/components/ui/ServiceIcon";
@@ -13,7 +14,8 @@ export const metadata: Metadata = {
 
 export default async function FoodPage({ searchParams }: { searchParams: { q?: string | string[] } }) {
   const t = await getTranslations("pages");
-  const places = await getPlaces("food");
+  const settings = await getSettings();
+  const places = visiblePlaces(await getPlaces("food"), noMenuModeOf(settings));
   const { categories, items } = await getMenu(places.map((p) => p.id));
   const raw = Array.isArray(searchParams.q) ? searchParams.q[0] : searchParams.q;
   const initialQuery = (raw ?? "").slice(0, 60);

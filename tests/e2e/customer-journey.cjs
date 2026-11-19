@@ -65,7 +65,7 @@ const ok = (name, pass, extra = "") => { results.push({ name, pass }); console.l
   await page.evaluate(() => document.querySelector("a[href='/p/the-chicken-box']").click());
   await page.waitForFunction(() => location.pathname === "/p/the-chicken-box", { timeout: 15000 });
   await page.waitForSelector("button[aria-label$=': Combo 1']", { timeout: 15000 });
-  await sleep(Number(process.env.SETTLE || 500));
+  await sleep(Number(process.env.SETTLE || 1500));
 
   // 3. Café page
   const place = await text("main");

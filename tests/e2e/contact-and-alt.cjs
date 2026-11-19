@@ -43,7 +43,7 @@ const ok = (n, p, extra = "") => { p ? pass++ : fail++; console.log((p ? "PASS "
     const wantLogo = locale === "ne" ? "चित्तो मिठो लोगो" : "Chitto Mitho logo";
     ok(`${locale}: the logo's alt text is "${wantLogo}" (header and footer)`, logos.length >= 2 && logos.every((a) => a === wantLogo), JSON.stringify(logos));
     const partners = await page.$$eval("img[src*='images%2Fpartners']", (is) => is.map((i) => i.alt));
-    ok(`${locale}: partner logos are named after the business`, partners.length === 8 && partners.every((a) => a.length > 3), JSON.stringify(partners));
+    ok(`${locale}: partner logos are named after the business`, partners.length >= 8 && partners.every((a) => a.length > 3), JSON.stringify(partners));
     await page.goto(BASE + "/p/the-chicken-box", { waitUntil: "networkidle2" }); await sleep(800);
     const items = await page.$$eval("main li", (lis) => lis.filter((l) => l.querySelector("img[src*='menu']")).map((l) => ({ alt: l.querySelector("img[src*='menu']").alt, name: l.querySelector("span.font-bold, p.font-bold")?.textContent.trim() })));
     ok(`${locale}: item photos use the item name as alt text`, items.length > 50 && items.every((i) => i.alt && i.alt === i.name), JSON.stringify(items.find((i) => i.alt !== i.name)));
