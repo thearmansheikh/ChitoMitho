@@ -21,6 +21,8 @@ export const SAMPLE_SETTINGS: Settings = {
   delivery_from_npr: 50,
   announcement: "Preview mode: showing sample menus.",
   liquor_age_text: "You must be 18 or older. ID will be checked at the door.",
+  // Preview only: lets the liquor pages be tried locally without a database (PREVIEW_LIQUOR=1).
+  liquor_enabled: process.env.PREVIEW_LIQUOR === "1",
 };
 
 const place = (id: string, name: string, slug: string, type: Place["type"], description: string, sort_order: number, name_ne: string | null = null): Place => ({
@@ -55,7 +57,7 @@ const item = (id: string, place_id: string, category_id: string, name: string, n
   id, place_id, category_id, name, name_ne, description: null, price_npr, image_url: null, is_available, is_featured, sort_order: 0,
 });
 
-export const SAMPLE_ITEMS: Item[] = [
+const ALL_SAMPLE_ITEMS: Item[] = [
   item("i-cmomo", "p-olive", "c-momo", "Chicken Momo", "चिकेन मोमो", 250, true, true),
   item("i-vmomo", "p-olive", "c-momo", "Veg Momo", "भेज मोमो", 200, false),
   item("i-coffee", "p-olive", "c-drinks", "Cold Coffee", "कोल्ड कफी", 180),
@@ -89,3 +91,6 @@ SAMPLE_PLACES[0] = {
   opens_at: "09:00:00",
   closes_at: "21:00:00",
 };
+
+// Preview only: PREVIEW_EMPTY_SHELVES=1 removes the grocery, liquor and gift items so the empty-section screens can be tried.
+export const SAMPLE_ITEMS: Item[] = process.env.PREVIEW_EMPTY_SHELVES === "1" ? ALL_SAMPLE_ITEMS.filter((i) => ["p-olive", "p-circle", "p-siblings"].includes(i.place_id)) : ALL_SAMPLE_ITEMS;

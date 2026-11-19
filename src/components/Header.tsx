@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { getSettings } from "@/lib/data";
+import { liquorEnabledOf } from "@/lib/liquor";
 import BasketCount from "./BasketCount";
 import LangToggle from "./LangToggle";
 import NavLinks from "./NavLinks";
@@ -17,7 +18,7 @@ export default async function Header() {
   const items = [
     { href: "/food", label: n("food") },
     { href: "/groceries", label: n("grocery") },
-    { href: "/liquor", label: n("liquor") },
+    ...(liquorEnabledOf(s) ? [{ href: "/liquor", label: n("liquor") }] : []),
     { href: "/gifts", label: n("gifts") },
     { href: "/parcel", label: n("parcel") },
     { href: "/anything", label: n("anything") },

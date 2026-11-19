@@ -80,6 +80,8 @@ export interface Settings {
   timezone: string;
   orders_paused: boolean;
   pause_message: string | null;
+  /** Liquor is sold only when this is true. Off by default. */
+  liquor_enabled?: boolean;
   /** What to do with a place that has no menu yet. */
   places_without_menu?: "badge" | "hide";
   /** The delivery charge starts from this amount. Null: no amount is mentioned. */

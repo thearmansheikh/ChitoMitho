@@ -224,5 +224,16 @@ eq("greeting (English)", w.greetingMessage("en"), "Hi Chitto Mitho, I have a que
 eq("greeting (Nepali) is not empty", w.greetingMessage("ne").length > 5, true);
 eq("greeting link is not blank", textOf(w.buildWhatsAppUrl("9805338257", w.greetingMessage("en"))).length > 5, true);
 
+// ---- liquor orders carry the 18+ line
+{
+  const beer = { ...base, itemId: "b1", placeId: "p9", placeName: "Chitto Mitho Drinks", placeNameNe: null, placeType: "liquor", name: "Beer 650ml", price: 450, qty: 2 };
+  const en = w.basketMessage("en", { lines: [beer], extras, total: 900, customer });
+  const ne = w.basketMessage("ne", { lines: [beer], extras, total: 900, customer });
+  eq("[en] a liquor order says 18+ only, ID checked at the door", en.includes("18+ only. ID checked at the door."), true);
+  eq("[ne] a liquor order says it in Nepali", ne.includes("१८+ मात्र। ढोकामा परिचयपत्र जाँचिन्छ।"), true);
+  eq("a food order does not carry the 18+ line", w.basketMessage("en", { lines: [lines[0]], extras, total: 600, customer }).includes("18+"), false);
+  eq("food and liquor together still carry it", w.basketMessage("en", { lines: [lines[0], beer], extras, total: 1500, customer }).includes("18+ only"), true);
+}
+
 console.log(`\n${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

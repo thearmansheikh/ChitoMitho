@@ -29,7 +29,7 @@ const hind = Hind({
 });
 
 const DESCRIPTION =
-  "Order food, groceries, liquor, gifts & flowers, parcels and anything from anywhere. Delivery in Dharan, Itahari and Biratnagar, Nepal. Open 10am – 10pm.";
+  "Order food, groceries, gifts & flowers, parcels and anything from anywhere. Delivery in Dharan, Itahari and Biratnagar, Nepal. Open 10am – 10pm.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

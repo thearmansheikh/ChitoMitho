@@ -125,6 +125,7 @@ function buildBasketMessage(
     }
   }
   if (o.lines.length > 0) out.push("", `${t.itemsTotal}: ${formatNPR(o.total)}`);
+  if (o.lines.some((l) => l.placeType === "liquor")) out.push(t.ageNote);
   // (The promo code is written with the customer's details below, not here.)
 
   if (o.extras.shoppingList.trim()) out.push("", `${t.shoppingList}:`, o.extras.shoppingList.trim());

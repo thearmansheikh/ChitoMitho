@@ -3,6 +3,7 @@ import { unstable_cache } from "next/cache";
 import { createClient } from "@supabase/supabase-js";
 import type { Area, Category, Closure, Item, Offer, Place, PlaceType, Settings } from "@/types/db";
 import { nepalDates } from "./format";
+import { liquorEnabledOf } from "./liquor";
 import { DAY_NAMES, DAY_NAMES_NE, hoursFor, nepalWeekday, validWeekHours } from "./hours";
 import {
   SAMPLE_OFFERS,
@@ -73,7 +74,7 @@ export const getAreas = unstable_cache(
 
 export const getPlaces = unstable_cache(
   async (type?: PlaceType): Promise<Place[]> => {
-    if (!isConfigured) return SAMPLE_PLACES.filter((p) => !type || p.type === type).map((p) => ({ ...p, item_count: SAMPLE_ITEMS.filter((i) => i.place_id === p.id).length }));
+    if (!isConfigured) return SAMPLE_PLACES.filter((p) => (!type || p.type === type) && (liquorEnabledOf(SAMPLE_SETTINGS) || p.type !== "liquor")).map((p) => ({ ...p, item_count: SAMPLE_ITEMS.filter((i) => i.place_id === p.id).length }));
     let q = sb().from("places").select("*").order("sort_order").order("name");
     if (type) q = q.eq("type", type);
     const { data, error } = await q;
@@ -86,7 +87,8 @@ export const getPlaces = unstable_cache(
       if (countError) console.error("getPlaces counts", countError.message);
       for (const r of (rows as { place_id: string }[] | null) ?? []) counts.set(r.place_id, (counts.get(r.place_id) ?? 0) + 1);
     }
-    return places.map((p) => ({ ...p, item_count: counts.get(p.id) ?? 0 }));
+    const sellLiquor = liquorEnabledOf(await getSettings());
+    return places.filter((p) => sellLiquor || p.type !== "liquor").map((p) => ({ ...p, item_count: counts.get(p.id) ?? 0 }));
   },
   ["places"],
   REVALIDATE,
@@ -94,10 +96,13 @@ export const getPlaces = unstable_cache(
 
 export const getPlaceBySlug = unstable_cache(
   async (slug: string): Promise<Place | null> => {
-    if (!isConfigured) return SAMPLE_PLACES.find((p) => p.slug === slug) ?? null;
+    if (!isConfigured) return SAMPLE_PLACES.find((p) => p.slug === slug && (liquorEnabledOf(SAMPLE_SETTINGS) || p.type !== "liquor")) ?? null;
     const { data, error } = await sb().from("places").select("*").eq("slug", slug).maybeSingle();
     if (error) console.error("getPlaceBySlug", error.message);
-    return (data as Place | null) ?? null;
+    const place = (data as Place | null) ?? null;
+    // While liquor is switched off its pages do not exist.
+    if (place?.type === "liquor" && !liquorEnabledOf(await getSettings())) return null;
+    return place;
   },
   ["place-by-slug"],
   REVALIDATE,
@@ -125,8 +130,10 @@ export const getFeatured = unstable_cache(
     if (list.length === 0) return [];
     const { data: places } = await c.from("places").select("*").in("id", [...new Set(list.map((i) => i.place_id))]);
     const byId = new Map(((places as Place[]) ?? []).map((p) => [p.id, p]));
+    const sellLiquor = liquorEnabledOf(await getSettings());
     return list.flatMap((item) => {
       const place = byId.get(item.place_id);
+      if (place?.type === "liquor" && !sellLiquor) return [];
       return place ? [{ item: { ...item, price_npr: Number(item.price_npr) }, place }] : [];
     });
   },

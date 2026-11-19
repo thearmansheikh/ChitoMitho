@@ -16,6 +16,7 @@ type Form = {
   close_time: string;
   delivery_from: string;
   places_without_menu: "badge" | "hide";
+  liquor_enabled: boolean;
   different_days: boolean;
   week: DayHours[];
   orders_paused: boolean;
@@ -47,6 +48,7 @@ export default function SettingsPage() {
         close_time: (s?.close_time ?? "22:00").slice(0, 5),
         delivery_from: s?.delivery_from_npr == null ? "" : String(Number(s.delivery_from_npr)),
         places_without_menu: s?.places_without_menu === "hide" ? "hide" : "badge",
+        liquor_enabled: s?.liquor_enabled === true,
         ...weekState(s),
         orders_paused: s?.orders_paused ?? false,
         pause_message: s?.pause_message ?? "",
@@ -77,6 +79,7 @@ export default function SettingsPage() {
       close_time: f.close_time,
       delivery_from_npr: fromNum,
       places_without_menu: f.places_without_menu,
+      liquor_enabled: f.liquor_enabled,
       weekday_hours: f.different_days ? f.week : null,
       orders_paused: f.orders_paused,
       pause_message: f.pause_message.trim() || null,
@@ -84,7 +87,7 @@ export default function SettingsPage() {
       liquor_age_text: f.liquor_age_text.trim() || null,
     });
     setBusy(false);
-    if (error) setError(/weekday_hours/.test(error.message) ? "The weekday hours column is missing. Run supabase/migrations/0008_weekday_hours.sql in the Supabase SQL Editor first." : /places_without_menu/.test(error.message) ? "The places setting is missing. Run supabase/migrations/0018_partner_places.sql in the Supabase SQL Editor first." : /delivery_from_npr/.test(error.message) ? "The delivery amount column is missing. Run supabase/migrations/0012_delivery_from.sql in the Supabase SQL Editor first." : error.message); else setOk("Settings saved. The site updates within a minute.");
+    if (error) setError(/weekday_hours/.test(error.message) ? "The weekday hours column is missing. Run supabase/migrations/0008_weekday_hours.sql in the Supabase SQL Editor first." : /places_without_menu/.test(error.message) ? "The places setting is missing. Run supabase/migrations/0018_partner_places.sql in the Supabase SQL Editor first." : /liquor_enabled/.test(error.message) ? "The liquor switch is missing. Run supabase/migrations/0019_liquor_switch_and_starter_categories.sql in the Supabase SQL Editor first." : /delivery_from_npr/.test(error.message) ? "The delivery amount column is missing. Run supabase/migrations/0012_delivery_from.sql in the Supabase SQL Editor first." : error.message); else setOk("Settings saved. The site updates within a minute.");
   }
 
   return (
@@ -139,6 +142,10 @@ export default function SettingsPage() {
           </label>
           <Field label="Pause message (rain, festival, busy…)"><input className={inputCls} value={f.pause_message} onChange={(e) => set("pause_message", e.target.value)} /></Field>
           <Field label="Top announcement banner"><input className={inputCls} value={f.announcement} onChange={(e) => set("announcement", e.target.value)} /></Field>
+          <label className="flex min-h-[44px] items-center gap-3 rounded-lg bg-slate-50 p-3 font-semibold">
+            <input type="checkbox" className="h-5 w-5" checked={f.liquor_enabled} onChange={(e) => set("liquor_enabled", e.target.checked)} />
+            Sell liquor (shows the Liquor page, menu links and cards; OFF hides all of it)
+          </label>
           <Field label="Liquor age text"><input className={inputCls} value={f.liquor_age_text} onChange={(e) => set("liquor_age_text", e.target.value)} /></Field>
           <button className={btnPrimary} disabled={busy}>{busy ? "Saving…" : "Save settings"}</button>
         </form>

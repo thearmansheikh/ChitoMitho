@@ -66,7 +66,11 @@
     "noPlaces": "No places available right now.",
     "comingSoon": "Menu coming soon",
     "comingSoonBody": "This menu is not on the website yet. Message us on WhatsApp and we will arrange your order.",
-    "orderFrom": "Order from {name} on WhatsApp"
+    "orderFrom": "Order from {name} on WhatsApp",
+    "liquorSoonTitle": "Liquor delivery is coming soon",
+    "liquorSoonBody": "We are not delivering liquor yet. Please check back later.",
+    "sectionEmpty": "Items for this section are being added. Tell us what you need on WhatsApp and we will arrange it for you.",
+    "sectionEmptyButton": "Ask on WhatsApp"
   },
   "menu": {
     "categories": "Menu categories",
@@ -87,7 +91,8 @@
     "ageTitle": "Are you 18 or older?",
     "ageDefault": "You must be 18 or older. ID will be checked at the door.",
     "ageYes": "Yes, I am 18 or older",
-    "ageNo": "No, go back"
+    "ageNo": "No, go back",
+    "ageNote": "18+ only. ID checked at the door."
   },
   "gifts": {
     "detailsTitle": "Gift details",
@@ -705,7 +710,8 @@
     "senderName": "Sender name",
     "senderPhone": "Sender phone",
     "pickupTime": "Pickup time",
-    "placeOrder": "Hi, I'd like to order from {name}."
+    "placeOrder": "Hi, I'd like to order from {name}.",
+    "ageNote": "🔞 18+ only. ID checked at the door."
   },
   "weekHours": {
     "d0": "Sun",

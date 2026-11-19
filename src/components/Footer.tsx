@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { getSettings } from "@/lib/data";
+import { liquorEnabledOf } from "@/lib/liquor";
 import { SITE } from "@/lib/config";
 import { validWeekHours } from "@/lib/hours";
 import { callNumbers } from "@/lib/contact";
@@ -27,7 +28,7 @@ export default async function Footer() {
       links: [
         { href: "/food", label: n("food") },
         { href: "/groceries", label: n("grocery") },
-        { href: "/liquor", label: n("liquor") },
+        ...(liquorEnabledOf(s) ? [{ href: "/liquor", label: n("liquor") }] : []),
         { href: "/gifts", label: n("gifts") },
         { href: "/parcel", label: n("parcel") },
         { href: "/anything", label: n("anything") },

@@ -5,6 +5,7 @@ import { getMenu, getPlaceBySlug, getSettings } from "@/lib/data";
 import { pick } from "@/lib/names";
 import Menu from "@/components/shop/Menu";
 import ComingSoon from "@/components/shop/ComingSoon";
+import AgeGate from "@/components/shop/AgeGate";
 import PlaceInfo from "@/components/shop/PlaceInfo";
 import PageHeader, { type Tone } from "@/components/ui/PageHeader";
 import ServiceIcon, { type ServiceIconName } from "@/components/ui/ServiceIcon";
@@ -38,6 +39,7 @@ export default async function PlacePage({ params }: { params: { slug: string } }
   if (!place) notFound();
   const locale = await getLocale();
   const n = await getTranslations("nav");
+  const l = await getTranslations("liquor");
   const [{ categories, items }, settings] = await Promise.all([getMenu([place.id]), getSettings()]);
   const look = LOOK[place.type];
   const name = pick(place.name, place.name_ne, locale);
@@ -73,7 +75,14 @@ export default async function PlacePage({ params }: { params: { slug: string } }
         paused={settings.orders_paused}
       />
 
-      {items.length > 0 ? <Menu place={place} categories={categories} items={items} /> : <ComingSoon place={place} number={settings.whatsapp_number} />}
+      {place.type === "liquor" ? (
+        <>
+          <p className="rounded-xl bg-amber-50 p-3 text-center font-bold text-amber-900 ring-1 ring-amber-200">{l("ageNote")}</p>
+          <AgeGate text={settings.liquor_age_text}>{items.length > 0 ? <Menu place={place} categories={categories} items={items} /> : <ComingSoon place={place} number={settings.whatsapp_number} />}</AgeGate>
+        </>
+      ) : (
+        items.length > 0 ? <Menu place={place} categories={categories} items={items} /> : <ComingSoon place={place} number={settings.whatsapp_number} />
+      )}
     </div>
   );
 }

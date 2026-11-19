@@ -4,6 +4,7 @@ import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
 import { getFeatured, getMenu, getOffers, getPlaces, getSettings } from "@/lib/data";
 import { pick } from "@/lib/names";
+import { liquorEnabledOf } from "@/lib/liquor";
 import { placeTags } from "@/lib/tags";
 import TodaysPicks from "@/components/shop/TodaysPicks";
 import SearchBar from "@/components/shop/SearchBar";
@@ -98,7 +99,7 @@ export default async function Home() {
 
       {/* Services */}
       <section aria-label="Services" className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-        {SERVICES.map((x, i) => (
+        {SERVICES.filter((x) => x.key !== "liquor" || liquorEnabledOf(settings)).map((x, i) => (
           <Link
             key={x.key}
             href={x.href}
