@@ -291,6 +291,11 @@ export default function DetailsSheet({ open, onClose, onConfirm, areas, initial,
           <textarea className={`${input} min-h-[72px]`} value={note} onChange={(e) => setNote(e.target.value)} />
         </label>
 
+        <p className="flex gap-2 rounded-lg bg-amber-50 p-3 text-sm text-amber-900 ring-1 ring-amber-200">
+          <span aria-hidden>ℹ️</span>
+          <span>{t("chargeNote")}</span>
+        </p>
+
         <button disabled={busy} className="min-h-[56px] w-full rounded-xl bg-green-700 text-lg font-bold text-white disabled:opacity-60">
           {busy ? t("opening") : preview ? t("review") : `💬 ${t("continue")}`}
         </button>

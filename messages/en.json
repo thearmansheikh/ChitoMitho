@@ -191,7 +191,7 @@
     "notListedTitle": "Your place is not in the list?",
     "notListedBody": "Choose “Other area” when you order and type where you are. We will tell you on WhatsApp if we can reach you.",
     "chargeTitle": "What delivery costs",
-    "chargeBody": "The delivery charge depends on how far we travel and what you order. We tell you the exact amount on WhatsApp before a rider is sent, so there are no surprises at the door.",
+    "chargeBody": "The delivery charge is not fixed. It depends on your order and the distance to your address. We tell you the exact amount on WhatsApp before a rider is sent, so there are no surprises at the door.",
     "hoursTitle": "When we deliver",
     "hoursBody": "Every day, {open} to {close}, Nepal time.",
     "cta": "Start an order",
@@ -206,7 +206,7 @@
     "q2": "Do I need an account or to pay online?",
     "a2": "No account and no online payment. You pay cash or by QR (eSewa, Khalti, Fonepay) when your order arrives.",
     "q3": "How much does delivery cost?",
-    "a3": "It depends on how far we travel and what you order. We confirm the exact charge on WhatsApp before a rider is sent.",
+    "a3": "The delivery charge is not fixed. It depends on your order and the distance to your address. We confirm the exact amount on WhatsApp before a rider is sent.",
     "q4": "What are your opening hours?",
     "a4": "Every day from {open} to {close}, Nepal time. You can browse any time, but orders can only be sent while we are open.",
     "q5": "Which areas do you deliver to?",
@@ -454,7 +454,7 @@
     "instagram": "Instagram"
   },
   "delivery": {
-    "note": "Delivery charge will be confirmed on WhatsApp."
+    "note": "Delivery charge is not fixed. It depends on your order and the distance to your address. We confirm the exact amount on WhatsApp before a rider is sent."
   },
   "order": {
     "title": "Your details",
@@ -499,7 +499,7 @@
     "reviewEdit": "Edit my details",
     "nextTitle": "What happens next",
     "next1": "We read your order on WhatsApp.",
-    "next2": "We reply with the delivery charge and when to expect it.",
+    "next2": "We reply with the delivery charge, which depends on your order and the distance, and when to expect it.",
     "next3": "Your rider delivers. Pay cash or QR at the door.",
     "hoursLine": "We reply between {open} and {close}.",
     "shareLocation": "Share my location",
@@ -529,7 +529,8 @@
     "toleHelp": "Choose from the suggestions or type your own. A tole or street, or a landmark below, is needed.",
     "house": "House / gate number (optional)",
     "houseHelp": "e.g. House 14, blue gate, second floor",
-    "addressRequired": "Please enter your tole or street, or a nearby landmark."
+    "addressRequired": "Please enter your tole or street, or a nearby landmark.",
+    "chargeNote": "Delivery charge is not fixed. It depends on your order and the distance to your address. We confirm the exact amount on WhatsApp before a rider is sent."
   },
   "parcel": {
     "title": "Parcel / Pick & Drop",
@@ -579,7 +580,7 @@
     "orderType": "Order type",
     "from": "From",
     "itemsTotal": "Items total",
-    "deliveryTbc": "(Delivery charge to be confirmed)",
+    "deliveryTbc": "(Delivery charge depends on the order and distance – to be confirmed)",
     "name": "Name",
     "phone": "Phone",
     "area": "Area",
