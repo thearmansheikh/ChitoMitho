@@ -26,7 +26,15 @@ export default function BasketView({ config, areas, offers }: { config: OrderCon
 
   const fixedList = fixedChargeList(areas, locale);
 
-  if (!hydrated) return <div className="min-h-[70vh]" aria-hidden />;
+  // The basket is read from this phone, so until it is loaded show only the heading (it is real content, in the server HTML).
+  if (!hydrated) {
+    return (
+      <div className="space-y-4">
+        <PageHeader icon="🧺" tone="blue" title={t("title")} />
+        <div className="min-h-[60vh]" aria-hidden />
+      </div>
+    );
+  }
 
   const giftInBasket = lines.some((l) => l.placeType === "gifts");
   const hasGift = giftInBasket && Object.values(extras.gift).some(Boolean);
