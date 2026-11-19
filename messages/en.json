@@ -196,7 +196,9 @@
     "hoursBody": "Every day, {open} to {close}, Nepal time.",
     "cta": "Start an order",
     "empty": "The area list is being updated. Ask us on WhatsApp if we deliver to you.",
-    "hoursBodyWeek": "{schedule}. All times are Nepal time."
+    "hoursBodyWeek": "{schedule}. All times are Nepal time.",
+    "chargeBodyFrom": "The delivery charge starts from {amount}. The exact charge depends on your location, inside Dharan or outside Dharan, and on your order. We tell you the exact amount on WhatsApp before a rider is sent, so there are no surprises at the door.",
+    "fixedCharges": "Fixed delivery charges: {list}."
   },
   "help": {
     "title": "Help and questions",
@@ -231,7 +233,9 @@
     "a14": "Yes. Use Partner with us. Riders can apply there too.",
     "stuckTitle": "Still stuck?",
     "stuckBody": "Message us on WhatsApp or call. We reply during opening hours.",
-    "a4Week": "Our opening hours are: {schedule}. All times are Nepal time. You can browse any time, but orders can only be sent while we are open."
+    "a4Week": "Our opening hours are: {schedule}. All times are Nepal time. You can browse any time, but orders can only be sent while we are open.",
+    "a3From": "The delivery charge starts from {amount}. The exact charge depends on your location, inside Dharan or outside Dharan, and on your order. We confirm the exact amount on WhatsApp before a rider is sent.",
+    "fixedCharges": "Fixed delivery charges: {list}."
   },
   "privacy": {
     "title": "Privacy",
@@ -454,7 +458,9 @@
     "instagram": "Instagram"
   },
   "delivery": {
-    "note": "Delivery charge is not fixed. It depends on your order and the distance to your address. We confirm the exact amount on WhatsApp before a rider is sent."
+    "note": "Delivery charge is not fixed. It depends on your order and the distance to your address. We confirm the exact amount on WhatsApp before a rider is sent.",
+    "noteFrom": "Delivery charge starts from {amount}. The exact charge depends on your location (inside Dharan or outside Dharan) and your order. We confirm it on WhatsApp before a rider is sent.",
+    "fixedList": "Fixed delivery charges: {list}."
   },
   "order": {
     "title": "Your details",
@@ -530,7 +536,10 @@
     "house": "House / gate number (optional)",
     "houseHelp": "e.g. House 14, blue gate, second floor",
     "addressRequired": "Please enter your tole or street, or a nearby landmark.",
-    "chargeNote": "Delivery charge is not fixed. It depends on your order and the distance to your address. We confirm the exact amount on WhatsApp before a rider is sent."
+    "chargeNote": "Delivery charge is not fixed. It depends on your order and the distance to your address. We confirm the exact amount on WhatsApp before a rider is sent.",
+    "chargeNoteFrom": "Delivery charge starts from {amount}. The exact charge depends on your location (inside Dharan or outside Dharan) and your order. We confirm it on WhatsApp before a rider is sent.",
+    "next2From": "We reply with the delivery charge (it starts from {amount} and depends on your location and order) and when to expect it.",
+    "chargeFixed": "Delivery to {area} is {amount}."
   },
   "parcel": {
     "title": "Parcel / Pick & Drop",
@@ -668,7 +677,9 @@
     "greeting": "Hi Chitto Mitho, I have a question.",
     "tole": "Tole / street",
     "house": "House / gate",
-    "phone2": "Other phone"
+    "phone2": "Other phone",
+    "deliveryFrom": "(Delivery charge starts from {amount}; depends on location and order – to be confirmed)",
+    "deliveryFixed": "(Delivery charge for {area}: {amount})"
   },
   "weekHours": {
     "d0": "Sun",

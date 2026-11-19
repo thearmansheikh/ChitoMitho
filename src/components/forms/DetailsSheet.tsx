@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { pick } from "@/lib/names";
 import { EMPTY_DETAILS, PHONE_RE, normalizePhone, type Details, type Payment } from "@/lib/details";
-import { nowMinutesNPT, parseTimeToMinutes } from "@/lib/format";
+import { formatNPR, nowMinutesNPT, parseTimeToMinutes } from "@/lib/format";
+import { fixedChargeOf } from "@/lib/areaCharges";
 import type { Area, AreaGroup } from "@/types/db";
 import LocationButton, { type Coords } from "./LocationButton";
 import { useToles } from "@/lib/toles";
@@ -24,12 +25,14 @@ export interface SheetExtra {
 /** A customer can pick a time at least this long from now, so the team has time to prepare. */
 const LEAD_MINUTES = 30;
 
-export default function DetailsSheet({ open, onClose, onConfirm, areas, initial, busy, openTime, closeTime, allowSchedule, preview }: {
+export default function DetailsSheet({ open, onClose, onConfirm, areas, initial, busy, openTime, closeTime, allowSchedule, preview, deliveryFrom = null }: {
   open: boolean;
   onClose: () => void;
   onConfirm: (d: Details, note: string, extra: SheetExtra) => void;
   openTime: string;
   closeTime: string;
+  /** The delivery charge starts from this amount (Settings). */
+  deliveryFrom?: number | null;
   /** Hide the delivery-time choice (gift orders already pick their own date and time). */
   allowSchedule: boolean;
   areas: Area[];
@@ -81,6 +84,9 @@ export default function DetailsSheet({ open, onClose, onConfirm, areas, initial,
   const closeLabel = closeTime.slice(0, 5);
   // "Today" only makes sense while there is still room before closing.
   const todayPossible = nowMinutesNPT() + LEAD_MINUTES < closeMin;
+
+  const selectedArea = areas.find((a) => a.id === d.areaId);
+  const selectedFixed = selectedArea ? fixedChargeOf(selectedArea) : null;
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -293,7 +299,12 @@ export default function DetailsSheet({ open, onClose, onConfirm, areas, initial,
 
         <p className="flex gap-2 rounded-lg bg-amber-50 p-3 text-sm text-amber-900 ring-1 ring-amber-200">
           <span aria-hidden>ℹ️</span>
-          <span>{t("chargeNote")}</span>
+          <span>
+            {selectedFixed !== null && selectedArea && (
+              <b className="block">{t("chargeFixed", { area: pick(selectedArea.name, selectedArea.name_ne, locale), amount: formatNPR(selectedFixed) })}</b>
+            )}
+            {deliveryFrom != null ? t("chargeNoteFrom", { amount: formatNPR(deliveryFrom) }) : t("chargeNote")}
+          </span>
         </p>
 
         <button disabled={busy} className="min-h-[56px] w-full rounded-xl bg-green-700 text-lg font-bold text-white disabled:opacity-60">

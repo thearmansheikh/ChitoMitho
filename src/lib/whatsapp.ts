@@ -14,6 +14,10 @@ export interface Customer {
   phone: string;
   area: string;
   /** Tole or street, house or gate number and a second phone number are optional extras for the rider. */
+  /** The delivery charge starts from this amount (from Settings). */
+  deliveryFrom?: number | null;
+  /** The chosen area has a fixed delivery charge. */
+  deliveryFixed?: { area: string; amount: number } | null;
   tole?: string;
   house?: string;
   phone2?: string;
@@ -64,6 +68,13 @@ function customerBlock(lang: Lang, c: Customer): string[] {
     `${t.payment}: ${t.payments[c.payment]}`,
     ...(c.note.trim() ? [`${t.note}: ${c.note.trim()}`] : []),
   ];
+}
+
+/** The line under the order that tells the team what the customer was told about the delivery charge. */
+function deliveryLine(lang: Lang, c: { deliveryFrom?: number | null; deliveryFixed?: { area: string; amount: number } | null }): string {
+  const t = L[lang];
+  if (c.deliveryFixed) return t.deliveryFixed.replace("{area}", c.deliveryFixed.area).replace("{amount}", formatNPR(c.deliveryFixed.amount));
+  return c.deliveryFrom != null ? t.deliveryFrom.replace("{amount}", formatNPR(c.deliveryFrom)) : t.deliveryTbc;
 }
 
 /** WhatsApp handles far more, but a short message is easier to read and to check before sending. */
@@ -121,7 +132,7 @@ function buildBasketMessage(
     if (gl.length) out.push("", ...gl);
   }
 
-  out.push(t.deliveryTbc, "", ...customerBlock(lang, o.customer));
+  out.push(deliveryLine(lang, o.customer), "", ...customerBlock(lang, o.customer));
   return out.join("\n");
 }
 
@@ -139,7 +150,7 @@ export function parcelMessage(lang: Lang, p: ParcelOrder, customer: Customer): s
     `${t.size}: ${t.sizes[p.size]}`,
     `${t.receiver}: ${p.receiverName}`,
     `${t.receiverPhone}: ${p.receiverPhone}`,
-    t.deliveryTbc,
+    deliveryLine(lang, customer),
     "",
     ...customerBlock(lang, customer),
   ].join("\n");
@@ -154,7 +165,7 @@ export function anythingMessage(lang: Lang, a: AnythingOrder, customer: Customer
     `${t.need}: ${a.need}`,
     ...(a.buyFrom.trim() ? [`${t.buyFrom}: ${a.buyFrom.trim()}`] : []),
     ...(a.budget.trim() ? [`${t.budget}: ${a.budget.trim()}`] : []),
-    t.deliveryTbc,
+    deliveryLine(lang, customer),
     "",
     ...customerBlock(lang, customer),
   ].join("\n");

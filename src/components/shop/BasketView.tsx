@@ -13,6 +13,7 @@ import SendOrder, { type OrderConfig } from "@/components/forms/SendOrder";
 import PageHeader from "@/components/ui/PageHeader";
 import ScooterArt from "@/components/ui/ScooterArt";
 import ReorderCard from "./ReorderCard";
+import { fixedChargeList } from "@/lib/areaCharges";
 import PromoCode from "./PromoCode";
 
 export default function BasketView({ config, areas, offers }: { config: OrderConfig; areas: Area[]; offers: Offer[] }) {
@@ -22,6 +23,8 @@ export default function BasketView({ config, areas, offers }: { config: OrderCon
   const gt = useTranslations("gifts");
   const locale = useLocale();
   const { lines, extras, total, hydrated, setQty, setNote, remove, clear, saveLastOrder, notice, setNotice } = useBasket();
+
+  const fixedList = fixedChargeList(areas, locale);
 
   if (!hydrated) return <div className="min-h-[70vh]" aria-hidden />;
 
@@ -139,7 +142,8 @@ export default function BasketView({ config, areas, offers }: { config: OrderCon
         <p className="flex items-center justify-between text-lg font-bold">
           <span>{t("itemsTotal")}</span><span>{formatNPR(total)}</span>
         </p>
-        <p className="text-sm text-slate-600">{d("note")}</p>
+        <p className="text-sm text-slate-600">{config.deliveryFrom != null ? d("noteFrom", { amount: formatNPR(config.deliveryFrom) }) : d("note")}
+          {fixedList && <span className="block font-semibold text-slate-700">{d("fixedList", { list: fixedList })}</span>}</p>
         <Link href="/help" className="inline-flex min-h-[44px] items-center text-sm font-semibold text-brand-blue underline">{o("helpLink")}</Link>
       </section>
 

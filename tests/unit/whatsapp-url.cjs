@@ -108,6 +108,21 @@ for (const lang of ["en", "ne"]) {
   ].every((line) => has(neRows, line)), true);
 }
 
+// ---- the delivery line: starts from an amount, a fixed charge for an area, or just "to be confirmed"
+{
+  const one = [lines[0]];
+  const lineOf = (lang, c) => w.basketMessage(lang, { lines: one, extras, total: 600, customer: { ...customer, ...c } }).split("\n").find((l) => /^\(/.test(l));
+  eq("delivery line: starts from Rs. 50", lineOf("en", { deliveryFrom: 50 }), "(Delivery charge starts from Rs. 50; depends on location and order – to be confirmed)");
+  eq("delivery line: a fixed charge for BPKIHS wins", lineOf("en", { deliveryFrom: 50, deliveryFixed: { area: "BPKIHS", amount: 50 } }), "(Delivery charge for BPKIHS: Rs. 50)");
+  eq("delivery line: no amount set says it depends on order and distance", lineOf("en", {}), "(Delivery charge depends on the order and distance – to be confirmed)");
+  eq("delivery line (Nepali): starts from", lineOf("ne", { deliveryFrom: 50 }), "(डेलिभरी शुल्क Rs. 50 बाट सुरु; स्थान र अर्डरमा भर पर्छ – पुष्टि गरिनेछ)");
+  eq("delivery line (Nepali): fixed", lineOf("ne", { deliveryFixed: { area: "बीपीकेआईएचएस", amount: 50 } }), "(बीपीकेआईएचएस को डेलिभरी शुल्क: Rs. 50)");
+  const parcel = w.parcelMessage("en", { pickup: "A", drop: "B", item: "docs", size: "small", receiverName: "R", receiverPhone: "9812345678" }, { ...customer, deliveryFixed: { area: "BPKIHS", amount: 50 } });
+  eq("delivery line: parcels get it too", parcel.split("\n").includes("(Delivery charge for BPKIHS: Rs. 50)"), true);
+  const anything = w.anythingMessage("en", { need: "medicine", buyFrom: "", budget: "" }, { ...customer, deliveryFrom: 50 });
+  eq("delivery line: order-anything gets it too", anything.split("\n").includes("(Delivery charge starts from Rs. 50; depends on location and order – to be confirmed)"), true);
+}
+
 // ---- a very long basket gets shorter lines but keeps every item, quantity and the total
 const big = Array.from({ length: 30 }, (_, i) => ({ ...base, itemId: "b" + i, name: `Crispy Boneless Strips - ${i + 1}pc special`, price: 100 + i, qty: 2 + (i % 3), note: "extra crispy please, not too salty and well done" }));
 const bigTotal = big.reduce((n, l) => n + l.qty * l.price, 0);

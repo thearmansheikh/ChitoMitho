@@ -18,6 +18,7 @@ export const SAMPLE_SETTINGS: Settings = {
   timezone: "Asia/Kathmandu",
   orders_paused: false,
   pause_message: null,
+  delivery_from_npr: 50,
   announcement: "Preview mode: showing sample menus.",
   liquor_age_text: "You must be 18 or older. ID will be checked at the door.",
 };

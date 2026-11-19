@@ -4,6 +4,9 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { getAreas, getSettings } from "@/lib/data";
 import { pick } from "@/lib/names";
 import { validWeekHours } from "@/lib/hours";
+import { deliveryFromOf } from "@/lib/orderConfig";
+import { fixedChargeList, fixedChargeOf } from "@/lib/areaCharges";
+import { formatNPR } from "@/lib/format";
 import { weekSummary } from "@/lib/weekText";
 import PageHeader from "@/components/ui/PageHeader";
 import SectionTitle from "@/components/ui/SectionTitle";
@@ -28,6 +31,8 @@ export default async function AreasPage() {
   const [areas, settings] = await Promise.all([getAreas(), getSettings()]);
   const hours = { open: settings.open_time.slice(0, 5), close: settings.close_time.slice(0, 5) };
   const week = validWeekHours(settings.weekday_hours);
+  const from = deliveryFromOf(settings);
+  const fixedList = fixedChargeList(areas, locale);
   const schedule = week ? await weekSummary(week) : "";
 
   return (
@@ -58,7 +63,7 @@ export default async function AreasPage() {
               <ul className="flex flex-wrap gap-2">
                 {list.map((a) => (
                   <li key={a.id} className="rounded-full bg-emerald-50 px-3 py-1.5 text-sm font-semibold text-emerald-900 ring-1 ring-emerald-100">
-                    {pick(a.name, a.name_ne, locale)}
+                    {pick(a.name, a.name_ne, locale)}{fixedChargeOf(a) !== null && <span className="font-normal"> · {formatNPR(fixedChargeOf(a) as number)}</span>}
                   </li>
                 ))}
               </ul>
@@ -74,7 +79,8 @@ export default async function AreasPage() {
         </div>
         <div className="rounded-2xl bg-white p-5 shadow-card ring-1 ring-slate-200/70">
           <h2 className="font-bold">{t("chargeTitle")}</h2>
-          <p className="mt-1 text-slate-700">{t("chargeBody")}</p>
+          <p className="mt-1 text-slate-700">{from != null ? t("chargeBodyFrom", { amount: formatNPR(from) }) : t("chargeBody")}</p>
+          {fixedList && <p className="mt-2 font-semibold text-slate-800">{t("fixedCharges", { list: fixedList })}</p>}
         </div>
         <div className="rounded-2xl bg-white p-5 shadow-card ring-1 ring-slate-200/70">
           <h2 className="font-bold">{t("hoursTitle")}</h2>

@@ -14,6 +14,7 @@ type Form = {
   phones: string;
   open_time: string;
   close_time: string;
+  delivery_from: string;
   different_days: boolean;
   week: DayHours[];
   orders_paused: boolean;
@@ -43,6 +44,7 @@ export default function SettingsPage() {
         phones: (s?.phone_numbers ?? []).join(", "),
         open_time: (s?.open_time ?? "10:00").slice(0, 5),
         close_time: (s?.close_time ?? "22:00").slice(0, 5),
+        delivery_from: s?.delivery_from_npr == null ? "" : String(Number(s.delivery_from_npr)),
         ...weekState(s),
         orders_paused: s?.orders_paused ?? false,
         pause_message: s?.pause_message ?? "",
@@ -61,6 +63,9 @@ export default function SettingsPage() {
     setError(null); setOk(null);
     const wa = f.whatsapp_number.replace(/\D/g, "");
     if (!/^9[78]\d{8}$/.test(wa)) return setError("WhatsApp number must be a 10-digit Nepal mobile number (97/98…).");
+    const from = f.delivery_from.trim();
+    const fromNum = from === "" ? null : Number(from);
+    if (fromNum !== null && (!Number.isFinite(fromNum) || fromNum < 0)) return setError("Enter the delivery starting amount as a number, or leave it empty.");
     setBusy(true);
     const { error } = await createClient().from("settings").upsert({
       id: 1,
@@ -68,6 +73,7 @@ export default function SettingsPage() {
       phone_numbers: f.phones.split(",").map((p) => p.trim()).filter(Boolean),
       open_time: f.open_time,
       close_time: f.close_time,
+      delivery_from_npr: fromNum,
       weekday_hours: f.different_days ? f.week : null,
       orders_paused: f.orders_paused,
       pause_message: f.pause_message.trim() || null,
@@ -90,6 +96,10 @@ export default function SettingsPage() {
             <Field label="Opens"><input type="time" className={inputCls} required value={f.open_time} onChange={(e) => set("open_time", e.target.value)} /></Field>
             <Field label="Closes"><input type="time" className={inputCls} required value={f.close_time} onChange={(e) => set("close_time", e.target.value)} /></Field>
           </div>
+          <Field label="Delivery charge starts from (Rs.)">
+            <input className={inputCls} inputMode="decimal" value={f.delivery_from} onChange={(e) => set("delivery_from", e.target.value)} placeholder="50" />
+          </Field>
+          <p className="-mt-2 text-xs text-slate-500">Shown to customers as “Delivery charge starts from Rs. 50”, with a note that the exact charge depends on the location and the order. Leave it empty to show only that the charge is not fixed. A fixed charge for one area (for example BPKIHS) is set in Areas.</p>
           <label className="flex min-h-[44px] items-center gap-3 rounded-lg bg-slate-50 p-3 font-semibold">
             <input type="checkbox" className="h-5 w-5" checked={f.different_days} onChange={(e) => set("different_days", e.target.checked)} />
             Different hours on different days

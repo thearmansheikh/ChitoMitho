@@ -1,9 +1,12 @@
 import WhatsAppLink from "@/components/WhatsAppLink";
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
-import { getSettings } from "@/lib/data";
+import { getLocale, getTranslations } from "next-intl/server";
+import { getAreas, getSettings } from "@/lib/data";
 import PageHeader from "@/components/ui/PageHeader";
 import { validWeekHours } from "@/lib/hours";
+import { deliveryFromOf } from "@/lib/orderConfig";
+import { fixedChargeList } from "@/lib/areaCharges";
+import { formatNPR } from "@/lib/format";
 import { weekSummary } from "@/lib/weekText";
 
 export const metadata: Metadata = {
@@ -16,13 +19,17 @@ const COUNT = 14;
 
 export default async function HelpPage() {
   const t = await getTranslations("help");
+  const locale = await getLocale();
   const c = await getTranslations("common");
   const s = await getSettings();
   const hours = { open: s.open_time.slice(0, 5), close: s.close_time.slice(0, 5) };
   const week = validWeekHours(s.weekday_hours);
   const schedule = week ? await weekSummary(week) : "";
   // Question 4 is about opening hours: with different hours on different days it lists the whole week.
-  const answer = (n: number) => (n === 4 && week ? t("a4Week", { schedule }) : t(`a${n}`, hours));
+  const from = deliveryFromOf(s);
+  const fixedList = fixedChargeList(await getAreas(), locale);
+  const chargeAnswer = (from != null ? t("a3From", { amount: formatNPR(from) }) : t("a3", hours)) + (fixedList ? " " + t("fixedCharges", { list: fixedList }) : "");
+  const answer = (n: number) => (n === 4 && week ? t("a4Week", { schedule }) : n === 3 ? chargeAnswer : t(`a${n}`, hours));
   const items = Array.from({ length: COUNT }, (_, i) => ({ q: t(`q${i + 1}`), a: answer(i + 1) }));
 
   // Lets search engines show the answers directly.

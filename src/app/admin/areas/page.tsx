@@ -7,7 +7,7 @@ import { btnDanger, btnGhost, btnPrimary, Card, Field, inputCls, Notice } from "
 import type { Area, AreaGroup } from "@/types/db";
 
 const GROUPS: AreaGroup[] = ["dharan", "itahari", "biratnagar", "nearby"];
-const EMPTY = { name: "", name_ne: "", area_group: "dharan" as AreaGroup };
+const EMPTY = { name: "", name_ne: "", area_group: "dharan" as AreaGroup, charge: "" };
 
 export default function AreasPage() {
   const sb = createClient();
@@ -25,12 +25,14 @@ export default function AreasPage() {
   async function save(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    const row = { name: form.name.trim(), name_ne: form.name_ne.trim() || null, area_group: form.area_group };
+    const charge = form.charge.trim() === "" ? null : Number(form.charge);
+    if (charge !== null && (!Number.isFinite(charge) || charge < 0)) return setError("Enter the fixed delivery charge as a number, or leave it empty.");
+    const row = { name: form.name.trim(), name_ne: form.name_ne.trim() || null, area_group: form.area_group, delivery_charge_npr: charge };
     const inGroup = areas.filter((a) => a.area_group === form.area_group);
     const res = editing
       ? await sb.from("areas").update(row).eq("id", editing)
       : await sb.from("areas").insert({ ...row, sort_order: (inGroup.at(-1)?.sort_order ?? 0) + 1 });
-    if (res.error) return setError(res.error.message);
+    if (res.error) return setError(/delivery_charge_npr/.test(res.error.message) ? "The delivery charge column is missing. Run supabase/migrations/0013_area_charges.sql in the Supabase SQL Editor first." : res.error.message);
     setEditing(null); setForm(EMPTY); load();
   }
 
@@ -63,8 +65,8 @@ export default function AreasPage() {
       <h1 className="text-2xl font-extrabold text-brand-blue">Delivery areas</h1>
       <Notice error={error} />
       <Card>
-        <form onSubmit={save} className="grid gap-3 sm:grid-cols-3">
-          <h2 className="font-bold sm:col-span-3">{editing ? "Edit area" : "Add area"}</h2>
+        <form onSubmit={save} className="grid gap-3 sm:grid-cols-4">
+          <h2 className="font-bold sm:col-span-4">{editing ? "Edit area" : "Add area"}</h2>
           <Field label="Name"><input className={inputCls} required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></Field>
           <Field label="Nepali name"><input className={inputCls} value={form.name_ne} onChange={(e) => setForm({ ...form, name_ne: e.target.value })} /></Field>
           <Field label="Group">
@@ -72,7 +74,11 @@ export default function AreasPage() {
               {GROUPS.map((g) => <option key={g} value={g}>{g}</option>)}
             </select>
           </Field>
-          <div className="flex gap-2 sm:col-span-3">
+          <Field label="Fixed delivery charge, Rs. (optional)">
+            <input className={inputCls} inputMode="decimal" value={form.charge} onChange={(e) => setForm({ ...form, charge: e.target.value })} placeholder="e.g. 50" />
+          </Field>
+          <p className="text-xs text-slate-500 sm:col-span-4">Leave the charge empty when it depends on distance and the order. With a charge, customers are told it when they choose this area, and it goes into the WhatsApp order.</p>
+          <div className="flex gap-2 sm:col-span-4">
             <button className={btnPrimary}>{editing ? "Save" : "Add area"}</button>
             {editing && <button type="button" className={btnGhost} onClick={() => { setEditing(null); setForm(EMPTY); }}>Cancel</button>}
           </div>
@@ -87,12 +93,12 @@ export default function AreasPage() {
             <h2 className="font-bold capitalize text-slate-700">{g}</h2>
             {list.map((a, i) => (
               <Card key={a.id} className={a.is_active ? "" : "opacity-60"}>
-                <p className="font-semibold">{a.name} {a.name_ne && <span className="font-normal text-slate-500">· {a.name_ne}</span>}</p>
+                <p className="font-semibold">{a.name} {a.name_ne && <span className="font-normal text-slate-500">· {a.name_ne}</span>} {a.delivery_charge_npr != null && <b className="text-brand-blue">· Rs. {Number(a.delivery_charge_npr)} delivery</b>}</p>
                 <div className="mt-2 flex flex-wrap gap-2">
                   <button className={btnGhost} aria-label={`Move ${a.name} up`} disabled={i === 0} onClick={() => move(a, -1)}>↑</button>
                   <button className={btnGhost} aria-label={`Move ${a.name} down`} disabled={i === list.length - 1} onClick={() => move(a, 1)}>↓</button>
                   <button className={btnGhost} onClick={() => toggle(a)}>{a.is_active ? "Deactivate" : "Activate"}</button>
-                  <button className={btnGhost} onClick={() => { setEditing(a.id); setForm({ name: a.name, name_ne: a.name_ne ?? "", area_group: a.area_group }); window.scrollTo({ top: 0, behavior: "smooth" }); }}>Edit</button>
+                  <button className={btnGhost} onClick={() => { setEditing(a.id); setForm({ name: a.name, name_ne: a.name_ne ?? "", area_group: a.area_group, charge: a.delivery_charge_npr == null ? "" : String(Number(a.delivery_charge_npr)) }); window.scrollTo({ top: 0, behavior: "smooth" }); }}>Edit</button>
                   <button className={btnDanger} onClick={() => remove(a)}>Delete</button>
                 </div>
               </Card>

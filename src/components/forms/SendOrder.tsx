@@ -5,7 +5,8 @@ import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import type { SheetExtra } from "./DetailsSheet";
-import { isOpenNow } from "@/lib/format";
+import { formatNPR, isOpenNow } from "@/lib/format";
+import { fixedChargeOf } from "@/lib/areaCharges";
 import { loadDetails, saveDetails, type Details } from "@/lib/details";
 import { pick } from "@/lib/names";
 import { buildWhatsAppUrl, type Customer, type Lang } from "@/lib/whatsapp";
@@ -22,6 +23,8 @@ export interface OrderConfig {
   pauseMessage: string | null;
   pauseMessageNe?: string | null;
   whatsapp: string;
+  /** The delivery charge starts from this amount. Null: say only that it is not fixed. */
+  deliveryFrom?: number | null;
 }
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -123,9 +126,13 @@ export default function SendOrder({ service, placeId, itemsTotal, build, validat
     const areaName = area ? pick(area.name, area.name_ne, locale) : "";
     const groupName = area ? t(`groups.${area.area_group}`) : "";
     // "Dharan-5" already names the town, so it is not written as "Dharan – Dharan-5".
+    const fixedFor = (a: Area | undefined) => {
+      const amount = a ? fixedChargeOf(a) : null;
+      return a && amount !== null ? { area: pick(a.name, a.name_ne, locale), amount } : null;
+    };
     const areaText = area ? (areaName.startsWith(groupName) ? areaName : `${groupName} – ${areaName}`) : d.areaOther;
     const text = build(
-      { name: d.name, phone: d.phone, phone2: d.phone2, area: areaText, tole: d.tole, house: d.house, landmark: d.landmark, location: extra.location, deliverAt: extra.deliverAt, payment: d.payment, note },
+      { deliveryFrom: config.deliveryFrom ?? null, deliveryFixed: fixedFor(area), name: d.name, phone: d.phone, phone2: d.phone2, area: areaText, tole: d.tole, house: d.house, landmark: d.landmark, location: extra.location, deliverAt: extra.deliverAt, payment: d.payment, note },
       locale,
     );
     return { text, area };
@@ -167,7 +174,7 @@ export default function SendOrder({ service, placeId, itemsTotal, build, validat
               {(["next1", "next2", "next3"] as const).map((k, i) => (
                 <li key={k} className="flex gap-3">
                   <span aria-hidden className="flex h-6 w-6 flex-none items-center justify-center rounded-full bg-brand-red text-xs font-bold text-white">{i + 1}</span>
-                  <span>{t(k)}</span>
+                  <span>{k === "next2" && config.deliveryFrom != null ? t("next2From", { amount: formatNPR(config.deliveryFrom) }) : t(k)}</span>
                 </li>
               ))}
             </ol>
@@ -196,7 +203,7 @@ export default function SendOrder({ service, placeId, itemsTotal, build, validat
       {error && <p role="alert" className="mt-2 rounded-lg bg-red-50 p-3 text-sm font-semibold text-brand-red">{error}</p>}
       <DetailsSheet
         open={sheet} onClose={() => setSheet(false)} onConfirm={confirm} areas={areas} initial={saved} busy={busy}
-        openTime={config.openTime} closeTime={config.closeTime} allowSchedule={allowSchedule}
+        openTime={config.openTime} closeTime={config.closeTime} allowSchedule={allowSchedule} deliveryFrom={config.deliveryFrom ?? null}
         preview={(d, note, extra) => makeText(d, note, extra).text}
       />
     </>

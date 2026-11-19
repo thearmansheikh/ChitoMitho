@@ -102,6 +102,20 @@ const T = LOCALE === "ne"
     console.log("SKIP suggestion checks (could not read .env to look up the wards)");
   }
 
+  // ---- BPKIHS has a fixed delivery charge of Rs. 50
+  {
+    const bp = opts.find((o) => /^(BPKIHS|बीपीकेआईएचएस)$/.test(o.t));
+    ok("BPKIHS is in the area list", !!bp, JSON.stringify(opts.map((o) => o.t).slice(0, 12)));
+    if (bp) {
+      await page.select('form[role="dialog"] select', bp.v); await sleep(200);
+      const ft = await page.$eval('[role="dialog"]', (d) => d.innerText);
+      ok("Choosing BPKIHS shows that delivery there is Rs. 50", (LOCALE === "ne" ? /बीपीकेआईएचएस मा डेलिभरी शुल्क Rs\. 50 हो/ : /Delivery to BPKIHS is Rs\. 50/).test(ft), ft.slice(-400));
+      await page.select('form[role="dialog"] select', wards.find((o) => o.t === T.ward5).v); await sleep(200);
+      const ft2 = await page.$eval('[role="dialog"]', (d) => d.innerText);
+      ok("Choosing a ward does not claim a fixed charge", !/Delivery to .* is Rs\.|मा डेलिभरी शुल्क Rs\. [0-9]+ हो/.test(ft2));
+    }
+  }
+
   // ---- rule: a tole or a landmark is needed
   await fill(/^(Your name|तपाईंको नाम)/, "Sita Rai");
   await fill(/^(Phone number|फोन नम्बर)/, "98 12345678");

@@ -100,7 +100,8 @@ const ok = (name, pass, extra = "") => { results.push({ name, pass }); console.l
   await page.waitForSelector("main li", { timeout: 15000 });
   const basket = await text("main");
   ok("Basket lists both items with the right totals", /Combo - 1/.test(basket) && /Cheesy Zinger Burger/.test(basket) && /918/.test(basket) && /299/.test(basket), basket.slice(0, 300));
-  ok("Basket says the delivery charge is not fixed and depends on the order and distance", /not fixed|तोकिएको छैन/i.test(basket) && /distance|दूरी/i.test(basket), basket.slice(-400));
+  ok("Basket says the delivery charge starts from Rs. 50 and depends on location and order", /starts from Rs\. 50|Rs\. 50 बाट सुरु/i.test(basket) && /location|स्थान/i.test(basket), basket.slice(-400));
+  ok("Basket says delivery inside BPKIHS is a fixed Rs. 50", /BPKIHS|बीपीकेआईएचएस/.test(basket) && /Rs. 50/.test(basket), basket.slice(-400));
   ok("Basket remembers the note on the burger", await page.$$eval("main input", (is) => is.some((i) => /no onions|प्याज नहाल्नुहोस्/.test(i.value))));
   await shot("6-basket");
 
@@ -110,7 +111,7 @@ const ok = (name, pass, extra = "") => { results.push({ name, pass }); console.l
   await page.waitForSelector('[role="dialog"] input', { visible: true, timeout: 8000 });
   await sleep(300);
   const formText = await text("[role=dialog]");
-  ok("The address form says the delivery charge is not fixed and depends on the order and distance", /not fixed|तोकिएको छैन/i.test(formText) && /distance|दूरी/i.test(formText), formText.slice(-300));
+  ok("The address form says the delivery charge starts from Rs. 50 and depends on location and order", /starts from Rs\. 50|Rs\. 50 बाट सुरु/i.test(formText) && /location|स्थान/i.test(formText), formText.slice(-300));
   await shot("7-details-empty");
 
   // 7. Validation
@@ -144,7 +145,7 @@ const ok = (name, pass, extra = "") => { results.push({ name, pass }); console.l
   ok("Message carries the note", /no onions|प्याज नहाल्नुहोस्/.test(msg));
   ok("Message has the total", /1,?217/.test(msg), msg);
   ok("Message has name, cleaned phone, landmark and area", /Sita Rai/.test(msg) && /9812345678/.test(msg) && /Near Nabil Bank/.test(msg) && msg.includes(areaLabel.split(/[·(]/)[0].trim()), areaLabel);
-  ok("Message tells the team the charge depends on the order and distance", /distance|दूरी/i.test(msg) && /delivery charge|डेलिभरी शुल्क/i.test(msg), msg.slice(-300));
+  ok("Message tells the team the charge starts from Rs. 50 and depends on location and order", /starts from Rs\. 50|Rs\. 50 बाट सुरु/i.test(msg) && /location|स्थान/i.test(msg), msg.slice(-300));
   ok("Message says the delivery charge is confirmed later", /delivery charge|डेलिभरी शुल्क|डेलिभरी चार्ज/i.test(msg), msg.slice(-300));
 
   // 9. Send
@@ -153,7 +154,7 @@ const ok = (name, pass, extra = "") => { results.push({ name, pass }); console.l
   await page.waitForSelector("#sent-title", { visible: true, timeout: 8000 }).catch(() => {});
   await shot("11-sent");
   const sentText = await text("[role='dialog']");
-  ok("Confirmation screen says the charge depends on the order and distance", /distance|दूरी/i.test(sentText), sentText.slice(0, 300));
+  ok("Confirmation screen says the charge starts from Rs. 50", /starts from Rs\. 50|Rs\. 50 बाट सुरु/i.test(sentText), sentText.slice(0, 300));
   ok("Confirmation screen explains what happens next", /What happens next|के हुन्छ|अब के/i.test(sentText), sentText.slice(0, 200));
   const opened = await page.evaluate(() => window.__opened);
   ok("The WhatsApp link goes to the order number", typeof opened === "string" && opened.startsWith("https://api.whatsapp.com/send?phone=9779805338257&text="), String(opened).slice(0, 70));

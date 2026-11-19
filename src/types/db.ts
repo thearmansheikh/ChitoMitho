@@ -64,6 +64,8 @@ export interface Area {
   area_group: AreaGroup;
   is_active: boolean;
   sort_order: number;
+  /** A fixed delivery charge for this area (for example inside BPKIHS). Null: depends on distance and order. */
+  delivery_charge_npr?: number | null;
 }
 export interface Settings {
   id: 1;
@@ -74,6 +76,8 @@ export interface Settings {
   timezone: string;
   orders_paused: boolean;
   pause_message: string | null;
+  /** The delivery charge starts from this amount. Null: no amount is mentioned. */
+  delivery_from_npr?: number | null;
   /** Hours for each day of the week (see lib/hours.ts). Null or missing: same hours every day. */
   weekday_hours?: unknown;
   /** Set only while a holiday closure is on: the Nepali version of pause_message. */
