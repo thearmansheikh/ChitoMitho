@@ -10,3 +10,4 @@ next-env.d.ts
 # Big original photos and videos stay on this PC; only optimized copies are published
 public/images/raw/*
 !public/images/raw/.gitkeep
+.next-*
