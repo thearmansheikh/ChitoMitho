@@ -23,7 +23,7 @@ export default function PlaceCard({ place, name, tags = [], comingSoon }: { plac
       className="group block overflow-hidden rounded-2xl bg-white shadow-card ring-1 ring-slate-200/70 transition duration-200 hover:-translate-y-0.5 hover:shadow-lg active:scale-[0.99]"
     >
       <div className={`relative flex h-28 items-center justify-center gap-3 overflow-hidden bg-gradient-to-br ${DISH_TINT[dishes[0]]}`}>
-        {place.cover_url && <Image src={place.cover_url} alt="" fill sizes="(max-width: 640px) 100vw, 400px" loading="lazy" className="object-cover" />}
+        {place.cover_url && <Image src={place.cover_url} alt="" aria-hidden fill sizes="(max-width: 640px) 100vw, 400px" loading="lazy" className="object-cover" />}
         {!place.cover_url && <span aria-hidden className="absolute -right-6 -top-8 h-28 w-28 rounded-full bg-white/40" />}
         {!place.cover_url && <span aria-hidden className="absolute -bottom-10 left-6 h-20 w-20 rounded-full bg-white/30" />}
         {!place.cover_url && dishes.map((d, i) => (
