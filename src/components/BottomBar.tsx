@@ -15,7 +15,7 @@ export default async function BottomBar() {
       className="fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-40 rounded-2xl bg-white/95 p-2 shadow-float ring-1 ring-slate-200 md:hidden"
     >
       <div className="mx-auto flex max-w-3xl gap-2">
-        <Link href="/basket" aria-label={t("basket")} className={`${btn} bg-brand-blue text-white`}>
+        <Link href="/basket" className={`${btn} bg-brand-blue text-white`}>
           <span aria-hidden>🧺</span> {t("basket")}
           <BasketCount />
         </Link>

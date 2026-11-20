@@ -14,7 +14,7 @@ export default function LangToggle() {
     router.refresh();
   }
 
-  const base = "min-h-[40px] px-3 text-sm font-semibold transition-colors";
+  const base = "min-h-[44px] px-3 text-sm font-semibold transition-colors";
   return (
     <div role="group" aria-label={t("langToggle")} className="flex overflow-hidden rounded-full border border-brand-blue">
       <button type="button" onClick={() => set("en")} aria-pressed={locale === "en"}

@@ -44,7 +44,6 @@ export default async function Header() {
           {/* On phones these two live in the floating bottom bar; from tablet width up they live here. */}
           <Link
             href="/basket"
-            aria-label={bar("basket")}
             className="hidden min-h-[44px] items-center gap-1 rounded-xl bg-brand-blue px-4 font-bold text-white shadow-pop transition hover:bg-[#244a82] active:scale-95 md:inline-flex"
           >
             <span aria-hidden>🧺</span> {bar("basket")}
@@ -54,7 +53,7 @@ export default async function Header() {
             basketAware
             number={s.whatsapp_number}
             ariaLabel={bar("whatsapp")}
-            className="hidden h-11 w-11 items-center justify-center rounded-full bg-green-700 text-lg text-white transition hover:bg-green-800 active:scale-95 xl:inline-flex"
+            className="hidden h-11 w-11 items-center justify-center rounded-full bg-green-700 text-lg text-white transition hover:bg-green-800 active:scale-95 md:inline-flex"
           >
             <span aria-hidden>💬</span>
           </WhatsAppLink>

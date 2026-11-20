@@ -26,7 +26,7 @@ export default async function FoodPage({ searchParams }: { searchParams: { q?: s
       {places.length === 0 ? (
         <p className="rounded-2xl bg-white p-6 text-center text-slate-500 shadow-card">{t("noPlaces")}</p>
       ) : (
-        <FoodBrowser places={places} categories={categories} items={items} initialQuery={initialQuery} />
+        <FoodBrowser places={places} categories={categories} items={items} initialQuery={initialQuery} whatsapp={settings.whatsapp_number} />
       )}
     </div>
   );

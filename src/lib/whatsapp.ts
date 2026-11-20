@@ -256,6 +256,11 @@ export function placeOrderMessage(lang: Lang, name: string): string {
 }
 
 /** What a plain "WhatsApp us" button opens with, so the chat is never blank. */
+/** "Hi, I'd like to order <what they searched for>." for a search that found nothing. */
+export function searchOrderMessage(lang: Lang, query: string): string {
+  return L[lang].searchOrder.replace("{query}", query.trim().slice(0, 80));
+}
+
 export function greetingMessage(lang: Lang): string {
   return L[lang].greeting;
 }

@@ -14,15 +14,19 @@ import ScooterArt from "@/components/ui/ScooterArt";
 import AddToBasket from "./AddToBasket";
 import { withUnit } from "@/lib/itemName";
 import PlaceCard from "./PlaceCard";
+import WhatsAppLink from "@/components/WhatsAppLink";
+import { searchOrderMessage, type Lang } from "@/lib/whatsapp";
 
 const clean = (s: string) => s.toLowerCase().trim();
 
 /** Search and browse: type a word or tap a craving, see matching dishes and cafés from everywhere at once. */
-export default function FoodBrowser({ places, categories, items, initialQuery }: {
+export default function FoodBrowser({ places, categories, items, initialQuery, whatsapp }: {
   places: Place[];
   categories: Category[];
   items: Item[];
   initialQuery: string;
+  /** The shop's WhatsApp number, for "can't find it? ask us". */
+  whatsapp: string;
 }) {
   const t = useTranslations("food");
   const pg = useTranslations("pages");
@@ -123,7 +127,10 @@ export default function FoodBrowser({ places, categories, items, initialQuery }:
           <ScooterArt className="h-24 w-auto" />
           <p className="text-lg font-bold">{t("noResults")}</p>
           <p className="max-w-xs text-sm text-slate-600">{t("noResultsHint")}</p>
-          <button type="button" onClick={() => setQ("")} className="mt-2 min-h-[48px] rounded-xl bg-brand-blue px-5 font-bold text-white">{t("clear")}</button>
+          <WhatsAppLink number={whatsapp} message={searchOrderMessage(locale as Lang, q)} className="mt-2 flex min-h-[52px] items-center justify-center gap-2 rounded-xl bg-green-700 px-5 font-bold text-white">
+            <span aria-hidden>💬</span> {t("noResultsOrder")}
+          </WhatsAppLink>
+          <button type="button" onClick={() => setQ("")} className="min-h-[48px] rounded-xl border border-slate-300 px-5 font-bold">{t("clear")}</button>
         </div>
       )}
 

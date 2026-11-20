@@ -5,6 +5,8 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // Slightly darker than the default slate-500 so hint text meets WCAG AA (4.5:1) on the page background.
+        slate: { 500: "#5b6b80" },
         "brand-blue": "#2E5A9C",
         "brand-red": "#D62828",
         ink: "#1A2B4C",
