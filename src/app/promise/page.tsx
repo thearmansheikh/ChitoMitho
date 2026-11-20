@@ -5,13 +5,13 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { getSettings } from "@/lib/data";
 import PageHeader from "@/components/ui/PageHeader";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Our promise – how Chitto Mitho delivery works in Dharan",
-  description:
-    "Clear delivery charges confirmed on WhatsApp, cash or QR at the door, your details kept private, and what to do if something goes wrong.",
-  alternates: { canonical: "/promise" },
-};
+export const metadata: Metadata = pageMeta({
+  title: "Our delivery promise in Dharan",
+  path: "/promise",
+  description: "Clear delivery charges confirmed on WhatsApp, cash or QR at the door, your details kept private, and what to do if something goes wrong."
+});
 
 const SECTIONS = [
   ["s1", "💬"],

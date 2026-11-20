@@ -6,11 +6,13 @@ import GiftForm from "@/components/shop/GiftForm";
 import GiftOrderButton from "@/components/shop/GiftOrderButton";
 import PageHeader from "@/components/ui/PageHeader";
 import ServiceIcon from "@/components/ui/ServiceIcon";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Gifts & flowers delivery in Dharan",
-  description: "Send bouquets, cakes and gift sets in Dharan with a message card, on the date and time you choose. Order on WhatsApp.",
-};
+export const metadata: Metadata = pageMeta({
+  title: "Gifts and flowers delivery in Dharan",
+  path: "/gifts",
+  description: "Send bouquets, cakes and gift sets in Dharan with a message card, on the date and time you choose. Order on WhatsApp."
+});
 
 export default async function GiftsPage() {
   const t = await getTranslations("pages");

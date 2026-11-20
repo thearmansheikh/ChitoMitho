@@ -9,12 +9,13 @@ import { deliveryFromOf } from "@/lib/orderConfig";
 import { fixedChargeList } from "@/lib/areaCharges";
 import { formatNPR } from "@/lib/format";
 import { weekSummary } from "@/lib/weekText";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Help and questions – how ordering works",
-  description: "Answers about ordering on WhatsApp, delivery charges, payment, opening hours, areas, changes, problems and liquor orders with Chitto Mitho in Dharan.",
-  alternates: { canonical: "/help" },
-};
+export const metadata: Metadata = pageMeta({
+  title: "Help: how ordering works",
+  path: "/help",
+  description: "Answers about ordering on WhatsApp, delivery charges, payment, opening hours, areas, changes and problems with Chitto Mitho in Dharan."
+});
 
 const COUNT = 14;
 

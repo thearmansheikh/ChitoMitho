@@ -15,7 +15,7 @@ html {
 
 body {
   -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
+  /* No text-rendering: optimizeLegibility: it made every page slower to lay out for almost no visible gain. */
 }
 
 ::selection {

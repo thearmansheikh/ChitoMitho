@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { getSettings } from "@/lib/data";
+import { pageMeta } from "@/lib/seo";
 import { liquorEnabledOf } from "@/lib/liquor";
 import AgeGate from "@/components/shop/AgeGate";
 import TypeMenus from "@/components/shop/TypeMenus";
@@ -9,12 +10,13 @@ import ServiceIcon from "@/components/ui/ServiceIcon";
 
 export async function generateMetadata(): Promise<Metadata> {
   const on = liquorEnabledOf(await getSettings());
-  return {
-    title: on ? "Liquor delivery in Dharan (18+)" : "Liquor delivery in Dharan: coming soon",
+  // While liquor is switched off this page says "coming soon", so search engines are asked to skip it.
+  return pageMeta({
+    title: on ? "Liquor delivery in Dharan (18+)" : "Liquor delivery: coming soon",
     description: "Beer, wine and spirits delivered in Dharan for adults 18 and over. ID checked at the door. Order on WhatsApp.",
-    // While liquor is switched off this page says "coming soon", so search engines should skip it.
-    ...(on ? {} : { robots: { index: false, follow: true } }),
-  };
+    path: "/liquor",
+    noindex: !on,
+  });
 }
 
 export default async function LiquorPage() {

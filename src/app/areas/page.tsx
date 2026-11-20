@@ -11,12 +11,13 @@ import { weekSummary } from "@/lib/weekText";
 import PageHeader from "@/components/ui/PageHeader";
 import SectionTitle from "@/components/ui/SectionTitle";
 import type { AreaGroup } from "@/types/db";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Where we deliver – Dharan, Itahari, Biratnagar",
-  description: "Chitto Mitho delivers in Dharan and nearby areas in every direction, including Itahari and Biratnagar. See the places we cover and how delivery charges work.",
-  alternates: { canonical: "/areas" },
-};
+export const metadata: Metadata = pageMeta({
+  title: "Delivery areas: Dharan, Itahari, Biratnagar",
+  path: "/areas",
+  description: "Chitto Mitho delivers in Dharan and nearby areas in every direction, including Itahari and Biratnagar. See where we deliver and how delivery charges work."
+});
 
 const GROUPS: AreaGroup[] = ["dharan", "itahari", "biratnagar", "nearby"];
 const MAP_QUERY: Partial<Record<AreaGroup, string>> = {

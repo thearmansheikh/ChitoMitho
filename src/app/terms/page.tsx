@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import PageHeader from "@/components/ui/PageHeader";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Terms of service – ordering with Chitto Mitho",
-  description: "The simple rules for ordering with Chitto Mitho: prices, delivery charge and time, payment, changes, problems, liquor and offers.",
-  alternates: { canonical: "/terms" },
-};
+export const metadata: Metadata = pageMeta({
+  title: "Terms of service",
+  path: "/terms",
+  description: "The simple rules for ordering with Chitto Mitho: prices, delivery charge and time, payment, changes, problems and offers."
+});
 
 const COUNT = 10;
 

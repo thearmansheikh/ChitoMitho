@@ -5,11 +5,13 @@ import { getTranslations } from "next-intl/server";
 import { getSettings } from "@/lib/data";
 import { SITE } from "@/lib/config";
 import PageHeader from "@/components/ui/PageHeader";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "About & contact – delivery in Dharan",
-  description: "Chitto Mitho is an everyday delivery service in Dharan, Nepal. Opening hours, phone, WhatsApp, TikTok and Instagram.",
-};
+export const metadata: Metadata = pageMeta({
+  title: "About and contact – delivery in Dharan",
+  path: "/about",
+  description: "Chitto Mitho is an everyday delivery service in Dharan, Nepal. Opening hours, phone, WhatsApp, TikTok and Instagram."
+});
 
 export default async function AboutPage() {
   const t = await getTranslations("about");

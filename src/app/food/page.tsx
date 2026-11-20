@@ -5,12 +5,13 @@ import { noMenuModeOf, visiblePlaces } from "@/lib/places";
 import FoodBrowser from "@/components/shop/FoodBrowser";
 import PageHeader from "@/components/ui/PageHeader";
 import ServiceIcon from "@/components/ui/ServiceIcon";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
   title: "Food delivery in Dharan",
-  description: "Order from the best cafés and restaurants in Dharan. Momo, burgers, coffee and more, delivered to your door. Order on WhatsApp.",
-  alternates: { canonical: "/food" },
-};
+  path: "/food",
+  description: "Order from cafés and restaurants in Dharan. Momo, burgers, coffee and more, delivered to your door. Order on WhatsApp."
+});
 
 export default async function FoodPage({ searchParams }: { searchParams: { q?: string | string[] } }) {
   const t = await getTranslations("pages");

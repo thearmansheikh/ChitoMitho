@@ -4,11 +4,13 @@ import TypeMenus from "@/components/shop/TypeMenus";
 import ShoppingList from "@/components/shop/ShoppingList";
 import PageHeader from "@/components/ui/PageHeader";
 import ServiceIcon from "@/components/ui/ServiceIcon";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
   title: "Grocery delivery in Dharan",
-  description: "Order groceries and vegetables in Dharan, Itahari and Biratnagar, or type your own shopping list. Order on WhatsApp.",
-};
+  path: "/groceries",
+  description: "Order groceries and vegetables in Dharan, Itahari and Biratnagar, or type your own shopping list. Order on WhatsApp."
+});
 
 export default async function GroceriesPage() {
   const t = await getTranslations("pages");

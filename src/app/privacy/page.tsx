@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import PageHeader from "@/components/ui/PageHeader";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Privacy – what this website stores",
-  description: "In plain words: Chitto Mitho’s website does not store your name, phone number or location. Orders go through your own WhatsApp message.",
-  alternates: { canonical: "/privacy" },
-};
+export const metadata: Metadata = pageMeta({
+  title: "Privacy: what this website stores",
+  path: "/privacy",
+  description: "In plain words: Chitto Mitho's website does not store your name, phone number or location. Orders go through your own WhatsApp message."
+});
 
 const COUNT = 8;
 

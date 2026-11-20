@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import WhatsAppLink from "@/components/WhatsAppLink";
 import { callNumbers } from "@/lib/contact";
 import Link from "next/link";
@@ -18,6 +19,7 @@ import OffersStrip from "@/components/shop/OffersStrip";
 import HeroScene from "@/components/ui/HeroScene";
 import ServiceIcon from "@/components/ui/ServiceIcon";
 import SectionTitle from "@/components/ui/SectionTitle";
+import { pageMeta } from "@/lib/seo";
 
 // Each service gets its own soft colour so people can find it by sight, not only by reading.
 const SERVICES = [
@@ -29,7 +31,12 @@ const SERVICES = [
   { href: "/anything", key: "anything", icon: "✨", badge: "bg-indigo-100", glow: "group-hover:shadow-indigo-200" },
 ] as const;
 
-export const metadata = { alternates: { canonical: "/" } };
+export const metadata: Metadata = pageMeta({
+  title: "Delivery in Dharan: food, groceries, gifts",
+  path: "",
+  absolute: true,
+  description: "Order food, groceries, gifts and flowers, parcels and anything from any shop. Delivery in Dharan, Itahari and Biratnagar. Open 10am to 10pm. Order on WhatsApp."
+});
 
 export default async function Home() {
   const t = await getTranslations("home");
